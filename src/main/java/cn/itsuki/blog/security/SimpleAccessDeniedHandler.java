@@ -1,0 +1,31 @@
+package cn.itsuki.blog.security;
+
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.stereotype.Component;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+
+/**
+ * @author: itsuki
+ * @create: 2021-09-14 21:45
+ **/
+@Component
+public class SimpleAccessDeniedHandler implements AccessDeniedHandler {
+    /**
+     * 403 响应体
+     */
+    private static final String ERROR_MESSAGE = "{ \"message\": \"%s\" }";
+
+    @Override
+    public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
+
+        response.setContentType("application/json");
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.getOutputStream().println(String.format(ERROR_MESSAGE, accessDeniedException.getMessage()));
+
+    }
+}
