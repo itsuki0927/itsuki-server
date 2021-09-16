@@ -1,5 +1,6 @@
 package cn.itsuki.blog.exceptions;
 
+import cn.itsuki.blog.entities.responses.WrapperResponse;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
@@ -167,7 +168,8 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
     private static ResponseEntity<Object> buildErrorResponse(HttpStatus status, String message) {
         Map<String, Object> responseBody = new HashMap<>();
         responseBody.put("message", message);
+        WrapperResponse<Object> objectWrapperResponse = WrapperResponse.buildFailed(status.value(), message);
 
-        return new ResponseEntity<>((Object) responseBody, status);
+        return new ResponseEntity<>((Object) objectWrapperResponse, status);
     }
 }

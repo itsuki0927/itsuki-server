@@ -1,6 +1,6 @@
 package cn.itsuki.blog.security;
 
-import cn.itsuki.blog.entities.User;
+import cn.itsuki.blog.entities.Admin;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
@@ -36,12 +36,21 @@ public class TokenUtils {
     private ObjectMapper objectMapper;
 
     /**
+     * 获取过期时间
+     *
+     * @return 过期时间
+     */
+    public long getExpirationInSeconds() {
+        return expirationInSeconds;
+    }
+
+    /**
      * 根据用户信息创建token
      *
      * @param user 用户
      * @return token
      */
-    public String createJwtToken(User user) {
+    public String createJwtToken(Admin user) {
         final Date expiration = new Date(System.currentTimeMillis() + expirationInSeconds * 1000);
 
         try {
@@ -52,17 +61,17 @@ public class TokenUtils {
         }
     }
 
-    public User decodeJwtToken(String jwtToken) {
+    public Admin decodeJwtToken(String jwtToken) {
         Claims claims;
 
         try {
-            claims = Jwts.parser().setSigningKey(secret).parseClaimsJwt(jwtToken).getBody();
+            claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken).getBody();
         } catch (Exception ex) {
             throw new BadCredentialsException(ex.getMessage(), ex);
         }
         String payload = (String) claims.get(CLAIM_KEY);
         try {
-            return objectMapper.readValue(payload, User.class);
+            return objectMapper.readValue(payload, Admin.class);
         } catch (IOException ex) {
             throw new BadCredentialsException("Invalid JWT token", ex);
         }

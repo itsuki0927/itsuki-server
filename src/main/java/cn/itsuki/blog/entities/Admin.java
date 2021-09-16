@@ -1,43 +1,55 @@
 package cn.itsuki.blog.entities;
 
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.Min;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import java.util.Date;
 
 /**
  * @author: itsuki
  * @create: 2021-09-14 20:42
  **/
-@Entity(name = "User")
+@Entity(name = "Admin")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class User extends IdentifiableEntity {
+public class Admin extends IdentifiableEntity {
     /**
-     * 标题
+     * 昵称
      */
     private String nickname;
+
+    /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
+     * 权限
+     */
+    @NonNull
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
+    /**
+     * 用户名
+     */
+    private String username;
+
+    /**
+     * 密码
+     */
+    private String password;
+
     /**
      * 描述
      */
     private String description;
-
-    /**
-     * 评论数
-     */
-    @Min(0)
-    private int comment;
-
-    /**
-     * 喜欢数
-     */
-    @Min(0)
-    private int liker;
-
 
     /**
      * 创建时间

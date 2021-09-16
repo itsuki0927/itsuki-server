@@ -4,6 +4,7 @@ import cn.itsuki.blog.entities.IdentifiableEntity;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.BaseRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,6 +17,8 @@ import java.util.List;
 import java.util.Optional;
 
 /**
+ * service 基类
+ *
  * @author: itsuki
  * @create: 2021-09-14 19:49
  **/
@@ -34,6 +37,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
     // 默认排序列
     private final String defaultSortColumn;
     // 实例
+    @Autowired
     protected BaseRepository<T> repository;
 
     /**
@@ -186,10 +190,11 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
             throw new IllegalArgumentException(entityName + " id必须>0");
         }
         Optional<E> optionalEntity = repository.findById(id);
-        if (optionalEntity.isPresent()) {
+        if (!optionalEntity.isPresent()) {
             throw new EntityNotFoundException(String.format("%s does not exist with id %s", entityName, id));
         }
-        return repository.getById(id);
+        return optionalEntity.get();
+        // return repository.getById(id);
     }
 
     /**

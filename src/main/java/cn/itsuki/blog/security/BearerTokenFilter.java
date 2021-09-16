@@ -1,6 +1,6 @@
 package cn.itsuki.blog.security;
 
-import cn.itsuki.blog.entities.User;
+import cn.itsuki.blog.entities.Admin;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -38,10 +38,10 @@ public class BearerTokenFilter extends OncePerRequestFilter {
         }
 
         if (!StringUtils.isEmpty(bearerToken)) {
-            User user = tokenUtils.decodeJwtToken(bearerToken);
+            Admin user = tokenUtils.decodeJwtToken(bearerToken);
 
             // 设置 user 到上下文中
-            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getId());
+            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
                     Arrays.asList(authority));
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
