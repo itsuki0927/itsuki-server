@@ -81,9 +81,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint) //
                 .accessDeniedHandler(accessDeniedHandler);
 
-        httpSecurity.authorizeRequests().antMatchers("/admin/login").anonymous()
-                .antMatchers(HttpMethod.GET, "/admin/current-user").hasAnyRole(Role.ADMIN.toString())
-                .anyRequest().authenticated();
+        // httpSecurity.authorizeRequests().antMatchers("/admin/login").anonymous()
+        //         .antMatchers(HttpMethod.GET, "/admin/current-user").anonymous()
+        //         // .antMatchers(HttpMethod.GET, "/admin/current-user").hasAnyRole(Role.ADMIN.toString())
+        //         .anyRequest().anonymous();
 
         // token 处理
         httpSecurity.addFilterBefore(authenticationTokenFilter(),

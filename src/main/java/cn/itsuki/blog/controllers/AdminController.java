@@ -1,6 +1,7 @@
 package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Admin;
+import cn.itsuki.blog.entities.requests.AdminSearchRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
@@ -18,7 +19,7 @@ import javax.validation.Valid;
  **/
 @RestController
 @RequestMapping("/admin")
-public class AdminController {
+public class AdminController extends BaseController<Admin, AdminSearchRequest> {
 
     @Autowired
     private AdminService adminService;
@@ -30,7 +31,6 @@ public class AdminController {
 
     @GetMapping("/current-user")
     public WrapperResponse<Admin> getCurrentUser() {
-        return WrapperResponse.build(adminService.get(1), "获取信息成功");
-        // return adminService.get(SecurityUtils.getCurrentAdmin().getId());
+        return WrapperResponse.build(adminService.getCurrentAdmin(), "获取信息成功");
     }
 }

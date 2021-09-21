@@ -41,7 +41,7 @@ public class BearerTokenFilter extends OncePerRequestFilter {
             Admin user = tokenUtils.decodeJwtToken(bearerToken);
 
             // 设置 user 到上下文中
-            GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_" + user.getRole());
+            GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().toString());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
                     Arrays.asList(authority));
             authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

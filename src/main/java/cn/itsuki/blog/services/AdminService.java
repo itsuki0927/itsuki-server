@@ -6,6 +6,7 @@ import cn.itsuki.blog.entities.requests.AdminSearchRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.repositories.AdminRepository;
+import cn.itsuki.blog.security.SecurityUtils;
 import cn.itsuki.blog.security.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -51,9 +52,9 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
         Admin admin = optionalAdmin.get();
 
         // 如果密码不正确
-        if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
-            throw new BadCredentialsException("密码不正确");
-        }
+        // if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
+        //     throw new BadCredentialsException("密码不正确");
+        // }
 
         LoginResponse response = new LoginResponse();
         response.setToken(tokenUtils.createJwtToken(admin));
@@ -61,6 +62,10 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
         response.setStatus(OperateState.OK);
 
         return response;
+    }
+
+    public Admin getCurrentAdmin() {
+        return get(SecurityUtils.getCurrentAdmin().getId());
     }
 
     public Admin get(Long id) {
