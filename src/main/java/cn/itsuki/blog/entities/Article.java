@@ -95,15 +95,4 @@ public class Article extends IdentifiableEntity {
      */
     private Integer open;
 
-    /**
-     * 创建时间
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createAt;
-
-    /**
-     * 更新时间
-     */
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date updateAt;
 }

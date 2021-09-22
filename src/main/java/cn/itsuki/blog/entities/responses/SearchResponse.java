@@ -19,6 +19,6 @@ import java.util.List;
 @ToString(callSuper = true)
 public class SearchResponse<T extends IdentifiableEntity> {
     private long total;
-    private List<T> results;
+    private List<T> data;
     private BaseSearchRequest filter;
 }

@@ -51,13 +51,4 @@ public class Admin extends IdentifiableEntity {
      */
     private String description;
 
-    /**
-     * 创建时间
-     */
-    private Date createAt;
-
-    /**
-     * 更新时间
-     */
-    private Date updateAt;
 }
