@@ -9,30 +9,30 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 标签管理
+ * 分类管理
  *
  * @author: itsuki
  * @create: 2021-09-21 18:13
  **/
-@Entity(name = "Tag")
+@Entity(name = "Category")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class Tag extends IdentifiableEntity {
+public class Category extends IdentifiableEntity {
     /**
-     * 标签名称
+     * 分类名称
      */
     @NotBlank
     private String name;
 
     /**
-     * 标签路径
+     * 分类路径
      */
     @NotBlank
     private String path;
 
     /**
-     * 标签描述
+     * 分类描述
      */
     @NotBlank
     private String description;
@@ -49,9 +49,14 @@ public class Tag extends IdentifiableEntity {
     private Integer sort;
 
     /**
-     * 当前标签下文章数量
+     * 当前分类下文章数量
      */
     @Min(0)
     private Integer count;
+
+    /**
+     * 父类id
+     */
+    private Long parentId;
 }
 
