@@ -5,8 +5,10 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import java.util.Set;
 
 /**
  * 标签管理

@@ -32,4 +32,31 @@ public class IdentifiableEntity {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     private Date updateAt;
+
+    @PrePersist
+    protected void onCreate() {
+        setCreateAt(new Date());
+        setUpdateAt(new Date());
+        setId(null);
+        onCreateAction();
+    }
+
+    /**
+     * create之前的action
+     */
+    protected void onCreateAction() {
+    }
+
+    /**
+     * update之前的action
+     */
+    protected void onUpdateAction() {
+
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        setUpdateAt(new Date());
+        onUpdateAction();
+    }
 }

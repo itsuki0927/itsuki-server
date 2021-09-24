@@ -59,7 +59,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
      * @return 创建好的实体数据
      */
     public T create(T entity) {
-        defaultCreateInitialAction(entity);
+        // defaultCreateInitialAction(entity);
         beforeCreateInitialAction(entity);
         validateEntity(entity);
         return repository.saveAndFlush(entity);

@@ -1,13 +1,21 @@
 package cn.itsuki.blog.services;
 
 import cn.itsuki.blog.entities.Article;
+import cn.itsuki.blog.entities.ArticleCategory;
+import cn.itsuki.blog.entities.ArticleTag;
+import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
+import cn.itsuki.blog.repositories.ArticleCategoryRepository;
+import cn.itsuki.blog.repositories.ArticleTagRepository;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author: itsuki
@@ -17,6 +25,10 @@ import java.util.Date;
 public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     @Autowired
     AdminService adminService;
+    @Autowired
+    ArticleTagRepository tagRepository;
+    @Autowired
+    ArticleCategoryRepository categoryRepository;
 
     /**
      * 创建一个service实例
@@ -25,16 +37,43 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         super("liking", new String[]{"commenting", "liking", "reading"});
     }
 
-    @Override
-    public Article create(Article entity) {
-        entity.setAuthor(adminService.getCurrentAdmin().getNickname());
-        entity.setCreateAt(new Date());
-        entity.setUpdateAt(new Date());
-        return super.create(entity);
+    private void saveAllTags(List<Long> tagIds, Long articleId) {
+        if (tagIds != null) {
+            List<ArticleTag> tagList = tagIds.stream().map(tagId -> {
+                ArticleTag tag = new ArticleTag();
+                tag.setTagId(tagId);
+                tag.setArticleId(articleId);
+                return tag;
+            }).collect(Collectors.toList());
+            tagRepository.saveAll(tagList);
+        }
+    }
+
+    public Article create(ArticleCreateRequest request) {
+        Article entity = new Article();
+        BeanUtils.copyProperties(request, entity);
+        Article article = super.create(entity);
+
+        saveAllTags(request.getTagIds(), article.getId());
+        saveAllCategories(request.getCategoryIds(), article.getId());
+
+        return article;
+    }
+
+    private void saveAllCategories(List<Long> categoryIds, Long articleId) {
+        if (categoryIds != null) {
+            List<ArticleCategory> categoryList = categoryIds.stream().map(categoryId -> {
+                ArticleCategory category = new ArticleCategory();
+                category.setCategoryId(categoryId);
+                category.setArticleId(articleId);
+                return category;
+            }).collect(Collectors.toList());
+            categoryRepository.saveAll(categoryList);
+        }
     }
 
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
     }
 }

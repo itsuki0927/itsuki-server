@@ -1,16 +1,16 @@
 package cn.itsuki.blog.entities;
 
 import cn.itsuki.blog.constants.PublishState;
+import cn.itsuki.blog.security.SecurityUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Entity;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.Date;
+import java.util.Set;
 
 /**
  * @author: itsuki
@@ -95,4 +95,19 @@ public class Article extends IdentifiableEntity {
      */
     private Integer open;
 
+
+    @ManyToMany
+    @JoinTable(
+            name = "ArticleTags",
+            joinColumns = @JoinColumn(name = "articleId"),
+            inverseJoinColumns = @JoinColumn(name = "tagId"))
+    private Set<Tag> tags;
+
+    @Override
+    protected void onCreateAction() {
+        setAuthor(SecurityUtils.getCurrentAdmin().getNickname());
+        setCommenting(0);
+        setLiking(0);
+        setReading(0);
+    }
 }
