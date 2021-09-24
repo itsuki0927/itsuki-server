@@ -2,12 +2,12 @@ package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
+import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
+import cn.itsuki.blog.entities.responses.SearchResponse;
+import cn.itsuki.blog.entities.responses.WrapperResponse;
 import cn.itsuki.blog.services.ArticleService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,7 +23,12 @@ public class ArticleController {
     ArticleService service;
 
     @PostMapping
-    public Article create(@Valid @RequestBody ArticleCreateRequest article) {
-        return service.create(article);
+    public WrapperResponse<Article> create(@Valid @RequestBody ArticleCreateRequest article) {
+        return WrapperResponse.build(service.create(article), "创建成功");
+    }
+
+    @GetMapping
+    public WrapperResponse<SearchResponse<Article>> search(@Valid @ModelAttribute ArticleSearchRequest criteria) {
+        return WrapperResponse.build(service.search(criteria));
     }
 }

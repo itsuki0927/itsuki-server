@@ -19,8 +19,29 @@ public class ArticleSearchRequest extends BaseSearchRequest {
      * 名称
      */
     private String name;
+
     /**
-     * 状态
+     * 发布状态
      */
-    private Integer status;
+    private Integer publish;
+
+    /**
+     * 原创状态
+     */
+    private Integer origin;
+
+    /**
+     * 公开状态
+     */
+    private Integer open;
+
+    /**
+     * 标签
+     */
+    private Integer tag;
+
+    /**
+     * 分类
+     */
+    private Integer category;
 }

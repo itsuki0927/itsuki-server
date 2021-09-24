@@ -69,12 +69,6 @@ public class Article extends IdentifiableEntity {
     private int reading;
 
     /**
-     * 分类id
-     */
-    @Column(name = "category_id")
-    private Long categoryId;
-
-    /**
      * 文章密码
      */
     private String password;
@@ -94,13 +88,19 @@ public class Article extends IdentifiableEntity {
      */
     private Integer open;
 
-
     @ManyToMany
     @JoinTable(
             name = "article_tag",
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
+
+    @ManyToMany
+    @JoinTable(
+            name = "article_category",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<Category> categories;
 
     @Override
     protected void onCreateAction() {
