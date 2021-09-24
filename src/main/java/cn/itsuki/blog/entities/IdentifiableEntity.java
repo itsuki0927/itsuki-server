@@ -27,10 +27,12 @@ public class IdentifiableEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "create_at")
     private Date createAt;
 
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
+    @Column(name = "update_at")
     private Date updateAt;
 
     @PrePersist

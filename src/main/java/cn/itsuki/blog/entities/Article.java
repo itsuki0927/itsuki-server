@@ -1,6 +1,5 @@
 package cn.itsuki.blog.entities;
 
-import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.security.SecurityUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,14 +8,13 @@ import lombok.ToString;
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Date;
 import java.util.Set;
 
 /**
  * @author: itsuki
  * @create: 2021-09-14 20:42
  **/
-@Entity(name = "Article")
+@Entity(name = "article")
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -73,6 +71,7 @@ public class Article extends IdentifiableEntity {
     /**
      * 分类id
      */
+    @Column(name = "category_id")
     private Long categoryId;
 
     /**
@@ -98,9 +97,9 @@ public class Article extends IdentifiableEntity {
 
     @ManyToMany
     @JoinTable(
-            name = "ArticleTags",
-            joinColumns = @JoinColumn(name = "articleId"),
-            inverseJoinColumns = @JoinColumn(name = "tagId"))
+            name = "article_tag",
+            joinColumns = @JoinColumn(name = "article_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
 
     @Override

@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +15,7 @@ import javax.validation.constraints.NotBlank;
  * @author: itsuki
  * @create: 2021-09-21 18:13
  **/
-@Entity(name = "Category")
+@Entity(name = "category")
 @Getter
 @Setter
 @ToString(callSuper = true)
@@ -57,6 +58,7 @@ public class Category extends IdentifiableEntity {
     /**
      * 父类id
      */
+    @Column(name = "parent_id")
     private Long parentId;
 }
 

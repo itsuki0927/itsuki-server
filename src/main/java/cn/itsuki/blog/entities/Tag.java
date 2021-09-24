@@ -5,10 +5,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
 
 /**
  * 标签管理
@@ -16,7 +14,7 @@ import java.util.Set;
  * @author: itsuki
  * @create: 2021-09-21 18:13
  **/
-@Entity(name = "Tag")
+@Entity(name = "tag")
 @Getter
 @Setter
 @ToString(callSuper = true)

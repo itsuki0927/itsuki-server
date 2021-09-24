@@ -8,13 +8,12 @@ import lombok.ToString;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import java.util.Date;
 
 /**
  * @author: itsuki
  * @create: 2021-09-14 20:42
  **/
-@Entity(name = "Admin")
+@Entity(name = "admin")
 @Getter
 @Setter
 @ToString(callSuper = true)
