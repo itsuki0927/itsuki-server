@@ -108,5 +108,17 @@ public class Article extends IdentifiableEntity {
         setCommenting(0);
         setLiking(0);
         setReading(0);
+        // 默认情况下草稿
+        if (getPublish() == null) {
+            setPublish(0);
+        }
+        // 默认情况下原创
+        if (getOpen() == null) {
+            setOpen(0);
+        }
+        // 默认情况私密
+        if (getOrigin() == null) {
+            setOrigin(2);
+        }
     }
 }
