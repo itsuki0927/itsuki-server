@@ -59,8 +59,6 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
      * @return 创建好的实体数据
      */
     public T create(T entity) {
-        // defaultCreateInitialAction(entity);
-        beforeCreateInitialAction(entity);
         validateEntity(entity);
         return repository.saveAndFlush(entity);
     }
@@ -74,7 +72,6 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
      */
     public T update(long id, T entity) {
         ensureExist(repository, id, "Entity");
-        defaultUpdateInitialAction(id, entity);
         validateEntity(entity);
         return repository.saveAndFlush(entity);
     }
@@ -202,41 +199,11 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
     }
 
     /**
-     * 创建之前的默认行为: 初始化id、createAt、updateAt
-     *
-     * @param entity 实体数据
-     */
-    private void defaultCreateInitialAction(T entity) {
-        entity.setId(null);
-        entity.setCreateAt(new Date());
-        entity.setUpdateAt(new Date());
-    }
-
-    /**
-     * 更新之前的默认行为: 更新updateAt
-     *
-     * @param id     id
-     * @param entity 实体数据
-     */
-    private void defaultUpdateInitialAction(long id, T entity) {
-        entity.setId(id);
-        entity.setUpdateAt(new Date());
-    }
-
-    /**
      * 验证实体数据
      *
      * @param entity 实体数据
      */
     protected void validateEntity(T entity) {
 
-    }
-
-    /**
-     * 创建时需要初始化的钩子
-     *
-     * @param entity 实体数据
-     */
-    protected void beforeCreateInitialAction(T entity) {
     }
 }
