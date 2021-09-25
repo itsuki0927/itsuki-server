@@ -6,6 +6,7 @@ import cn.itsuki.blog.entities.ArticleTag;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.repositories.ArticleCategoryRepository;
+import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.ArticleTagRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,6 +82,16 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         BeanUtils.copyProperties(entity, article);
 
         return super.update(id, article);
+    }
+
+    @Override
+    public int delete(long id) {
+        int result = super.delete(id);
+
+        deleteCategory(id);
+        deleteTag(id);
+
+        return result;
     }
 
     private void saveAllCategories(List<Long> categoryIds, Long articleId) {
