@@ -31,4 +31,9 @@ public class ArticleController {
     public WrapperResponse<SearchResponse<Article>> search(@Valid @ModelAttribute ArticleSearchRequest criteria) {
         return WrapperResponse.build(service.search(criteria));
     }
+
+    @GetMapping("/{id}")
+    public WrapperResponse<Article> get(@PathVariable("id") Long id) {
+        return WrapperResponse.build(service.get(id));
+    }
 }
