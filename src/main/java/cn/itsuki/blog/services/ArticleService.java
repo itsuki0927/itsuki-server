@@ -4,6 +4,7 @@ import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleCategory;
 import cn.itsuki.blog.entities.ArticleTag;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
+import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.repositories.ArticleCategoryRepository;
 import cn.itsuki.blog.repositories.ArticleRepository;
@@ -92,6 +93,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         deleteTag(id);
 
         return result;
+    }
+
+    public int patch(ArticlePatchRequest request) {
+        return ((ArticleRepository) repository).batchUpdateState(request.getState(), request.getIds());
     }
 
     private void saveAllCategories(List<Long> categoryIds, Long articleId) {
