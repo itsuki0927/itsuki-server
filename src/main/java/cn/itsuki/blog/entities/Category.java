@@ -60,5 +60,14 @@ public class Category extends IdentifiableEntity {
      */
     @Column(name = "parent_id")
     private Long parentId;
+
+    @Override
+    protected void onCreateAction() {
+        setSort(0);
+        setCount(0);
+        if (getParentId() == null) {
+            setParentId((long) -1);
+        }
+    }
 }
 

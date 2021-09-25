@@ -42,11 +42,6 @@ public class TagService extends BaseService<Tag, TagSearchRequest> {
     }
 
     @Override
-    protected void beforeCreateInitialAction(Tag entity) {
-        entity.setSort(0);
-    }
-
-    @Override
     protected Page<Tag> searchWithPageable(TagSearchRequest criteria, Pageable pageable) {
         String name = criteria.getName();
         if (name != null) {

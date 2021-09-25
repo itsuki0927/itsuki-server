@@ -32,15 +32,6 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> {
     }
 
     @Override
-    protected void beforeCreateInitialAction(Category entity) {
-        entity.setSort(0);
-        entity.setCount(0);
-        if (entity.getParentId() == null) {
-            entity.setParentId((long) -1);
-        }
-    }
-
-    @Override
     protected Page<Category> searchWithPageable(BaseSearchRequest criteria, Pageable pageable) {
         return repository.findAll(pageable);
     }

@@ -53,5 +53,10 @@ public class Tag extends IdentifiableEntity {
      */
     @Min(0)
     private Integer count;
+
+    @Override
+    protected void onCreateAction() {
+        setSort(0);
+    }
 }
 
