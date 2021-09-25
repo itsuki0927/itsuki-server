@@ -59,6 +59,30 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         return article;
     }
 
+    private void deleteTag(long articleId) {
+        tagRepository.deleteAllByArticleIdEquals(articleId);
+    }
+
+    private void deleteCategory(long articleId) {
+        categoryRepository.deleteAllByArticleIdEquals(articleId);
+    }
+
+    public Article update(long id, ArticleCreateRequest entity) {
+        Article article = ensureExist(repository, id, "article");
+
+        // 删除当前文章的tag、category
+        deleteTag(id);
+        deleteCategory(id);
+
+        // 添加tag、category
+        saveAllTags(entity.getTagIds(), id);
+        saveAllCategories(entity.getCategoryIds(), id);
+
+        BeanUtils.copyProperties(entity, article);
+
+        return super.update(id, article);
+    }
+
     private void saveAllCategories(List<Long> categoryIds, Long articleId) {
         if (categoryIds != null) {
             List<ArticleCategory> categoryList = categoryIds.stream().map(categoryId -> {

@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface ArticleTagRepository extends BaseRepository<ArticleTag> {
+    int deleteAllByArticleIdEquals(Long articleId);
 }

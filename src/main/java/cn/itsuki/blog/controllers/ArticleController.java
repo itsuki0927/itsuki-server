@@ -36,4 +36,9 @@ public class ArticleController {
     public WrapperResponse<Article> get(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.get(id));
     }
+
+    @PutMapping("/{id}")
+    public WrapperResponse<Article> put(@PathVariable("id") Long id, @Valid @RequestBody ArticleCreateRequest article) {
+        return WrapperResponse.build(service.update(id, article));
+    }
 }
