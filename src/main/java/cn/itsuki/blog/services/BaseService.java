@@ -13,7 +13,6 @@ import org.springframework.util.StringUtils;
 import javax.persistence.EntityNotFoundException;
 import javax.transaction.Transactional;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,6 +58,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
      * @return 创建好的实体数据
      */
     public T create(T entity) {
+        entity.setId(null);
         validateEntity(entity);
         return repository.saveAndFlush(entity);
     }
@@ -72,6 +72,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
      */
     public T update(long id, T entity) {
         ensureExist(repository, id, "Entity");
+        entity.setId(id);
         validateEntity(entity);
         return repository.saveAndFlush(entity);
     }

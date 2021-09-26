@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -39,7 +40,6 @@ public class IdentifiableEntity {
     protected void onCreate() {
         setCreateAt(new Date());
         setUpdateAt(new Date());
-        setId(null);
         onCreateAction();
     }
 
