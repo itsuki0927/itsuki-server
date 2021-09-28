@@ -41,7 +41,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> {
         probe.setName(entity.getName());
         Optional<Category> optionalEntity = repository.findOne(Example.of(probe));
         if (optionalEntity.isPresent()) {
-            throw new EntityExistsException("tag exist with name:" + entity.getName());
+            throw new EntityExistsException("category exist with name:" + entity.getName());
         }
     }
 }
