@@ -2,12 +2,14 @@ package cn.itsuki.blog.services;
 
 import cn.itsuki.blog.entities.Admin;
 import cn.itsuki.blog.entities.OperateState;
+import cn.itsuki.blog.entities.requests.AdminSaveRequest;
 import cn.itsuki.blog.entities.requests.AdminSearchRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.repositories.AdminRepository;
 import cn.itsuki.blog.security.SecurityUtils;
 import cn.itsuki.blog.security.TokenUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -52,9 +54,9 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
         Admin admin = optionalAdmin.get();
 
         // 如果密码不正确
-        // if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
-        //     throw new BadCredentialsException("密码不正确");
-        // }
+        if (!passwordEncoder.matches(request.getPassword(), admin.getPassword())) {
+            throw new BadCredentialsException("密码不正确");
+        }
 
         LoginResponse response = new LoginResponse();
         response.setToken(tokenUtils.createJwtToken(admin));
@@ -65,7 +67,9 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
     }
 
     public Admin getCurrentAdmin() {
-        return get(SecurityUtils.getCurrentAdmin().getId());
+        Admin admin = SecurityUtils.getCurrentAdmin();
+        admin.setPassword(null);
+        return admin;
     }
 
     public Admin get(Long id) {
@@ -77,5 +81,42 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
     @Override
     protected Page<Admin> searchWithPageable(AdminSearchRequest criteria, Pageable pageable) {
         return null;
+    }
+
+    private void updatePassword(AdminSaveRequest request) {
+        String password = request.getPassword();
+        String newPassword = request.getNewPassword();
+        String confirm = request.getConfirm();
+        Admin currentAdmin = ensureExist(repository, getCurrentAdmin().getId(), "admin");
+        System.out.println(currentAdmin.toString());
+
+        // 参数验证
+        if (password != null && newPassword != null && confirm != null) {
+            if (password.equals(newPassword) || !newPassword.equals(confirm)) {
+                throw new IllegalArgumentException("新旧密码一样");
+            }
+            // 密码验证
+            if (!passwordEncoder.matches(currentAdmin.getPassword(), password)) {
+                throw new IllegalArgumentException("旧密码错误");
+            }
+            // 设置加密后的新密码
+            request.setPassword(passwordEncoder.encode(newPassword));
+        }
+    }
+
+    public Admin save(AdminSaveRequest request) {
+        Admin currentAdmin = getCurrentAdmin();
+        Admin admin = new Admin();
+
+        updatePassword(request);
+
+        BeanUtils.copyProperties(request, admin);
+        admin.setId(currentAdmin.getId());
+        admin.setRole(currentAdmin.getRole());
+        admin.setUsername(currentAdmin.getUsername());
+
+        repository.save(admin);
+
+        return admin;
     }
 }

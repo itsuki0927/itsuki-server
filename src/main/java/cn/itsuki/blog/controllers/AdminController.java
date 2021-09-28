@@ -1,6 +1,7 @@
 package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Admin;
+import cn.itsuki.blog.entities.requests.AdminSaveRequest;
 import cn.itsuki.blog.entities.requests.AdminSearchRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
@@ -32,5 +33,10 @@ public class AdminController extends BaseController<Admin, AdminSearchRequest> {
     @GetMapping("/current-user")
     public WrapperResponse<Admin> getCurrentUser() {
         return WrapperResponse.build(adminService.getCurrentAdmin(), "获取信息成功");
+    }
+
+    @PostMapping("/save")
+    public WrapperResponse<Admin> save(@Valid @RequestBody AdminSaveRequest request) {
+        return WrapperResponse.build(adminService.save(request), "保存成功");
     }
 }
