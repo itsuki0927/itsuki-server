@@ -3,7 +3,7 @@ package cn.itsuki.blog.services;
 import cn.itsuki.blog.entities.Admin;
 import cn.itsuki.blog.entities.OperateState;
 import cn.itsuki.blog.entities.requests.AdminSaveRequest;
-import cn.itsuki.blog.entities.requests.AdminSearchRequest;
+import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.repositories.AdminRepository;
@@ -27,7 +27,7 @@ import java.util.Optional;
  * @create: 2021-09-15 19:57
  **/
 @Service
-public class AdminService extends BaseService<Admin, AdminSearchRequest> {
+public class AdminService extends BaseService<Admin, BaseSearchRequest> {
     @Autowired
     private AdminRepository repository;
     @Autowired
@@ -72,23 +72,11 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
         return admin;
     }
 
-    public Admin get(Long id) {
-        Admin admin = ensureExist(repository, id, "Admin");
-        admin.setPassword(null);
-        return admin;
-    }
-
-    @Override
-    protected Page<Admin> searchWithPageable(AdminSearchRequest criteria, Pageable pageable) {
-        return null;
-    }
-
     private void updatePassword(AdminSaveRequest request) {
         String password = request.getPassword();
         String newPassword = request.getNewPassword();
         String confirm = request.getConfirm();
         Admin currentAdmin = ensureExist(repository, getCurrentAdmin().getId(), "admin");
-        System.out.println(currentAdmin.toString());
 
         // 参数验证
         if (password != null && newPassword != null && confirm != null) {
@@ -118,5 +106,10 @@ public class AdminService extends BaseService<Admin, AdminSearchRequest> {
         repository.save(admin);
 
         return admin;
+    }
+
+    @Override
+    protected Page<Admin> searchWithPageable(BaseSearchRequest criteria, Pageable pageable) {
+        return null;
     }
 }
