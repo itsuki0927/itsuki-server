@@ -19,11 +19,6 @@ import java.io.IOException;
 @Service
 public class UploadService {
     /**
-     * 域名
-     */
-    @Value("${qiniu.domain}")
-    private String domain;
-    /**
      * 公钥
      */
     @Value("${qiniu.access-key}")
@@ -40,7 +35,7 @@ public class UploadService {
     private String bucket;
 
     //构造一个带指定Region对象的配置类
-    private Configuration cfg = new Configuration(Region.region2());
+    private Configuration cfg = new Configuration(Region.region0());
 
     private UploadManager uploadManager = new UploadManager(cfg);
 
@@ -50,7 +45,7 @@ public class UploadService {
         try {
             String originalFilename = file.getOriginalFilename();
             uploadManager.put(file.getInputStream(), originalFilename, token, null, null);
-            return domain + "/" + originalFilename;
+            return originalFilename;
         } catch (IOException e) {
             e.printStackTrace();
         }

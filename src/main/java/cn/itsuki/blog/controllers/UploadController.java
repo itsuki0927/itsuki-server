@@ -20,8 +20,8 @@ public class UploadController {
     @Autowired
     protected UploadService service;
 
-    @PostMapping("file")
-    private WrapperResponse<String> uploadFile(MultipartFile file) {
+    @PostMapping("/file")
+    public WrapperResponse<String> uploadFile(MultipartFile file) {
         return WrapperResponse.build(this.service.uploadFile(file), "上传成功");
     }
 }
