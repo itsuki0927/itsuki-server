@@ -102,6 +102,10 @@ public class Article extends IdentifiableEntity {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private Set<Category> categories;
 
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id")
+    private Set<Comment> comments;
+
     @Override
     protected void onCreateAction() {
         setAuthor(SecurityUtils.getCurrentAdmin().getNickname());
