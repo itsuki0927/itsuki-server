@@ -40,8 +40,8 @@ public class CommentUpdateRequest {
     /**
      * 被喜欢数
      */
-    @NotBlank
-    private Integer liking;
+    @NotNull
+    private int liking;
 
     /**
      * 扩展
