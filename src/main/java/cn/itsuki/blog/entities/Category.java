@@ -1,5 +1,6 @@
 package cn.itsuki.blog.entities;
 
+import cn.itsuki.blog.constants.CommonState;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -63,8 +64,8 @@ public class Category extends IdentifiableEntity {
 
     @Override
     protected void onCreateAction() {
-        setSort(0);
-        setCount(0);
+        setSort(CommonState.INIT_VALUE);
+        setCount(CommonState.INIT_VALUE);
         if (getParentId() == null) {
             setParentId((long) -1);
         }
