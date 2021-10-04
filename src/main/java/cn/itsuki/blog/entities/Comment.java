@@ -105,7 +105,7 @@ public class Comment extends IdentifiableEntity {
     @Override
     protected void onCreateAction() {
         if (getParentId() == null) {
-            setParentId(-1);
+            setParentId(0);
         }
         if (getArticleId() == null) {
             setArticleId(0l);
