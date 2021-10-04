@@ -1,5 +1,6 @@
 package cn.itsuki.blog.services;
 
+import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.Comment;
 import cn.itsuki.blog.entities.SystemConfig;
@@ -14,10 +15,12 @@ import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -111,5 +114,13 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     public Integer patch(CommentPatchRequest request) {
         return ((CommentRepository) repository).batchPatchStatus(request.getIds(), request.getStatus());
+    }
+
+    public List<Comment> get(Long articleId) {
+        Comment probe = new Comment();
+        probe.setArticleId(articleId);
+        // 只有发布了的评论才可以观看
+        probe.setStatus(CommentState.Published);
+        return repository.findAll(Example.of(probe));
     }
 }

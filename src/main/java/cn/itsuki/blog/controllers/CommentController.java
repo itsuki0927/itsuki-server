@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 评论 controller
@@ -29,6 +30,11 @@ public class CommentController {
     @PostMapping
     public WrapperResponse<Comment> create(@RequestBody @Valid CommentCreateRequest request) {
         return WrapperResponse.build(service.create(request));
+    }
+
+    @GetMapping("/{articleId}")
+    public WrapperResponse<List<Comment>> get(@PathVariable("articleId") Long articleId) {
+        return WrapperResponse.build(service.get(articleId));
     }
 
     @GetMapping
