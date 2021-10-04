@@ -9,6 +9,7 @@ import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.repositories.ArticleCategoryRepository;
 import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.ArticleTagRepository;
+import cn.itsuki.blog.utils.CloneUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -80,7 +81,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         saveAllTags(entity.getTagIds(), id);
         saveAllCategories(entity.getCategoryIds(), id);
 
-        BeanUtils.copyProperties(entity, article);
+        CloneUtil.copyPropertiesExcludeNullValue(entity, article);
 
         return super.update(id, article);
     }

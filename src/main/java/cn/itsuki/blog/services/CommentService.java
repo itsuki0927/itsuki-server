@@ -9,6 +9,7 @@ import cn.itsuki.blog.entities.requests.CommentSearchRequest;
 import cn.itsuki.blog.entities.requests.CommentUpdateRequest;
 import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
+import cn.itsuki.blog.utils.CloneUtil;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.BeanUtils;
@@ -96,17 +97,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     public Comment update(long id, CommentUpdateRequest request) {
         Comment comment = ensureExist(repository, id, "comment");
-        // BeanUtils.copyProperties(request, comment);
 
-        comment.setNickname(request.getNickname());
-        comment.setContent(request.getContent());
-        comment.setEmail(request.getEmail());
-        comment.setWebsite(request.getWebsite());
-        comment.setStatus(request.getStatus());
-        comment.setLiking(request.getLiking());
-        comment.setExpand(request.getExpand());
-
-        System.out.println(comment.toString());
+        CloneUtil.copyPropertiesExcludeNullValue(request, comment);
 
         return super.update(id, comment);
     }
