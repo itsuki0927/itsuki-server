@@ -1,5 +1,6 @@
 package cn.itsuki.blog.entities;
 
+import cn.itsuki.blog.constants.CommonState;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -56,7 +57,7 @@ public class Tag extends IdentifiableEntity {
 
     @Override
     protected void onCreateAction() {
-        setSort(0);
+        setSort(CommonState.INIT_VALUE);
     }
 }
 

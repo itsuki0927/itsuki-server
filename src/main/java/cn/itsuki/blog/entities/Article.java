@@ -1,7 +1,9 @@
 package cn.itsuki.blog.entities;
 
+import cn.itsuki.blog.constants.*;
 import cn.itsuki.blog.security.SecurityUtils;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -76,6 +78,7 @@ public class Article extends IdentifiableEntity {
     /**
      * 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
      */
+    @NonNull
     private Integer publish;
 
     /**
@@ -109,20 +112,20 @@ public class Article extends IdentifiableEntity {
     @Override
     protected void onCreateAction() {
         setAuthor(SecurityUtils.getCurrentAdmin().getNickname());
-        setCommenting(0);
-        setLiking(0);
-        setReading(0);
+        setCommenting(CommonState.INIT_VALUE);
+        setLiking(CommonState.INIT_VALUE);
+        setReading(CommonState.INIT_VALUE);
         // 默认情况下草稿
         if (getPublish() == null) {
-            setPublish(0);
+            setPublish(PublishState.Draft);
         }
         // 默认情况下原创
         if (getOpen() == null) {
-            setOpen(0);
+            setOpen(ArticleOrigin.Original);
         }
         // 默认情况私密
         if (getOrigin() == null) {
-            setOrigin(2);
+            setOrigin(ArticleOpen.Password);
         }
     }
 }
