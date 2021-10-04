@@ -5,6 +5,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -48,11 +49,13 @@ public class ArticleCreateRequest {
     /**
      * 分类id
      */
+    @NotEmpty
     private List<Long> categoryIds;
 
     /**
      * 标签id
      */
+    @NotEmpty
     private List<Long> tagIds;
 
     /**

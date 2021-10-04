@@ -2,6 +2,7 @@ package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
+import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
 import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
@@ -48,8 +49,13 @@ public class ArticleController {
         return WrapperResponse.build(service.delete(id));
     }
 
+    @PatchMapping("/{id}")
+    public WrapperResponse<Integer> patch(@PathVariable("id") Long id, @Valid @RequestBody ArticleMetaPatchRequest request) {
+        return WrapperResponse.build(service.patchMeta(id, request));
+    }
+
     @PatchMapping
-    public WrapperResponse<Integer> patch(@Valid @RequestBody ArticlePatchRequest request){
-       return WrapperResponse.build(service.patch(request)) ;
+    public WrapperResponse<Integer> patch(@Valid @RequestBody ArticlePatchRequest request) {
+        return WrapperResponse.build(service.patch(request));
     }
 }

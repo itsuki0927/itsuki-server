@@ -4,6 +4,7 @@ import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleCategory;
 import cn.itsuki.blog.entities.ArticleTag;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
+import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
 import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.repositories.ArticleCategoryRepository;
@@ -98,6 +99,23 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
     public int patch(ArticlePatchRequest request) {
         return ((ArticleRepository) repository).batchUpdateState(request.getState(), request.getIds());
+    }
+
+    public int patchMeta(Long id, ArticleMetaPatchRequest request) {
+        String meta = request.getMeta();
+        if (!meta.equals("reading") && !meta.equals("liking")) {
+            throw new IllegalArgumentException("meta can only be one of reading and liking");
+        }
+
+        Article article = ensureExist(repository, id, "article");
+
+        if (meta.equals("reading")) {
+            article.setReading(article.getReading() + 1);
+        } else if (meta.equals("liking")) {
+            article.setLiking(article.getLiking() + 1);
+        }
+        repository.saveAndFlush(article);
+        return 1;
     }
 
     private void saveAllCategories(List<Long> categoryIds, Long articleId) {
