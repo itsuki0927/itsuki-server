@@ -5,7 +5,9 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Column;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * 评论创建类
@@ -27,6 +29,7 @@ public class CommentCreateRequest {
      * 邮箱
      */
     @NotBlank
+    @Email
     private String email;
 
     /**
@@ -38,6 +41,7 @@ public class CommentCreateRequest {
     /**
      * 浏览器agent
      */
+    @NotBlank
     private String agent;
 
     /**
@@ -60,7 +64,7 @@ public class CommentCreateRequest {
     /**
      * 文章id
      */
-    @NotBlank
+    @NotNull
     @Column(name = "article_id")
     private Long articleId;
 }

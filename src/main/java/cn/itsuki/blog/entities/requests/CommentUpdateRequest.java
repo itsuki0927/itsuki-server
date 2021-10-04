@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author: itsuki
@@ -50,5 +51,6 @@ public class CommentUpdateRequest {
     /**
      * 状态
      */
+    @NotNull
     private Integer status;
 }

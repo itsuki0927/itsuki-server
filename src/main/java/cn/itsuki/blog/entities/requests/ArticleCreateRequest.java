@@ -2,8 +2,10 @@ package cn.itsuki.blog.entities.requests;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -12,6 +14,7 @@ import java.util.List;
  **/
 @Getter
 @Setter
+@ToString
 public class ArticleCreateRequest {
     /**
      * 标题
@@ -60,19 +63,19 @@ public class ArticleCreateRequest {
     /**
      * 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
      */
-    @NotBlank
+    @NotNull
     private Integer publish;
 
     /**
      * 文章来源: 0 -> 原创, 1 -> 转载, 2 -> 混合
      */
-    @NotBlank
+    @NotNull
     private Integer origin;
 
     /**
      * 公开类型: 0 -> 需要密码, 1 -> 公开, 2 -> 私密
      */
-    @NotBlank
+    @NotNull
     private Integer open;
 
 }
