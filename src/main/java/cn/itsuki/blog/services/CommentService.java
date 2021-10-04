@@ -39,7 +39,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         super("id", new String[]{"id"});
     }
 
-    private void ensureArticleExist(Long articleId) {
+    private Article ensureArticleExist(Long articleId) {
         if (articleId == null) {
             throw new IllegalArgumentException("article id must be not null");
         }
@@ -47,6 +47,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         if (!optionalArticle.isPresent()) {
             throw new IllegalArgumentException("article id: " + articleId + " not exist");
         }
+        return optionalArticle.get();
     }
 
     private void ensureIsInBlackList(Comment entity) {
@@ -75,7 +76,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         Comment comment = new Comment();
         BeanUtils.copyProperties(entity, comment);
 
-        ensureArticleExist(comment.getArticleId());
+        Article article = ensureArticleExist(comment.getArticleId());
+        comment.setArticleTitle(article.getTitle());
+        comment.setArticleDescription(article.getDescription());
+
         // ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         // HttpServletRequest request = attributes.getRequest();
         // entity.setIp(RequestUtil.getRequestIp(request));
