@@ -105,10 +105,16 @@ public class Comment extends IdentifiableEntity {
     private String articleDescription;
 
     /**
+     * 回复人昵称
+     */
+    @Column(name = "parent_nickname")
+    private String parentNickName;
+
+    /**
      * 父id
      */
     @Column(name = "parent_id")
-    private Integer parentId;
+    private Long parentId;
 
     /**
      * 文章id
@@ -120,7 +126,7 @@ public class Comment extends IdentifiableEntity {
     @Override
     protected void onCreateAction() {
         if (getParentId() == null) {
-            setParentId(CommonState.NO_PARENT);
+            setParentId((long) CommonState.NO_PARENT);
         }
         // 没有文章id, 默认为留言板
         if (getArticleId() == null) {

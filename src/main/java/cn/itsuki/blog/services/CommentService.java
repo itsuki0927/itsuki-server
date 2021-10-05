@@ -17,7 +17,10 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -38,6 +41,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     private AkismetService akismetService;
     @Value("${dev.ip}")
     private String devIP;
+    @Value("${mode.isDev}")
+    private boolean isDev;
 
     CommentService() {
         super("id", new String[]{"id"});
@@ -84,10 +89,13 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         comment.setArticleTitle(article.getTitle());
         comment.setArticleDescription(article.getDescription());
 
-        // ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-        // HttpServletRequest request = attributes.getRequest();
-        // entity.setIp(RequestUtil.getRequestIp(request));
-        comment.setIp(devIP);
+        if (isDev) {
+            comment.setIp(devIP);
+        } else {
+            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+            HttpServletRequest request = attributes.getRequest();
+            comment.setIp(requestUtil.getRequestIp(request));
+        }
 
         // 如果有父类id, 设置父类名称
         Long parentId = comment.getParentId();
