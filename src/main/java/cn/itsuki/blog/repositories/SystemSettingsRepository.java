@@ -1,7 +1,7 @@
 package cn.itsuki.blog.repositories;
 
 
-import cn.itsuki.blog.entities.SystemConfig;
+import cn.itsuki.blog.entities.SystemSettings;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  * @create: 2021-09-28 08:30
  **/
 @Repository
-public interface SystemConfigRepository extends BaseRepository<SystemConfig> {
+public interface SystemSettingsRepository extends BaseRepository<SystemSettings> {
 }

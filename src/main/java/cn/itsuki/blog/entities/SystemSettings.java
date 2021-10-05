@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 
 /**
@@ -13,11 +12,11 @@ import javax.persistence.Entity;
  * @author: itsuki
  * @create: 2021-09-28 08:22
  **/
-@Entity(name = "system_config")
+@Entity(name = "system_settings")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class SystemConfig extends IdentifiableEntity {
+public class SystemSettings extends IdentifiableEntity {
 
     /**
      * 喜欢
@@ -58,23 +57,5 @@ public class SystemConfig extends IdentifiableEntity {
      * 备案号
      */
     private String record;
-
-    /**
-     * ip 黑名单
-     */
-    @Column(name = "ip_black_list")
-    private String ipBlackList;
-
-    /**
-     * email 黑名单
-     */
-    @Column(name = "email_black_list")
-    private String emailBlackList;
-
-    /**
-     * 关键字 黑名单
-     */
-    @Column(name = "keyword_black_list")
-    private String keywordBlackList;
 }
 
