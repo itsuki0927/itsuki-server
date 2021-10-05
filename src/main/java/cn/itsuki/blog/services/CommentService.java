@@ -21,6 +21,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -67,17 +68,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         SystemConfig systemConfig = systemConfigService.get(1);
         String ipBlackList = systemConfig.getIpBlackList();
         String emailBlackList = systemConfig.getEmailBlackList();
-        String keywordBlackList = systemConfig.getKeywordBlackList();
+        String[] keywordBlackList = systemConfig.getKeywordBlackList().split(",");
 
-        // if (ipBlackList != null && ipBlackList.contains(ip)) {
-        //     throw new IllegalArgumentException("评论失败");
-        // } else if (emailBlackList != null && emailBlackList.contains(email)) {
-        //     throw new IllegalArgumentException("评论失败");
-        // } else if (keywordBlackList != null && keywordBlackList.contains(content)) {
-        //     throw new IllegalArgumentException("评论失败");
-        // }
-        if (ipBlackList.contains(ip) || emailBlackList.contains(email) || keywordBlackList.contains(content)) {
-            throw new IllegalArgumentException("评论失败");
+        if (ipBlackList.contains(ip) || emailBlackList.contains(email) || Arrays.stream(keywordBlackList).anyMatch(v -> v.contains(content))) {
+            throw new IllegalArgumentException("ip加入黑名单 | 邮箱加入黑名 | 关键字加入黑名单");
         }
     }
 
@@ -97,7 +91,20 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
             comment.setIp(requestUtil.getRequestIp(request));
         }
 
-        // 如果有父类id, 设置父类名称
+        // 确保回复的是同一篇文章
+        // 检查是否为垃圾评论
+        ensureReplySameArticle(comment);
+        ensureIsInBlackList(comment);
+        akismetService.checkComment(comment);
+
+        JSONObject object = requestUtil.findLocationByIp(devIP);
+        comment.setCity((String) object.get("city"));
+        comment.setProvince((String) object.get("province"));
+
+        return super.create(comment);
+    }
+
+    private void ensureReplySameArticle(Comment comment) {
         Long parentId = comment.getParentId();
         if (parentId != null && parentId != 0) {
             Comment parent = ensureExist(repository, parentId, "comment");
@@ -108,14 +115,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
             }
             comment.setParentNickName(parent.getNickname());
         }
-
-        ensureIsInBlackList(comment);
-
-        JSONObject object = requestUtil.findLocationByIp(devIP);
-        comment.setCity((String) object.get("city"));
-        comment.setProvince((String) object.get("province"));
-
-        return super.create(comment);
     }
 
     public Comment update(long id, CommentUpdateRequest request) {
@@ -137,11 +136,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     }
 
     public List<Comment> get(Long articleId) {
-        Comment probe = new Comment();
-        probe.setArticleId(articleId);
-        // 只有发布了的评论才可以观看
-        probe.setStatus(CommentState.Published);
-        return repository.findAll(Example.of(probe));
+        return ((CommentRepository) repository).findCommentListByArticleId(articleId);
     }
 
     public int patchMeta(Long id, CommentMetaPatchRequest request) {

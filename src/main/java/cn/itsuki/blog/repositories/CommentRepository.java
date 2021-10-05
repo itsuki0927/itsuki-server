@@ -21,4 +21,7 @@ public interface CommentRepository extends BaseRepository<Comment> {
     @Transactional
     @Query(value = "update comment  c set c.status = :status where c.id in :ids")
     int batchPatchStatus(@Param("ids") List<Long> ids, @Param("status") Integer status);
+
+    @Query(value = "select c from comment c where c.articleId = :articleId and c.status = 1 or c.status = 0")
+    List<Comment> findCommentListByArticleId(@Param("articleId") Long articleId);
 }
