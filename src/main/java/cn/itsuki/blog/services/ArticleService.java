@@ -1,5 +1,7 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleCategory;
 import cn.itsuki.blog.entities.ArticleTag;
@@ -10,7 +12,6 @@ import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.repositories.ArticleCategoryRepository;
 import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.ArticleTagRepository;
-import cn.itsuki.blog.utils.CloneUtil;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -82,7 +83,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         saveAllTags(entity.getTagIds(), id);
         saveAllCategories(entity.getCategoryIds(), id);
 
-        CloneUtil.copyPropertiesExcludeNullValue(entity, article);
+        BeanUtil.copyProperties(entity, article, CopyOptions.create().ignoreNullValue());
 
         return super.update(id, article);
     }
