@@ -1,10 +1,7 @@
 package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Comment;
-import cn.itsuki.blog.entities.requests.CommentCreateRequest;
-import cn.itsuki.blog.entities.requests.CommentPatchRequest;
-import cn.itsuki.blog.entities.requests.CommentSearchRequest;
-import cn.itsuki.blog.entities.requests.CommentUpdateRequest;
+import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import cn.itsuki.blog.services.CommentService;
@@ -51,6 +48,11 @@ public class CommentController {
     @PatchMapping
     public WrapperResponse<Integer> patch(@Valid @RequestBody CommentPatchRequest request) {
         return WrapperResponse.build(service.patch(request));
+    }
+
+    @PatchMapping("/{id}")
+    public WrapperResponse<Integer> patch(@PathVariable("id") Long id, @Valid @RequestBody CommentMetaPatchRequest request) {
+        return WrapperResponse.build(service.patchMeta(id, request));
     }
 
     @DeleteMapping("/{id}")

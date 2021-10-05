@@ -59,7 +59,7 @@ public class CommentCreateRequest {
      * 父id
      */
     @Column(name = "parent_id")
-    private Integer parentId;
+    private Long parentId;
 
     /**
      * 文章id

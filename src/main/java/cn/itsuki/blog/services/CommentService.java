@@ -1,20 +1,18 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.bean.copier.CopyOptions;
 import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.Comment;
 import cn.itsuki.blog.entities.SystemConfig;
-import cn.itsuki.blog.entities.requests.CommentCreateRequest;
-import cn.itsuki.blog.entities.requests.CommentPatchRequest;
-import cn.itsuki.blog.entities.requests.CommentSearchRequest;
-import cn.itsuki.blog.entities.requests.CommentUpdateRequest;
+import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
-import cn.itsuki.blog.utils.CloneUtil;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -36,8 +34,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     private ArticleRepository articleRepository;
     @Autowired
     private RequestUtil requestUtil;
-    // dev ip
-    private String devIP = "220.169.96.10";
+    @Autowired
+    private AkismetService akismetService;
+    @Value("${dev.ip}")
+    private String devIP;
 
     CommentService() {
         super("id", new String[]{"id"});
@@ -78,7 +78,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     public Comment create(CommentCreateRequest entity) {
         Comment comment = new Comment();
-        BeanUtils.copyProperties(entity, comment);
+        BeanUtil.copyProperties(entity, comment);
 
         Article article = ensureArticleExist(comment.getArticleId());
         comment.setArticleTitle(article.getTitle());
@@ -88,6 +88,18 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         // HttpServletRequest request = attributes.getRequest();
         // entity.setIp(RequestUtil.getRequestIp(request));
         comment.setIp(devIP);
+
+        // 如果有父类id, 设置父类名称
+        Long parentId = comment.getParentId();
+        if (parentId != null && parentId != 0) {
+            Comment parent = ensureExist(repository, parentId, "comment");
+            // 如果当前评论和回复的评论文章不是同一篇
+            if (!parent.getArticleId().equals(comment.getArticleId())) {
+                throw new IllegalArgumentException("The replied article is not the same, comment article id:"
+                        + comment.getArticleId() + " ---> parent comment article id: " + parent.getArticleId());
+            }
+            comment.setParentNickName(parent.getNickname());
+        }
 
         ensureIsInBlackList(comment);
 
@@ -101,7 +113,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     public Comment update(long id, CommentUpdateRequest request) {
         Comment comment = ensureExist(repository, id, "comment");
 
-        CloneUtil.copyPropertiesExcludeNullValue(request, comment);
+        BeanUtil.copyProperties(request, comment, CopyOptions.create().ignoreNullValue());
 
         return super.update(id, comment);
     }
@@ -122,5 +134,18 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         // 只有发布了的评论才可以观看
         probe.setStatus(CommentState.Published);
         return repository.findAll(Example.of(probe));
+    }
+
+    public int patchMeta(Long id, CommentMetaPatchRequest request) {
+        String meta = request.getMeta();
+        if (!meta.equals("liking")) {
+            throw new IllegalArgumentException("meta can only be one of reading and liking");
+        }
+
+        Comment comment = ensureExist(repository, id, "article");
+
+        comment.setLiking(comment.getLiking() + 1);
+        repository.saveAndFlush(comment);
+        return 1;
     }
 }
