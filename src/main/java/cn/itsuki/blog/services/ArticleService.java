@@ -133,6 +133,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
-        return repository.findAll(pageable);
+
+        return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
+                criteria.getOpen(), criteria.getTag(), criteria.getCategory(), pageable);
     }
 }
