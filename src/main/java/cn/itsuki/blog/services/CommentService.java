@@ -3,17 +3,13 @@ package cn.itsuki.blog.services;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.itsuki.blog.constants.CommentState;
-import cn.itsuki.blog.entities.Article;
-import cn.itsuki.blog.entities.Comment;
-import cn.itsuki.blog.entities.SystemConfig;
+import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
-import cn.itsuki.blog.repositories.ArticleRepository;
-import cn.itsuki.blog.repositories.CommentRepository;
+import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -21,9 +17,10 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author: itsuki
@@ -33,7 +30,11 @@ import java.util.Optional;
 public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     @Autowired
-    private SystemConfigService systemConfigService;
+    private BlackIpService ipService;
+    @Autowired
+    private BlackEmailService emailService;
+    @Autowired
+    private BlackKeywordService keywordService;
     @Autowired
     private ArticleRepository articleRepository;
     @Autowired
@@ -44,9 +45,13 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     private String devIP;
     @Value("${mode.isDev}")
     private boolean isDev;
+    private List<Integer> states;
 
     CommentService() {
         super("id", new String[]{"id"});
+        states = new ArrayList<>();
+        states.add(CommentState.Auditing);
+        states.add(CommentState.Published);
     }
 
     private Article ensureArticleExist(Long articleId) {
@@ -61,17 +66,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     }
 
     private void ensureIsInBlackList(Comment entity) {
-
         String ip = entity.getIp();
         String email = entity.getEmail();
         String content = entity.getContent();
-        SystemConfig systemConfig = systemConfigService.get(1);
-        String ipBlackList = systemConfig.getIpBlackList();
-        String emailBlackList = systemConfig.getEmailBlackList();
-        String[] keywordBlackList = systemConfig.getKeywordBlackList().split(",");
 
-        if (ipBlackList.contains(ip) || emailBlackList.contains(email) || Arrays.stream(keywordBlackList).anyMatch(v -> v.contains(content))) {
-            throw new IllegalArgumentException("ip加入黑名单 | 邮箱加入黑名 | 关键字加入黑名单");
+        if (ipService.isInBlackList(ip) || emailService.isInBlackList(email) || keywordService.isInBlackList(content)) {
+            throw new IllegalArgumentException("ip | 邮箱 | 内容 -> 不合法");
         }
     }
 
@@ -96,6 +96,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         ensureReplySameArticle(comment);
         ensureIsInBlackList(comment);
         akismetService.checkComment(comment);
+
+        // 更新文章评论数
+        article.setCommenting(article.getCommenting() + 1);
+        articleRepository.save(article);
 
         JSONObject object = requestUtil.findLocationByIp(devIP);
         comment.setCity((String) object.get("city"));
@@ -132,7 +136,40 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     }
 
     public Integer patch(CommentPatchRequest request) {
+        // 是否为垃圾评论
+        boolean isSpam = request.getStatus() == CommentState.Spam;
+
+        List<Comment> comments = ((CommentRepository) repository).findCommentsByIdIn(request.getIds());
+        List<String> ipList = comments.stream().map(Comment::getIp).collect(Collectors.toList());
+        List<String> emailList = comments.stream().map(Comment::getEmail).collect(Collectors.toList());
+
+        // 如果是垃圾评论，则加入黑名单，以及 submitSpam
+        // 如果不是垃圾评论，则移出黑名单，以及 submitHam
+        if (isSpam) {
+            ipService.save(ipList);
+            emailService.save(emailList);
+        } else {
+            ipService.remove(ipList);
+            emailService.remove(emailList);
+        }
+
+        if (isSpam) {
+            comments.forEach(comment -> akismetService.submitSpam(comment));
+        } else {
+            comments.forEach(comment -> akismetService.submitHam(comment));
+        }
+        updateArticleCommentCount(comments.stream().map(Comment::getArticleId).collect(Collectors.toList()));
+
         return ((CommentRepository) repository).batchPatchStatus(request.getIds(), request.getStatus());
+    }
+
+    private void updateArticleCommentCount(List<Long> articleIdList) {
+        articleIdList.forEach(articleId -> {
+            Article article = articleRepository.getById(articleId);
+            int count = ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, states);
+            article.setCommenting(count);
+            articleRepository.save(article);
+        });
     }
 
     public List<Comment> get(Long articleId) {
@@ -150,5 +187,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         comment.setLiking(comment.getLiking() + 1);
         repository.saveAndFlush(comment);
         return 1;
+    }
+
+    public Integer count(Long articleId) {
+        List<Integer> status = new ArrayList<>();
+        status.add(0);
+        status.add(1);
+        return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, status);
     }
 }

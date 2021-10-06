@@ -96,7 +96,7 @@ public class AkismetService {
     }
 
     // 本应该是垃圾评论但是未标记未垃圾评论的
-    private void submitSpam(Comment comment) {
+    public void submitSpam(Comment comment) {
         Map<String, Object> paramMap = getRequestParams(comment);
 
         String url = buildPath(secretKey, "submit-spam");

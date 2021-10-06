@@ -29,6 +29,11 @@ public class CommentController {
         return WrapperResponse.build(service.create(request));
     }
 
+    @GetMapping("/count/{articleId}")
+    public WrapperResponse<Integer> count(@PathVariable("articleId") Long articleId) {
+        return WrapperResponse.build(service.count(articleId));
+    }
+
     @GetMapping("/{articleId}")
     public WrapperResponse<List<Comment>> get(@PathVariable("articleId") Long articleId) {
         return WrapperResponse.build(service.get(articleId));

@@ -16,7 +16,6 @@ import java.util.List;
 @Getter
 @Setter
 public class CommentPatchRequest {
-
     @NotEmpty
     private List<Long> ids;
 

@@ -24,4 +24,8 @@ public interface CommentRepository extends BaseRepository<Comment> {
 
     @Query(value = "select c from comment c where c.articleId = :articleId and c.status = 1 or c.status = 0")
     List<Comment> findCommentListByArticleId(@Param("articleId") Long articleId);
+
+    int countCommentsByArticleIdEqualsAndStatusIsIn(Long articleId, List<Integer> status);
+
+    List<Comment> findCommentsByIdIn(List<Long> ids);
 }
