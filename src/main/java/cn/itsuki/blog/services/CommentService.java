@@ -132,7 +132,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     @Override
     protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
-        return repository.findAll(pageable);
+        return ((CommentRepository) repository).search(
+                criteria.getKeyword(), criteria.getArticleId(), criteria.getStatus(), pageable);
     }
 
     public Integer patch(CommentPatchRequest request) {
@@ -148,21 +149,23 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         if (isSpam) {
             ipService.save(ipList);
             emailService.save(emailList);
+            comments.forEach(comment -> akismetService.submitSpam(comment));
         } else {
             ipService.remove(ipList);
             emailService.remove(emailList);
-        }
-
-        if (isSpam) {
-            comments.forEach(comment -> akismetService.submitSpam(comment));
-        } else {
             comments.forEach(comment -> akismetService.submitHam(comment));
         }
+
         updateArticleCommentCount(comments.stream().map(Comment::getArticleId).collect(Collectors.toList()));
 
         return ((CommentRepository) repository).batchPatchStatus(request.getIds(), request.getStatus());
     }
 
+    /**
+     * 更新文章评论数
+     *
+     * @param articleIdList 文章id列表
+     */
     private void updateArticleCommentCount(List<Long> articleIdList) {
         articleIdList.forEach(articleId -> {
             Article article = articleRepository.getById(articleId);
@@ -173,7 +176,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     }
 
     public List<Comment> get(Long articleId) {
-        return ((CommentRepository) repository).findCommentListByArticleId(articleId);
+        return ((CommentRepository) repository).findCommentsByArticleIdAndStatusIsIn(articleId, states);
     }
 
     public int patchMeta(Long id, CommentMetaPatchRequest request) {
@@ -190,9 +193,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     }
 
     public Integer count(Long articleId) {
-        List<Integer> status = new ArrayList<>();
-        status.add(0);
-        status.add(1);
-        return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, status);
+        return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, states);
     }
 }

@@ -1,21 +1,26 @@
 package cn.itsuki.blog.entities.requests;
 
+import lombok.Getter;
+import lombok.Setter;
+
 /**
  * 评论搜索请求类
  *
  * @author: itsuki
  * @create: 2021-10-03 21:37
  **/
+@Getter
+@Setter
 public class CommentSearchRequest extends BaseSearchRequest {
     /**
-     * 名称
+     * 关键字
      */
-    private String name;
+    private String keyword;
 
     /**
      * 文章id
      */
-    private Integer articleId;
+    private Long articleId;
 
     /**
      * 状态
