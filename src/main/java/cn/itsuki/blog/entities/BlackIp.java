@@ -8,6 +8,8 @@ import javax.persistence.Entity;
 import javax.validation.constraints.NotBlank;
 
 /**
+ * ip黑名单 实体
+ *
  * @author: itsuki
  * @create: 2021-10-05 16:29
  **/

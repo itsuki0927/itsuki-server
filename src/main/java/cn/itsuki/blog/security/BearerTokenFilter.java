@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * token 过滤器
+ * token过滤器 配置
  *
  * @author: itsuki
  * @create: 2021-09-14 20:54

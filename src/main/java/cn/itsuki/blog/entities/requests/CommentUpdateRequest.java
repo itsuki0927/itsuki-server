@@ -7,6 +7,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
+ * 评论更新 请求类
+ *
  * @author: itsuki
  * @create: 2021-10-04 05:57
  **/

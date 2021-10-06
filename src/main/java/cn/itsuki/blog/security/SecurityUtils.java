@@ -4,6 +4,8 @@ import cn.itsuki.blog.entities.Admin;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
+ * security 工具类
+ *
  * @author: itsuki
  * @create: 2021-09-15 20:12
  **/

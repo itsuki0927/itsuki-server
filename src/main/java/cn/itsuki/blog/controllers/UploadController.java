@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
- * 上传 controller
+ * 上传 控制器
  *
  * @author: itsuki
  * @create: 2021-09-27 22:58

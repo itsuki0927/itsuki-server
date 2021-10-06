@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 /**
- * 管理员 service
+ * 管理员 服务
  *
  * @author: itsuki
  * @create: 2021-09-15 19:57
@@ -67,7 +67,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> {
     }
 
     public Admin getCurrentAdmin() {
-        Admin admin = SecurityUtils.getCurrentAdmin();
+        Admin admin = get(SecurityUtils.getCurrentAdmin().getId());
         admin.setPassword(null);
         return admin;
     }
@@ -76,7 +76,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> {
         String password = request.getPassword();
         String newPassword = request.getNewPassword();
         String confirm = request.getConfirm();
-        Admin currentAdmin = ensureExist(repository, getCurrentAdmin().getId(), "admin");
+        Admin currentAdmin = ensureExist(repository, SecurityUtils.getCurrentAdmin().getId(), "admin");
 
         // 参数验证
         if (password != null && newPassword != null && confirm != null) {
@@ -89,6 +89,9 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> {
             }
             // 设置加密后的新密码
             request.setPassword(passwordEncoder.encode(newPassword));
+        } else {
+            // 如果没有更新，则使用原密码
+            request.setPassword(passwordEncoder.encode(password));
         }
     }
 

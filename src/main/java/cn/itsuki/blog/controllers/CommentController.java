@@ -12,7 +12,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * 评论 controller
+ * 评论 控制器
  *
  * @author: itsuki
  * @create: 2021-10-03 16:33

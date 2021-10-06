@@ -10,7 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * 评论创建类
+ * 评论创建 请求类
  *
  * @author: itsuki
  * @create: 2021-10-03 20:28

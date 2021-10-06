@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 /**
- * 所有repository基类
+ * 基础 仓库
  *
  * @author: itsuki
  * @create: 2021-09-14 19:47

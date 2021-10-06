@@ -1,7 +1,7 @@
 package cn.itsuki.blog.constants;
 
 /**
- * 文章公开状态
+ * 文章公开 常量
  *
  * @author: itsuki
  * @create: 2021-10-04 12:39

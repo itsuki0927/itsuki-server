@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * 分类 controller
+ * 分类 控制器
  *
  * @author: itsuki
  * @create: 2021-09-21 18:16

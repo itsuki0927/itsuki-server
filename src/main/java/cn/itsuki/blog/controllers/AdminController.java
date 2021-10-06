@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
- * admin controller
+ * 管理员 控制器
  *
  * @author: itsuki
  * @create: 2021-09-15 19:54

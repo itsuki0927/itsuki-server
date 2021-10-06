@@ -1,12 +1,13 @@
 package cn.itsuki.blog.entities.responses;
 
-import cn.itsuki.blog.entities.SystemSettings;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.List;
 
 /**
+ * 系统设置 响应类
+ *
  * @author: itsuki
  * @create: 2021-10-05 16:35
  **/
@@ -16,7 +17,7 @@ public class SystemSettingsResponse {
     /**
      * 喜欢
      */
-    private int liking;
+    private Integer liking;
 
     /**
      * 站点标题

@@ -13,6 +13,8 @@ import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 /**
+ * 文章 实体
+ *
  * @author: itsuki
  * @create: 2021-09-14 20:42
  **/
@@ -30,45 +32,50 @@ public class Article extends IdentifiableEntity {
     /**
      * 描述
      */
+    @NotBlank
     private String description;
 
     /**
      * 关键字
      */
+    @NotBlank
     private String keywords;
 
     /**
      * 内容
      */
+    @NotBlank
     private String content;
 
     /**
      * 封面
      */
+    @NotBlank
     private String cover;
 
     /**
      * 评论数
      */
     @Min(0)
-    private int commenting;
+    private Integer commenting;
 
     /**
      * 作者
      */
+    @NotBlank
     private String author;
 
     /**
      * 喜欢数
      */
     @Min(0)
-    private int liking;
+    private Integer liking;
 
     /**
      * 观看数
      */
     @Min(0)
-    private int reading;
+    private Integer reading;
 
     /**
      * 文章密码
@@ -84,11 +91,13 @@ public class Article extends IdentifiableEntity {
     /**
      * 文章来源: 0 -> 原创, 1 -> 转载, 2 -> 混合
      */
+    @NonNull
     private Integer origin;
 
     /**
      * 公开类型: 0 -> 需要密码, 1 -> 公开, 2 -> 私密
      */
+    @NonNull
     private Integer open;
 
     @ManyToMany

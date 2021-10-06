@@ -1,7 +1,7 @@
 package cn.itsuki.blog.constants;
 
 /**
- * 公共状态
+ * 公共 常量
  *
  * @author: itsuki
  * @create: 2021-10-04 12:41
@@ -11,7 +11,7 @@ public class CommonState {
     public static final int INIT_VALUE = 0;
 
     // 无父类初始值
-    public static final int NO_PARENT = 0;
+    public static final long NO_PARENT = 0;
 
     // 留言板
     public static final long GUESTBOOK = 0;

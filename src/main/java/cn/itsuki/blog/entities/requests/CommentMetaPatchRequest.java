@@ -7,6 +7,8 @@ import lombok.ToString;
 import javax.validation.constraints.NotBlank;
 
 /**
+ * 评论 meta patch 请求类
+ *
  * @author: itsuki
  * @create: 2021-10-04 22:50
  **/

@@ -4,7 +4,7 @@ import cn.itsuki.blog.entities.ArticleTag;
 import org.springframework.stereotype.Repository;
 
 /**
- * article tag repository
+ * 文章-标签 仓库
  *
  * @author: itsuki
  * @create: 2021-09-23 17:08

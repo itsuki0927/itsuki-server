@@ -10,7 +10,7 @@ import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 标签管理
+ * 标签 实体
  *
  * @author: itsuki
  * @create: 2021-09-21 18:13
@@ -57,7 +57,10 @@ public class Tag extends IdentifiableEntity {
 
     @Override
     protected void onCreateAction() {
-        setSort(CommonState.INIT_VALUE);
+        if (getSort() != null) {
+            setSort(CommonState.INIT_VALUE);
+        }
+        setCount(CommonState.INIT_VALUE);
     }
 }
 

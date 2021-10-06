@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * service 基类
+ * 基础 服务
  *
  * @author: itsuki
  * @create: 2021-09-14 19:49

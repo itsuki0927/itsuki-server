@@ -6,6 +6,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
 /**
+ * 登陆 请求类
+ *
  * @author: itsuki
  * @create: 2021-09-15 20:02
  **/

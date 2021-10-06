@@ -8,7 +8,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * 评论 patch 类
+ * 评论 patch 请求类
  *
  * @author: itsuki
  * @create: 2021-10-04 06:07

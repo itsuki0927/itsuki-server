@@ -2,17 +2,19 @@ package cn.itsuki.blog.entities.requests;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 
 /**
- * 管理员save请求类
+ * 管理员更新 请求类
  *
  * @author: itsuki
  * @create: 2021-09-28 15:49
  **/
 @Getter
 @Setter
+@ToString
 public class AdminSaveRequest {
     /**
      * 头像

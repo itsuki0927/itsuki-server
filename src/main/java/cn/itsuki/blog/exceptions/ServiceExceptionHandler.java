@@ -29,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * 异常处理
+ *
  * @author: itsuki
  * @create: 2021-09-14 19:32
  **/

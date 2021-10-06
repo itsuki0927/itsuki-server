@@ -10,6 +10,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
+ * 创建文章 请求类
+ *
  * @author: itsuki
  * @create: 2021-09-23 18:10
  **/
@@ -44,6 +46,7 @@ public class ArticleCreateRequest {
     /**
      * 封面
      */
+    @NotBlank
     private String cover;
 
     /**

@@ -4,7 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * 评论搜索请求类
+ * 评论搜索 请求类
  *
  * @author: itsuki
  * @create: 2021-10-03 21:37

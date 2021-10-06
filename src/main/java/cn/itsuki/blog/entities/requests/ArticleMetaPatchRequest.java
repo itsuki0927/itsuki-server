@@ -7,7 +7,7 @@ import lombok.ToString;
 import javax.validation.constraints.NotBlank;
 
 /**
- * 文章meta patch请求类
+ * 文章 meta patch 请求类
  *
  * @author: itsuki
  * @create: 2021-10-04 20:42

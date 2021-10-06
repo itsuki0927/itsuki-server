@@ -9,7 +9,7 @@ import lombok.ToString;
 import java.util.List;
 
 /**
- * 搜索响应体
+ * 搜索 响应类
  *
  * @author: itsuki
  * @create: 2021-09-14 19:45

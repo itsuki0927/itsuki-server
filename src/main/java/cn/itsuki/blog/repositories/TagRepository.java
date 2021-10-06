@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import javax.validation.constraints.NotBlank;
 
 /**
+ * 标签 仓库
+ *
  * @author: itsuki
  * @create: 2021-09-21 18:12
  **/

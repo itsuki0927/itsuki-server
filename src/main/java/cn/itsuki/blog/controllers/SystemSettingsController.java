@@ -1,6 +1,5 @@
 package cn.itsuki.blog.controllers;
 
-import cn.itsuki.blog.entities.SystemSettings;
 import cn.itsuki.blog.entities.requests.SystemSettingsRequest;
 import cn.itsuki.blog.entities.responses.SystemSettingsResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 /**
+ * 系统设置 控制器
+ *
  * @author: itsuki
  * @create: 2021-09-28 08:29
  **/

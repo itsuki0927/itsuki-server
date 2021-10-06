@@ -5,7 +5,7 @@ import cn.itsuki.blog.entities.SystemSettings;
 import org.springframework.stereotype.Repository;
 
 /**
- * system config repository
+ * 系统设置 仓库
  *
  * @author: itsuki
  * @create: 2021-09-28 08:30

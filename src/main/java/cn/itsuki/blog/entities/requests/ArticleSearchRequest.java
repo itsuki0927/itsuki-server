@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 文章搜索请求
+ * 文章搜索 请求类
  *
  * @author: itsuki
  * @create: 2021-09-20 22:17

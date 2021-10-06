@@ -6,8 +6,11 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.NotNull;
 
 /**
+ * 文章-分类 实体
+ *
  * @author: itsuki
  * @create: 2021-09-23 16:51
  **/
@@ -19,12 +22,14 @@ public class ArticleCategory extends IdentifiableEntity {
     /**
      * article id
      */
+    @NotNull
     @Column(name = "article_id")
     private Long articleId;
 
     /**
      * tag id
      */
+    @NotNull
     @Column(name = "category_id")
     private Long categoryId;
 }

@@ -1,6 +1,5 @@
 package cn.itsuki.blog.repositories;
 
-import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.Comment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +12,7 @@ import javax.transaction.Transactional;
 import java.util.List;
 
 /**
- * comment repository
+ * 评论 仓库
  *
  * @author: itsuki
  * @create: 2021-10-03 16:34

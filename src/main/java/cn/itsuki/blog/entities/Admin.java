@@ -8,8 +8,11 @@ import lombok.ToString;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.validation.constraints.NotBlank;
 
 /**
+ * 管理员 实体
+ *
  * @author: itsuki
  * @create: 2021-09-14 20:42
  **/
@@ -21,11 +24,13 @@ public class Admin extends IdentifiableEntity {
     /**
      * 昵称
      */
+    @NotBlank
     private String nickname;
 
     /**
      * 头像
      */
+    @NotBlank
     private String avatar;
 
     /**
@@ -38,16 +43,19 @@ public class Admin extends IdentifiableEntity {
     /**
      * 用户名
      */
+    @NotBlank
     private String username;
 
     /**
      * 密码
      */
+    @NotBlank
     private String password;
 
     /**
      * 描述
      */
+    @NotBlank
     private String description;
 
 }

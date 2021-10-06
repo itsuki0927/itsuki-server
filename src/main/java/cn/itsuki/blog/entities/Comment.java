@@ -9,12 +9,13 @@ import lombok.ToString;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * 评论
+ * 评论 实体
  *
  * @author: itsuki
  * @create: 2021-10-03 16:21
@@ -35,6 +36,7 @@ public class Comment extends IdentifiableEntity {
      * 邮箱
      */
     @NotBlank
+    @Email
     private String email;
 
     /**
@@ -58,21 +60,25 @@ public class Comment extends IdentifiableEntity {
     /**
      * ip
      */
+    @NotBlank
     private String ip;
 
     /**
-     *
+     * 设备
      */
+    @NotBlank
     private String agent;
 
     /**
      * 省份
      */
+    @NotNull
     private String city;
 
     /**
      * 城市
      */
+    @NotNull
     private String province;
 
     /**
@@ -134,7 +140,6 @@ public class Comment extends IdentifiableEntity {
         }
         // 默认待审核
         setStatus(CommentState.Auditing);
-
         // 关闭fix
         setFix(CommonState.SHUT_DOWN);
         // 初始0

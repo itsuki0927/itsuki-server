@@ -9,9 +9,10 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 /**
- * 分类管理
+ * 分类 实体
  *
  * @author: itsuki
  * @create: 2021-09-21 18:13
@@ -59,6 +60,7 @@ public class Category extends IdentifiableEntity {
     /**
      * 父类id
      */
+    @NotNull
     @Column(name = "parent_id")
     private Long parentId;
 
@@ -67,7 +69,7 @@ public class Category extends IdentifiableEntity {
         setSort(CommonState.INIT_VALUE);
         setCount(CommonState.INIT_VALUE);
         if (getParentId() == null) {
-            setParentId((long) -1);
+            setParentId(CommonState.NO_PARENT);
         }
     }
 }

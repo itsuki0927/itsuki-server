@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
+ * 关键字黑名单 服务
+ *
  * @author: itsuki
  * @create: 2021-10-05 19:03
  **/

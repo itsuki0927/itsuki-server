@@ -6,7 +6,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 登陆响应体
+ * 登陆 响应类
  *
  * @author: itsuki
  * @create: 2021-09-15 20:01

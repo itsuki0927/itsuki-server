@@ -1,11 +1,11 @@
-package cn.itsuki.blog.entities.requests;
+ package cn.itsuki.blog.entities.requests;
 
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
 /**
- * 基本搜索请求体
+ * 基础搜索 请求类
  *
  * @author: itsuki
  * @create: 2021-09-14 19:41

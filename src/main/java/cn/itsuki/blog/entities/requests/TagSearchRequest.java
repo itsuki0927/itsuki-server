@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
+ * 标签搜索 请求类
+ *
  * @author: itsuki
  * @create: 2021-09-21 18:17
  **/

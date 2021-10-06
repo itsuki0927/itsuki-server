@@ -8,11 +8,10 @@ import cn.itsuki.blog.services.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.criteria.CriteriaBuilder;
 import javax.validation.Valid;
 
 /**
- * controller 基类
+ * 基本 控制器
  *
  * @author: itsuki
  * @create: 2021-09-14 22:49

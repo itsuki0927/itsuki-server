@@ -1,7 +1,7 @@
 package cn.itsuki.blog.constants;
 
 /**
- * 评论状态
+ * 评论 常量
  *
  * @author: itsuki
  * @create: 2021-10-04 12:40

@@ -9,10 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import java.util.Date;
 import java.util.Optional;
 
 /**
+ * 标签 服务
+ *
  * @author: itsuki
  * @create: 2021-09-21 18:18
  **/
@@ -37,7 +38,6 @@ public class TagService extends BaseService<Tag, TagSearchRequest> {
     @Override
     public Tag create(Tag entity) {
         ensureTagExist(entity);
-        entity.setCount(0);
         return super.create(entity);
     }
 

@@ -9,6 +9,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 /**
+ * 邮箱黑名单 实体
+ *
  * @author: itsuki
  * @create: 2021-10-05 16:29
  **/
