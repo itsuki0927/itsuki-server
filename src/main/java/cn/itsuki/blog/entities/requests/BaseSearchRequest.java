@@ -14,8 +14,8 @@ import lombok.ToString;
 @Setter
 @ToString
 public class BaseSearchRequest {
-    private Integer offset;
-    private Integer limit;
+    private Integer current;
+    private Integer pageSize;
     private String sortBy;
     private String sortOrder;
 }

@@ -24,10 +24,12 @@ import java.util.Optional;
  **/
 @Transactional
 public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSearchRequest> {
-    // 默认搜索偏移
-    protected static final int DEFAULT_SEARCH_OFFSET = 0;
+    // 第一页下标
+    protected static final int FIRST_PAGE_NO = 0;
+    // 默认搜索下标页码
+    protected static final int DEFAULT_SEARCH_CURRENT = 0;
     // 默认搜索数量
-    protected static final int DEFAULT_SEARCH_LIMIT = 20;
+    protected static final int DEFAULT_SEARCH_SIZE = 20;
     // 默认搜索排序
     protected static final String DEFAULT_SEARCH_SORT_DESC = "ASC";
     // 有效的排序列表
@@ -132,14 +134,14 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
 
 
     protected Pageable createPageRequest(S criteria) {
-        // 设置默认偏移值
-        if (criteria.getOffset() == null) {
-            criteria.setOffset(DEFAULT_SEARCH_OFFSET);
+        // 设置默认下标
+        if (criteria.getCurrent() == null) {
+            criteria.setCurrent(DEFAULT_SEARCH_CURRENT);
         }
 
-        // 设置默认limit
-        if (criteria.getLimit() == null) {
-            criteria.setLimit(DEFAULT_SEARCH_LIMIT);
+        // 设置默认size
+        if (criteria.getPageSize() == null) {
+            criteria.setPageSize(DEFAULT_SEARCH_SIZE);
         }
 
         // 设置sortOrder
@@ -158,8 +160,18 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
         }
 
         Sort sort = Sort.by("ASC".equals(criteria.getSortBy()) ? Sort.Direction.ASC : Sort.Direction.DESC, criteria.getSortBy());
-        Pageable pageable = new OffsetLimitPageRequest(criteria.getOffset(), criteria.getLimit(), sort);
+        int current = getSearchCurrent(criteria.getCurrent());
+        int limit = criteria.getPageSize();
+        Pageable pageable = new OffsetLimitPageRequest(current, limit, sort);
         return pageable;
+    }
+
+    private int getSearchCurrent(int current) {
+        if (current <= FIRST_PAGE_NO) {
+            return FIRST_PAGE_NO;
+        }
+        // current 是从 1 开始算的, 所以需要 - 1
+        return (current - 1);
     }
 
     /**

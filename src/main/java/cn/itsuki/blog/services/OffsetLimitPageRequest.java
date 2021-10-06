@@ -10,12 +10,12 @@ import org.springframework.data.domain.Sort;
  **/
 public class OffsetLimitPageRequest extends AbstractPageRequest {
     private static final long serialVersionUID = 4146362751484532549L;
-    private final int offset;
+    private final int current;
     private final Sort sort;
 
-    public OffsetLimitPageRequest(Integer offset, Integer limit, Sort sort) {
-        super(offset / limit, limit);
-        this.offset = offset;
+    public OffsetLimitPageRequest(Integer current, Integer limit, Sort sort) {
+        super(current, limit);
+        this.current = current;
         this.sort = sort;
     }
 
