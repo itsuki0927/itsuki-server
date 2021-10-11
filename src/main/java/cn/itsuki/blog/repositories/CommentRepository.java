@@ -30,6 +30,8 @@ public interface CommentRepository extends BaseRepository<Comment> {
 
     List<Comment> findCommentsByIdIn(List<Long> ids);
 
+    int deleteCommentsByArticleIdEquals(Long articleId);
+
     /**
      * @param keyword   关键字
      * @param articleId 文章id

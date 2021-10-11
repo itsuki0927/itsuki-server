@@ -2,16 +2,15 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleCategory;
 import cn.itsuki.blog.entities.ArticleTag;
-import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
-import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
-import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
-import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
+import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.repositories.ArticleCategoryRepository;
 import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.ArticleTagRepository;
+import cn.itsuki.blog.repositories.CommentRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,11 +29,13 @@ import java.util.stream.Collectors;
 @Service
 public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     @Autowired
-    AdminService adminService;
+    private AdminService adminService;
     @Autowired
-    ArticleTagRepository tagRepository;
+    private ArticleTagRepository tagRepository;
     @Autowired
-    ArticleCategoryRepository categoryRepository;
+    private ArticleCategoryRepository categoryRepository;
+    @Autowired
+    private CommentRepository commentRepository;
 
     /**
      * 创建一个service实例
@@ -74,6 +75,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         categoryRepository.deleteAllByArticleIdEquals(articleId);
     }
 
+    private void deleteComment(long articleId) {
+        commentRepository.deleteCommentsByArticleIdEquals(articleId);
+    }
+
     public Article update(long id, ArticleCreateRequest entity) {
         Article article = ensureExist(repository, id, "article");
 
@@ -96,6 +101,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
         deleteCategory(id);
         deleteTag(id);
+        deleteComment(id);
 
         return result;
     }
@@ -106,16 +112,28 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
     public int patchMeta(Long id, ArticleMetaPatchRequest request) {
         String meta = request.getMeta();
-        if (!meta.equals("reading") && !meta.equals("liking")) {
+        if (!meta.equals("reading") && !meta.equals("liking") && !meta.equals("banner")) {
             throw new IllegalArgumentException("meta can only be one of reading and liking");
         }
 
         Article article = ensureExist(repository, id, "article");
 
-        if (meta.equals("reading")) {
-            article.setReading(article.getReading() + 1);
-        } else if (meta.equals("liking")) {
-            article.setLiking(article.getLiking() + 1);
+        switch (meta) {
+            case "reading":
+                article.setReading(article.getReading() + 1);
+                break;
+            case "liking":
+                article.setLiking(article.getLiking() + 1);
+                break;
+            case "banner":
+                if (adminService.getCurrentAdmin() == null) {
+                    throw new IllegalArgumentException("没有权限");
+                }
+                if (article.getPublish() != PublishState.Published) {
+                    throw new IllegalArgumentException("文章还没发布");
+                }
+                article.setBanner(request.getValue());
+                break;
         }
         repository.saveAndFlush(article);
         return 1;
@@ -137,6 +155,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
 
         return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), criteria.getTag(), criteria.getCategory(), pageable);
+                criteria.getOpen(), criteria.getTag(), criteria.getCategory(), criteria.getBanner(), pageable);
     }
 }

@@ -100,6 +100,11 @@ public class Article extends IdentifiableEntity {
     @NonNull
     private Integer open;
 
+    /**
+     * 是否显示在banner: 0 -> 不显示, 1 -> 显示
+     */
+    private Integer banner;
+
     @ManyToMany
     @JoinTable(
             name = "article_tag",
