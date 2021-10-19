@@ -39,13 +39,17 @@ public class UploadService {
 
     private UploadManager uploadManager = new UploadManager(cfg);
 
-    public String uploadFile(MultipartFile file) {
+    public String uploadFile(String prefix, MultipartFile file) {
         Auth auth = Auth.create(accessKey, secretKey);
         String token = auth.uploadToken(bucket);
         try {
             String originalFilename = file.getOriginalFilename();
-            uploadManager.put(file.getInputStream(), originalFilename, token, null, null);
-            return originalFilename;
+            String path = originalFilename;
+            if (prefix != null) {
+                path = prefix + "/" + originalFilename;
+            }
+            uploadManager.put(file.getInputStream(), path, token, null, null);
+            return path;
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -3,9 +3,7 @@ package cn.itsuki.blog.controllers;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import cn.itsuki.blog.services.UploadService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -21,7 +19,7 @@ public class UploadController {
     protected UploadService service;
 
     @PostMapping("/file")
-    public WrapperResponse<String> uploadFile(MultipartFile file) {
-        return WrapperResponse.build(this.service.uploadFile(file), "上传成功");
+    public WrapperResponse<String> uploadFile(@RequestParam("file") MultipartFile file, @RequestParam("prefix") String prefix) {
+        return WrapperResponse.build(this.service.uploadFile(prefix, file), "上传成功");
     }
 }

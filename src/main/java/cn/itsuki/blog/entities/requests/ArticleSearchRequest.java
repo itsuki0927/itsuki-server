@@ -43,10 +43,10 @@ public class ArticleSearchRequest extends BaseSearchRequest {
     /**
      * 标签
      */
-    private Long tag;
+    private String tag;
 
     /**
      * 分类
      */
-    private Long category;
+    private String category;
 }
