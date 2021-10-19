@@ -49,4 +49,14 @@ public class TagService extends BaseService<Tag, TagSearchRequest> {
         }
         return repository.findAll(pageable);
     }
+
+    public Tag getTagByName(String name) {
+        Tag probe = new Tag();
+        probe.setName(name);
+        Optional<Tag> optional = repository.findOne(Example.of(probe));
+        if (!optional.isPresent()) {
+            throw new IllegalArgumentException("tag 不存在");
+        }
+        return optional.get();
+    }
 }

@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface CategoryRepository extends BaseRepository<Category> {
+    Category findCategoryByNameEqualsOrPathEquals(String name, String path);
 }

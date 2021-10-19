@@ -3,14 +3,9 @@ package cn.itsuki.blog.services;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
 import cn.itsuki.blog.constants.PublishState;
-import cn.itsuki.blog.entities.Article;
-import cn.itsuki.blog.entities.ArticleCategory;
-import cn.itsuki.blog.entities.ArticleTag;
+import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
-import cn.itsuki.blog.repositories.ArticleCategoryRepository;
-import cn.itsuki.blog.repositories.ArticleRepository;
-import cn.itsuki.blog.repositories.ArticleTagRepository;
-import cn.itsuki.blog.repositories.CommentRepository;
+import cn.itsuki.blog.repositories.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,9 +26,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     @Autowired
     private AdminService adminService;
     @Autowired
-    private ArticleTagRepository tagRepository;
+    private ArticleTagRepository articleTagRepository;
     @Autowired
-    private ArticleCategoryRepository categoryRepository;
+    private ArticleCategoryRepository articleCategoryRepository;
+    @Autowired
+    private TagService tagService;
+    @Autowired
+    private CategoryService categoryService;
     @Autowired
     private CommentRepository commentRepository;
 
@@ -52,7 +51,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
                 tag.setArticleId(articleId);
                 return tag;
             }).collect(Collectors.toList());
-            tagRepository.saveAll(tagList);
+            articleTagRepository.saveAll(tagList);
         }
     }
 
@@ -68,11 +67,11 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     }
 
     private void deleteTag(long articleId) {
-        tagRepository.deleteAllByArticleIdEquals(articleId);
+        articleTagRepository.deleteAllByArticleIdEquals(articleId);
     }
 
     private void deleteCategory(long articleId) {
-        categoryRepository.deleteAllByArticleIdEquals(articleId);
+        articleCategoryRepository.deleteAllByArticleIdEquals(articleId);
     }
 
     private void deleteComment(long articleId) {
@@ -147,14 +146,21 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
                 category.setArticleId(articleId);
                 return category;
             }).collect(Collectors.toList());
-            categoryRepository.saveAll(categoryList);
+            articleCategoryRepository.saveAll(categoryList);
         }
     }
 
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
-
+        Long tagId = null;
+        Long categoryId = null;
+        if (criteria.getTag() != null) {
+            tagId = tagService.getTagByName(criteria.getTag()).getId();
+        }
+        if (criteria.getCategory() != null) {
+            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
+        }
         return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), criteria.getTag(), criteria.getCategory(), criteria.getBanner(), pageable);
+                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
     }
 }
