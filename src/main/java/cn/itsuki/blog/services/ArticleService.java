@@ -163,4 +163,17 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
     }
+
+    public Integer count(ArticleSearchRequest criteria) {
+        Long tagId = null;
+        Long categoryId = null;
+        if (criteria.getTag() != null) {
+            tagId = tagService.getTagByName(criteria.getTag()).getId();
+        }
+        if (criteria.getCategory() != null) {
+            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
+        }
+        return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
+                criteria.getOpen(), tagId, categoryId, criteria.getBanner());
+    }
 }

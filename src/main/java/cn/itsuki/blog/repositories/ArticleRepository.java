@@ -52,9 +52,10 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:publish is null or a.publish = :publish)" +
             "and (:origin is null or a.origin = :origin)" +
             "and (:open is null or a.open = :open)" +
+            "and (:banner is null or a.banner = :banner)" +
             "and (:tagId is null or t.id = :tagId)" +
             "and (:categoryId is null or ac.id = :categoryId)" +
             "")
     int count(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
-              @Param("open") Integer open, @Param("tag") Long tagId, @Param("category") Long categoryId);
+              @Param("open") Integer open, @Param("tag") Long tagId, @Param("category") Long categoryId, @Param("banner") Integer banner);
 }

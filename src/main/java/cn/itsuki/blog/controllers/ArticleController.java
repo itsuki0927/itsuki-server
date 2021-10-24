@@ -36,6 +36,11 @@ public class ArticleController {
         return WrapperResponse.build(service.search(criteria));
     }
 
+    @GetMapping("/count")
+    public WrapperResponse<Integer> count(@Valid @ModelAttribute ArticleSearchRequest criteria) {
+        return WrapperResponse.build(service.count(criteria));
+    }
+
     @GetMapping("/{id}")
     public WrapperResponse<Article> get(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.get(id));
