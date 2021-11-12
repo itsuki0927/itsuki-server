@@ -1,11 +1,9 @@
 package cn.itsuki.blog.controllers;
 
-import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.Snippet;
 import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
-import cn.itsuki.blog.services.ArticleService;
 import cn.itsuki.blog.services.SnippetService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -48,6 +46,11 @@ public class SnippetController {
     @DeleteMapping("/{id}")
     public WrapperResponse<Integer> delete(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.delete(id));
+    }
+
+    @PatchMapping
+    public WrapperResponse<Integer> patch(@Valid @RequestBody SnippetPatchRequest request) {
+        return WrapperResponse.build(service.patch(request));
     }
 
 }

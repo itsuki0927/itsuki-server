@@ -19,11 +19,12 @@ public interface SnippetRepository extends BaseRepository<Snippet> {
     @Query("select s from snippet s " +
             "where " +
             "(" +
-            "   :keywords is null or s.author like %:keywords% " +
-            "                     or s.name like %:keywords% " +
-            "                     or s.email like %:keywords% " +
+            "   :keyword is null or s.author like %:keyword% " +
+            "                     or s.name like %:keyword% " +
+            "                     or s.email like %:keyword% " +
             ")" +
             "and (:status is null or s.status = :status)" +
+            "and (:ranks is null or s.ranks = :ranks)" +
             "")
-    Page<Snippet> search(@Param("keywords") String keywords, @Param("status") Integer status, Pageable pageable);
+    Page<Snippet> search(@Param("keyword") String keyword, @Param("status") Integer status, @Param("ranks") Integer ranks, Pageable pageable);
 }
