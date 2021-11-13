@@ -1,6 +1,7 @@
 package cn.itsuki.blog.repositories;
 
 import cn.itsuki.blog.entities.Article;
+import cn.itsuki.blog.entities.ArticleSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -23,6 +24,9 @@ public interface ArticleRepository extends BaseRepository<Article> {
     @Transactional
     @Query(value = "update article p set p.publish=:publish where p.id in (:articleIds)")
     int batchUpdateState(@Param("publish") Integer publish, @Param("articleIds") List<Long> articleIds);
+
+    @Query(value = "select new cn.itsuki.blog.entities.ArticleSummary(a.publish , count(a.id)) from article a group by a.publish")
+    List<ArticleSummary> summary();
 
     @Query("select distinct a from article a left join article_tag t on t.articleId = a.id left join article_category  ac on ac.articleId = a.id " +
             "where " +
@@ -57,5 +61,5 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:categoryId is null or ac.id = :categoryId)" +
             "")
     int count(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
-              @Param("open") Integer open, @Param("tag") Long tagId, @Param("category") Long categoryId, @Param("banner") Integer banner);
+              @Param("open") Integer open, @Param("tagId") Long tagId, @Param("categoryId") Long categoryId, @Param("banner") Integer banner);
 }

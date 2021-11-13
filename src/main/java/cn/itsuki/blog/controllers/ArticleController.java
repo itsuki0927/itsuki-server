@@ -6,6 +6,7 @@ import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
 import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
+import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import cn.itsuki.blog.services.ArticleService;
@@ -36,6 +37,11 @@ public class ArticleController {
     @GetMapping("/{id}/comments")
     public WrapperResponse<List<Comment>> getComments(@PathVariable("id") Long articleId) {
         return WrapperResponse.build(service.getComments(articleId));
+    }
+
+    @GetMapping("/summary")
+    public WrapperResponse<ArticleSummaryResponse> getSummary() {
+        return WrapperResponse.build(service.getSummary());
     }
 
     @GetMapping("/{id}")

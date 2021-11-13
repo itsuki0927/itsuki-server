@@ -6,6 +6,8 @@ import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
+import cn.itsuki.blog.entities.ArticleSummary;
+import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
 import cn.itsuki.blog.repositories.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -197,5 +199,31 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
     public List<Comment> getComments(Long articleId) {
         return commentRepository.findCommentsByArticleIdAndStatusIsIn(articleId, states);
+    }
+
+    public ArticleSummaryResponse getSummary() {
+        List<ArticleSummary> summaries = ((ArticleRepository) repository).summary();
+
+        ArticleSummaryResponse response = new ArticleSummaryResponse();
+        summaries.forEach(summary -> {
+            if (summary.getPublish() == PublishState.Draft) {
+                summary.setTitle("草稿");
+                summary.setStatus("warning");
+                response.setDraft(summary);
+            } else if (summary.getPublish() == PublishState.Published) {
+                summary.setTitle("已发布");
+                summary.setStatus("success");
+                response.setPublished(summary);
+            } else if (summary.getPublish() == PublishState.Recycle) {
+                summary.setTitle("回收站");
+                summary.setStatus("error");
+                response.setRecycle(summary);
+            }
+        });
+        ArticleSummary total = new ArticleSummary(0, summaries.stream().map(ArticleSummary::getValue).reduce(0L, Long::sum));
+        total.setStatus("processing");
+        total.setTitle("全部");
+        response.setTotal(total);
+        return response;
     }
 }
