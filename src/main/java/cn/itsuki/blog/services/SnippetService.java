@@ -47,7 +47,7 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
         return snippets.map(snippet -> {
             Snippet result = new Snippet();
             BeanUtils.copyProperties(snippet, result);
-            result.setCode("code placeholder");
+//            result.setCode("code placeholder");
             result.setExample("example placeholder");
             result.setSkill("skill placeholder");
             return result;
