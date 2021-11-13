@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * 评论 控制器
@@ -34,9 +33,9 @@ public class CommentController {
         return WrapperResponse.build(service.count(articleId));
     }
 
-    @GetMapping("/{articleId}")
-    public WrapperResponse<List<Comment>> get(@PathVariable("articleId") Long articleId) {
-        return WrapperResponse.build(service.get(articleId));
+    @GetMapping("/{id}")
+    public WrapperResponse<Comment> get(@PathVariable("id") Long id) {
+        return WrapperResponse.build(service.get(id));
     }
 
     @GetMapping

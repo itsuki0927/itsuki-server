@@ -43,10 +43,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     private RequestUtil requestUtil;
     @Autowired
     private AkismetService akismetService;
-    @Value("${dev.ip}")
-    private String devIP;
     @Value("${mode.isDev}")
     private boolean isDev;
+    private String devIP = "220.169.96.10";
     private List<Integer> states;
 
     CommentService() {
@@ -175,10 +174,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
             article.setCommenting(count);
             articleRepository.save(article);
         });
-    }
-
-    public List<Comment> get(Long articleId) {
-        return ((CommentRepository) repository).findCommentsByArticleIdAndStatusIsIn(articleId, states);
     }
 
     public int patchMeta(Long id, CommentMetaPatchRequest request) {
