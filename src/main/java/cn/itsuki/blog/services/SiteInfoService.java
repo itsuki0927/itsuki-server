@@ -2,39 +2,61 @@ package cn.itsuki.blog.services;
 
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
-import cn.itsuki.blog.entities.requests.BaseSearchRequest;
-import cn.itsuki.blog.entities.requests.TagSearchRequest;
-import cn.itsuki.blog.entities.responses.SearchResponse;
+import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.entities.responses.SiteInfoResponse;
+import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.entities.responses.SystemSettingsResponse;
+import cn.itsuki.blog.repositories.CategoryRepository;
+import cn.itsuki.blog.repositories.CommentRepository;
+import cn.itsuki.blog.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
+ * 网站信息 服务
+ *
  * @author: itsuki
  * @create: 2021-10-24 18:16
  **/
 @Service
 public class SiteInfoService {
     @Autowired
-    private TagService tagService;
+    private TagRepository tagRepository;
     @Autowired
-    private CategoryService categoryService;
+    private CategoryRepository categoryRepository;
+    @Autowired
+    private ArticleService articleService;
     @Autowired
     private SystemSettingsService settingsService;
+    @Autowired
+    private CommentRepository commentRepository;
 
     public SiteInfoResponse get() {
         SiteInfoResponse siteInfoResponse = new SiteInfoResponse();
 
-        SearchResponse<Tag> tagSearchResponse = tagService.search(new TagSearchRequest());
-        siteInfoResponse.setTags(tagSearchResponse.getData());
+        List<Tag> tags = tagRepository.findAll();
+        siteInfoResponse.setTags(tags);
 
-        SearchResponse<Category> categorySearchResponse = categoryService.search(new BaseSearchRequest());
-        siteInfoResponse.setCategories(categorySearchResponse.getData());
+        List<Category> categories = categoryRepository.findAll();
+        siteInfoResponse.setCategories(categories);
 
         SystemSettingsResponse settingsResponse = settingsService.get();
         siteInfoResponse.setSite(settingsResponse);
 
         return siteInfoResponse;
+    }
+
+    public SiteSummaryResponse getSummary() {
+        long article = articleService.count(new ArticleSearchRequest());
+        long tag = tagRepository.count();
+        long comment = commentRepository.count();
+        SiteSummaryResponse response = new SiteSummaryResponse();
+        response.setArticle(article);
+        response.setTag(tag);
+        response.setComment(comment);
+
+        return response;
     }
 }
