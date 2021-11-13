@@ -1,6 +1,7 @@
 package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Article;
+import cn.itsuki.blog.entities.Comment;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
 import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
@@ -12,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * 文章 控制器
@@ -31,6 +33,16 @@ public class ArticleController {
         return WrapperResponse.build(service.create(article), "创建成功");
     }
 
+    @GetMapping("/{id}/comments")
+    public WrapperResponse<List<Comment>> getComments(@PathVariable("id") Long articleId) {
+        return WrapperResponse.build(service.getComments(articleId));
+    }
+
+    @GetMapping("/{id}")
+    public WrapperResponse<Article> get(@PathVariable("id") Long id) {
+        return WrapperResponse.build(service.get(id));
+    }
+
     @GetMapping
     public WrapperResponse<SearchResponse<Article>> search(@Valid @ModelAttribute ArticleSearchRequest criteria) {
         return WrapperResponse.build(service.search(criteria));
@@ -39,11 +51,6 @@ public class ArticleController {
     @GetMapping("/count")
     public WrapperResponse<Integer> count(@Valid @ModelAttribute ArticleSearchRequest criteria) {
         return WrapperResponse.build(service.count(criteria));
-    }
-
-    @GetMapping("/{id}")
-    public WrapperResponse<Article> get(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.get(id));
     }
 
     @PutMapping("/{id}")

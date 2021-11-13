@@ -2,6 +2,7 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,12 +37,16 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     private CategoryService categoryService;
     @Autowired
     private CommentRepository commentRepository;
+    private List<Integer> states;
 
     /**
      * 创建一个service实例
      */
     public ArticleService() {
         super("liking", new String[]{"commenting", "liking", "reading"});
+        states = new ArrayList<>();
+        states.add(CommentState.Auditing);
+        states.add(CommentState.Published);
     }
 
     private void saveAllTags(List<Long> tagIds, Long articleId) {
@@ -160,8 +166,20 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         if (criteria.getCategory() != null) {
             categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
         }
-        return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
+        Page<Article> articles = ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
+        return articles.map(article -> {
+            Article result = new Article();
+            BeanUtils.copyProperties(article, result);
+            result.setContent("content placeholder");
+            result.setComments(result.getComments().stream().map(item -> {
+                Comment comment = new Comment();
+                BeanUtils.copyProperties(item, comment);
+                comment.setContent("comment placeholder");
+                return comment;
+            }).collect(Collectors.toSet()));
+            return result;
+        });
     }
 
     public Integer count(ArticleSearchRequest criteria) {
@@ -175,5 +193,9 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         }
         return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner());
+    }
+
+    public List<Comment> getComments(Long articleId) {
+        return commentRepository.findCommentsByArticleIdAndStatusIsIn(articleId, states);
     }
 }
