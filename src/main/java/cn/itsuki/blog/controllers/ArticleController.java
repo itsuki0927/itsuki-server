@@ -1,6 +1,7 @@
 package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Article;
+import cn.itsuki.blog.entities.ArticleArchive;
 import cn.itsuki.blog.entities.Comment;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.TreeMap;
 
 /**
  * 文章 控制器
@@ -42,6 +44,11 @@ public class ArticleController {
     @GetMapping("/summary")
     public WrapperResponse<ArticleSummaryResponse> getSummary() {
         return WrapperResponse.build(service.getSummary());
+    }
+
+    @GetMapping("/archive")
+    public WrapperResponse<TreeMap<String, TreeMap<String, List<ArticleArchive>>>> getArchive() {
+        return WrapperResponse.build(service.getArchive());
     }
 
     @GetMapping("/{id}")

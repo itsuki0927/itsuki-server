@@ -2,6 +2,7 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.bean.copier.CopyOptions;
+import cn.hutool.core.date.DateUtil;
 import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
@@ -15,8 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -224,6 +224,23 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         total.setStatus("processing");
         total.setTitle("全部");
         response.setTotal(total);
+        return response;
+    }
+
+    public TreeMap<String, TreeMap<String, List<ArticleArchive>>> getArchive() {
+        List<ArticleArchive> archives = ((ArticleRepository) repository).archive();
+        TreeMap<String, TreeMap<String, List<ArticleArchive>>> response;
+        response = new TreeMap((Comparator<String>) Comparator.reverseOrder());
+        archives.forEach(archive -> {
+            String year = DateUtil.format(archive.getCreateAt(), "yyyy");
+            String date = DateUtil.format(archive.getCreateAt(), "MM月");
+
+            TreeMap<String, List<ArticleArchive>> map = response.getOrDefault(year, new TreeMap<>((o1, o2) -> o2.compareTo(o1)));
+            List<ArticleArchive> articleArchiveList = map.getOrDefault(date, new ArrayList<>());
+            articleArchiveList.add(archive);
+            map.put(date, articleArchiveList);
+            response.put(year, map);
+        });
         return response;
     }
 }
