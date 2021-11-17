@@ -2,11 +2,14 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Snippet;
+import cn.itsuki.blog.entities.SnippetCategoryRelation;
 import cn.itsuki.blog.entities.requests.SnippetCreateRequest;
 import cn.itsuki.blog.entities.requests.SnippetPatchRequest;
 import cn.itsuki.blog.entities.requests.SnippetSearchRequest;
+import cn.itsuki.blog.repositories.SnippetCategoryRelationRepository;
 import cn.itsuki.blog.repositories.SnippetRepository;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,9 @@ import java.util.stream.Collectors;
  **/
 @Service
 public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
+    @Autowired
+    private SnippetCategoryRelationRepository categoryRelationRepository;
+
     /**
      * 创建一个service实例
      */
@@ -29,15 +35,41 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
         super("id", new String[]{"id"});
     }
 
-    public Snippet create(SnippetCreateRequest entity) {
-        Snippet snippet = new Snippet();
-        BeanUtil.copyProperties(entity, snippet);
-        return super.create(snippet);
+    private void saveAllCategories(List<Long> categories, Long snippetId) {
+        if (categories != null) {
+            List<SnippetCategoryRelation> categoryRelationList = categories.stream().map(categoryId -> {
+                SnippetCategoryRelation relation = new SnippetCategoryRelation();
+                relation.setCategoryId(categoryId);
+                relation.setSnippetId(snippetId);
+                return relation;
+            }).collect(Collectors.toList());
+            categoryRelationRepository.saveAll(categoryRelationList);
+        }
+    }
+
+
+    private void deleteCategory(long snippetId) {
+        categoryRelationRepository.deleteAllByCategoryIdEquals(snippetId);
+    }
+
+
+    public Snippet create(SnippetCreateRequest request) {
+        Snippet entity = new Snippet();
+        BeanUtil.copyProperties(request, entity);
+        Snippet snippet = super.create(entity);
+
+        saveAllCategories(request.getCategoryIds(), snippet.getId());
+
+        return snippet;
     }
 
     public Snippet update(Long id, SnippetCreateRequest entity) {
         Snippet snippet = ensureExist(repository, id, "snippet");
         BeanUtil.copyProperties(entity, snippet);
+
+        deleteCategory(id);
+        saveAllCategories(entity.getCategoryIds(), snippet.getId());
+
         return super.update(id, snippet);
     }
 

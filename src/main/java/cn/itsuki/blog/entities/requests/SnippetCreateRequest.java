@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 
 /**
  * 创建片段 请求类
@@ -56,4 +57,10 @@ public class SnippetCreateRequest {
      */
     @NotNull
     private Integer status;
+
+    /**
+     * 分类
+     */
+    @NotNull
+    private List<Long> categoryIds;
 }
