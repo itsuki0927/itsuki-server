@@ -11,5 +11,5 @@ import org.springframework.stereotype.Repository;
  **/
 @Repository
 public interface SnippetCategoryRelationRepository extends BaseRepository<SnippetCategoryRelation> {
-    void deleteAllByCategoryIdEquals(Long categoryId);
+    void deleteAllBySnippetIdEquals(Long snippetId);
 }

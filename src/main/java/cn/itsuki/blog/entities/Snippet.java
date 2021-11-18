@@ -6,9 +6,12 @@ import lombok.Setter;
 import lombok.ToString;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.Min;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 /**
  * 片段 实体
@@ -86,6 +89,14 @@ public class Snippet extends IdentifiableEntity {
      */
     @NotBlank
     private String email;
+
+    @ManyToMany
+    @JoinTable(
+            name = "snippet_category_relation",
+            joinColumns = @JoinColumn(name = "snippet_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id"))
+    private Set<SnippetCategory> categories;
+
 
     @Override
     protected void onCreateAction() {

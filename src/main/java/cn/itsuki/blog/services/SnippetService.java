@@ -49,7 +49,7 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
 
 
     private void deleteCategory(long snippetId) {
-        categoryRelationRepository.deleteAllByCategoryIdEquals(snippetId);
+        categoryRelationRepository.deleteAllBySnippetIdEquals(snippetId);
     }
 
 
