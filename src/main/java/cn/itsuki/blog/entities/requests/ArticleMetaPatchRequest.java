@@ -18,7 +18,7 @@ import javax.validation.constraints.NotBlank;
 public class ArticleMetaPatchRequest {
 
     /**
-     * liking、reading、banner
+     * liking、reading、banner、pinned
      */
     @NotBlank
     private String meta;

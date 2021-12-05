@@ -105,6 +105,11 @@ public class Article extends IdentifiableEntity {
      */
     private Integer banner;
 
+    /**
+     * 是否显示在首页: 0 -> 不显示, 1 -> 显示
+     */
+    private Integer pinned;
+
     @ManyToMany
     @JoinTable(
             name = "article_tag",
@@ -140,6 +145,10 @@ public class Article extends IdentifiableEntity {
         // 默认情况私密
         if (getOrigin() == null) {
             setOrigin(ArticleOpen.Password);
+        }
+        // 默认情况pinned
+        if (getPinned() == null) {
+            setOrigin(CommonState.SHUT_DOWN);
         }
     }
 }

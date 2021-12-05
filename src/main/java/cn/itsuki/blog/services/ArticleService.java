@@ -45,7 +45,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
      * 创建一个service实例
      */
     public ArticleService() {
-        super("liking", new String[]{"commenting", "liking", "reading"});
+        super("createAt", new String[]{"commenting", "liking", "reading", "createdAt"});
         states = new ArrayList<>();
         states.add(CommentState.Auditing);
         states.add(CommentState.Published);
@@ -119,9 +119,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
     public int patchMeta(Long id, ArticleMetaPatchRequest request) {
         String meta = request.getMeta();
-        if (!meta.equals("reading") && !meta.equals("liking") && !meta.equals("banner")) {
-            throw new IllegalArgumentException("meta can only be one of reading and liking");
-        }
+        ensureArticleMetaExist(meta);
 
         Article article = ensureExist(repository, id, "article");
 
@@ -133,17 +131,38 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
                 article.setLiking(article.getLiking() + 1);
                 break;
             case "banner":
-                if (adminService.getCurrentAdmin() == null) {
-                    throw new IllegalArgumentException("没有权限");
-                }
-                if (article.getPublish() != PublishState.Published) {
-                    throw new IllegalArgumentException("文章还没发布");
-                }
+                ensureAdminOperate(article);
                 article.setBanner(request.getValue());
                 break;
+            case "pinned":
+                ensureAdminOperate(article);
+                article.setPinned(request.getValue());
+                break;
         }
+
         repository.saveAndFlush(article);
         return 1;
+    }
+
+    /**
+     * 确保是管理员操作
+     */
+    private void ensureAdminOperate(Article article) {
+        if (adminService.getCurrentAdmin() == null) {
+            throw new IllegalArgumentException("没有权限");
+        }
+        if (article.getPublish() != PublishState.Published) {
+            throw new IllegalArgumentException("文章还没发布");
+        }
+    }
+
+    /**
+     * 确保更新的meta是允许更新的
+     */
+    private void ensureArticleMetaExist(String meta) {
+        if (!meta.equals("reading") && !meta.equals("liking") && !meta.equals("banner") && !meta.equals("pinned")) {
+            throw new IllegalArgumentException("meta can only be one of reading、liking、banner and pinned");
+        }
     }
 
     private void saveAllCategories(List<Long> categoryIds, Long articleId) {
@@ -169,7 +188,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
             categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
         }
         Page<Article> articles = ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
+                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), criteria.getPinned(), pageable);
         return articles.map(article -> {
             Article result = new Article();
             BeanUtils.copyProperties(article, result);
