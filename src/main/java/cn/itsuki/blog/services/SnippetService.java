@@ -32,7 +32,7 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
      * 创建一个service实例
      */
     public SnippetService() {
-        super("id", new String[]{"id"});
+        super("id", new String[]{"id", "createdAt"});
     }
 
     private void saveAllCategories(List<Long> categories, Long snippetId) {
@@ -75,7 +75,8 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
 
     @Override
     protected Page<Snippet> searchWithPageable(SnippetSearchRequest criteria, Pageable pageable) {
-        Page<Snippet> snippets = ((SnippetRepository) repository).search(criteria.getKeyword(), criteria.getStatus(), criteria.getRanks(), pageable);
+        Page<Snippet> snippets = ((SnippetRepository) repository).search(criteria.getKeyword(), criteria.getStatus(),
+                criteria.getRanks(), criteria.getCategoryName(), criteria.getCategoryPath(), criteria.getCategoryId(), pageable);
         return snippets.map(snippet -> {
             Snippet result = new Snippet();
             BeanUtils.copyProperties(snippet, result);

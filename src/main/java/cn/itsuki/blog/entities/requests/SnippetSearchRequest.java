@@ -17,4 +17,7 @@ public class SnippetSearchRequest extends BaseSearchRequest {
     private String keyword;
     private Integer status;
     private Integer ranks;
+    private String categoryPath;
+    private String categoryName;
+    private Long categoryId;
 }

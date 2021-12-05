@@ -2,8 +2,6 @@ package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.SnippetCategory;
 import cn.itsuki.blog.entities.requests.SnippetCategorySearchRequest;
-import cn.itsuki.blog.services.SnippetCategoryService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,6 +14,4 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("snippet-category")
 public class SnippetCategoryController extends BaseController<SnippetCategory, SnippetCategorySearchRequest> {
-    @Autowired
-    private SnippetCategoryService service;
 }

@@ -16,7 +16,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface SnippetRepository extends BaseRepository<Snippet> {
 
-    @Query("select s from snippet s " +
+    @Query("select distinct s from snippet s " +
+            "left join snippet_category_relation  scr on scr.snippetId = s.id " +
+            "left join snippet_category sc on scr.categoryId = sc.id " +
             "where " +
             "(" +
             "   :keyword is null or s.author like %:keyword% " +
@@ -25,6 +27,11 @@ public interface SnippetRepository extends BaseRepository<Snippet> {
             ")" +
             "and (:status is null or s.status = :status)" +
             "and (:ranks is null or s.ranks = :ranks)" +
+            "and (:categoryName is null or sc.name = :categoryName)" +
+            "and (:categoryPath is null or sc.path = :categoryPath)" +
+            "and (:categoryId is null or sc.id = :categoryId)" +
             "")
-    Page<Snippet> search(@Param("keyword") String keyword, @Param("status") Integer status, @Param("ranks") Integer ranks, Pageable pageable);
+    Page<Snippet> search(@Param("keyword") String keyword, @Param("status") Integer status, @Param("ranks") Integer ranks,
+                         @Param("categoryName") String categoryName, @Param("categoryPath") String categoryPath,
+                         @Param("categoryId") Long categoryId, Pageable pageable);
 }
