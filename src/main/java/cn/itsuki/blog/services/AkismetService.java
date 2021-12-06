@@ -92,7 +92,7 @@ public class AkismetService {
         boolean isSpam = StrUtil.equals(result, "true");
 
         if (isSpam) {
-            throw new IllegalArgumentException("comment content is spam");
+            throw new IllegalArgumentException("被 Akismet 过滤!!!");
         }
     }
 
