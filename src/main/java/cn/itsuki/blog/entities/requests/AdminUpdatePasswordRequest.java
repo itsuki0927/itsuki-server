@@ -2,36 +2,33 @@ package cn.itsuki.blog.entities.requests;
 
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 
 /**
- * 管理员更新 请求类
+ * 管理员更新密码 请求类
  *
  * @author: itsuki
- * @create: 2021-09-28 15:49
+ * @create: 2021-12-12 08:04
  **/
 @Getter
 @Setter
-@ToString
-public class AdminSaveRequest {
+public class AdminUpdatePasswordRequest {
     /**
-     * 头像
+     * 密码
      */
     @NotBlank
-    private String avatar;
+    private String password;
 
     /**
-     * 昵称
+     * 新密码
      */
     @NotBlank
-    private String nickname;
+    private String newPassword;
 
     /**
-     * 描述
+     * 确认密码
      */
     @NotBlank
-    private String description;
-
+    private String confirm;
 }

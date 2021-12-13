@@ -24,13 +24,11 @@ public class Admin extends IdentifiableEntity {
     /**
      * 昵称
      */
-    @NotBlank
     private String nickname;
 
     /**
      * 头像
      */
-    @NotBlank
     private String avatar;
 
     /**
@@ -49,13 +47,11 @@ public class Admin extends IdentifiableEntity {
     /**
      * 密码
      */
-    @NotBlank
     private String password;
 
     /**
      * 描述
      */
-    @NotBlank
     private String description;
 
 }

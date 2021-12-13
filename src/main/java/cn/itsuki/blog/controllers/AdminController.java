@@ -2,6 +2,7 @@ package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Admin;
 import cn.itsuki.blog.entities.requests.AdminSaveRequest;
+import cn.itsuki.blog.entities.requests.AdminUpdatePasswordRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
@@ -34,8 +35,13 @@ public class AdminController {
         return WrapperResponse.build(adminService.getCurrentAdmin(), "获取信息成功");
     }
 
-    @PostMapping("/save")
-    public WrapperResponse<Admin> save(@Valid @RequestBody AdminSaveRequest request) {
+    @PutMapping
+    public WrapperResponse<Admin> update(@Valid @RequestBody AdminSaveRequest request) {
         return WrapperResponse.build(adminService.save(request), "保存成功");
+    }
+
+    @PutMapping("/password")
+    public WrapperResponse<Admin> updatePassword(@Valid @RequestBody AdminUpdatePasswordRequest request) {
+        return WrapperResponse.build(adminService.updatePassword(request), "更新成功");
     }
 }

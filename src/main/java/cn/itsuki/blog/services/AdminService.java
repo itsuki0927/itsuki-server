@@ -1,19 +1,21 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Admin;
 import cn.itsuki.blog.entities.OperateState;
 import cn.itsuki.blog.entities.requests.AdminSaveRequest;
+import cn.itsuki.blog.entities.requests.AdminUpdatePasswordRequest;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.requests.LoginRequest;
 import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.repositories.AdminRepository;
 import cn.itsuki.blog.security.SecurityUtils;
 import cn.itsuki.blog.security.TokenUtils;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -67,48 +69,49 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> {
     }
 
     public Admin getCurrentAdmin() {
-        Admin admin = get(SecurityUtils.getCurrentAdmin().getId());
-        admin.setPassword(null);
-        return admin;
-    }
-
-    private void updatePassword(AdminSaveRequest request) {
-        String password = request.getPassword();
-        String newPassword = request.getNewPassword();
-        String confirm = request.getConfirm();
-        Admin currentAdmin = ensureExist(repository, SecurityUtils.getCurrentAdmin().getId(), "admin");
-
-        // 参数验证
-        if (password != null && newPassword != null && confirm != null) {
-            if (password.equals(newPassword) || !newPassword.equals(confirm)) {
-                throw new IllegalArgumentException("新旧密码一样");
-            }
-            // 密码验证
-            if (!passwordEncoder.matches(currentAdmin.getPassword(), password)) {
-                throw new IllegalArgumentException("旧密码错误");
-            }
-            // 设置加密后的新密码
-            request.setPassword(passwordEncoder.encode(newPassword));
-        } else {
-            // 如果没有更新，则使用原密码
-            request.setPassword(passwordEncoder.encode(password));
+        Admin currentAdmin = SecurityUtils.getCurrentAdmin();
+        if (currentAdmin == null) {
+            throw new AccessDeniedException("请先登录");
         }
+        return get(currentAdmin.getId());
     }
 
     public Admin save(AdminSaveRequest request) {
         Admin currentAdmin = getCurrentAdmin();
         Admin admin = new Admin();
 
-        updatePassword(request);
-
-        BeanUtils.copyProperties(request, admin);
+        BeanUtil.copyProperties(request, admin);
         admin.setId(currentAdmin.getId());
         admin.setRole(currentAdmin.getRole());
         admin.setUsername(currentAdmin.getUsername());
 
-        repository.save(admin);
-
+        repository.saveAndFlush(admin);
         return admin;
+    }
+
+    public Admin updatePassword(AdminUpdatePasswordRequest request) {
+        String password = request.getPassword();
+        String newPassword = request.getNewPassword();
+        String confirm = request.getConfirm();
+        Admin currentAdmin = getCurrentAdmin();
+        Admin probe = new Admin();
+        BeanUtil.copyProperties(currentAdmin, probe);
+
+        System.out.println(currentAdmin.toString());
+        if (password.equals(newPassword)) {
+            throw new IllegalArgumentException("新旧密码一样");
+        }
+        if (!newPassword.equals(confirm)) {
+            throw new IllegalArgumentException("新密码确认密码错误");
+        }
+        // 密码验证
+        if (!passwordEncoder.matches(password, currentAdmin.getPassword())) {
+            throw new IllegalArgumentException("旧密码错误");
+        }
+        // 设置加密后的新密码
+        probe.setPassword(passwordEncoder.encode(newPassword));
+        repository.saveAndFlush(probe);
+        return probe;
     }
 
     @Override
