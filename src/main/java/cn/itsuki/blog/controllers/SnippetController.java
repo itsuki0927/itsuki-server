@@ -53,4 +53,8 @@ public class SnippetController {
         return WrapperResponse.build(service.patch(request));
     }
 
+    @PatchMapping("/pinned")
+    public WrapperResponse<Integer> patchPinned(@Valid @RequestBody SnippetPatchPinnedRequest request) {
+        return WrapperResponse.build(service.patchPinned(request));
+    }
 }

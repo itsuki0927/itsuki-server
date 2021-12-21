@@ -59,6 +59,12 @@ public class SnippetCreateRequest {
     private Integer status;
 
     /**
+     * pinned
+     */
+    @NotNull
+    private Integer pinned;
+
+    /**
      * 分类
      */
     @NotNull

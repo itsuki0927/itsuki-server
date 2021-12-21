@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Snippet;
 import cn.itsuki.blog.entities.SnippetCategoryRelation;
 import cn.itsuki.blog.entities.requests.SnippetCreateRequest;
+import cn.itsuki.blog.entities.requests.SnippetPatchPinnedRequest;
 import cn.itsuki.blog.entities.requests.SnippetPatchRequest;
 import cn.itsuki.blog.entities.requests.SnippetSearchRequest;
 import cn.itsuki.blog.repositories.SnippetCategoryRelationRepository;
@@ -76,7 +77,9 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
     @Override
     protected Page<Snippet> searchWithPageable(SnippetSearchRequest criteria, Pageable pageable) {
         Page<Snippet> snippets = ((SnippetRepository) repository).search(criteria.getKeyword(), criteria.getStatus(),
-                criteria.getRanks(), criteria.getCategoryName(), criteria.getCategoryPath(), criteria.getCategoryId(), pageable);
+                criteria.getRanks(), criteria.getCategoryName(), criteria.getCategoryPath(), criteria.getCategoryId()
+                , criteria.getPinned(), pageable);
+
         return snippets.map(snippet -> {
             Snippet result = new Snippet();
             BeanUtils.copyProperties(snippet, result);
@@ -91,6 +94,16 @@ public class SnippetService extends BaseService<Snippet, SnippetSearchRequest> {
         List<Snippet> snippetList = request.getIds().stream().map(id -> {
             Snippet snippet = ensureExist(repository, id, "snippet");
             snippet.setStatus(request.getStatus());
+            return snippet;
+        }).collect(Collectors.toList());
+        repository.saveAllAndFlush(snippetList);
+        return snippetList.size();
+    }
+
+    public Integer patchPinned(SnippetPatchPinnedRequest request) {
+        List<Snippet> snippetList = request.getIds().stream().map(id -> {
+            Snippet snippet = ensureExist(repository, id, "snippet");
+            snippet.setPinned(request.getPinned());
             return snippet;
         }).collect(Collectors.toList());
         repository.saveAllAndFlush(snippetList);

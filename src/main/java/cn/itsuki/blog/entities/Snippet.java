@@ -87,6 +87,12 @@ public class Snippet extends IdentifiableEntity {
     @NotBlank
     private String email;
 
+    /**
+     * 邮箱
+     */
+    @NotNull
+    private Integer pinned;
+
     @ManyToMany
     @JoinTable(
             name = "snippet_category_relation",

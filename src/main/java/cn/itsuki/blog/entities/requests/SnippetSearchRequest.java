@@ -20,4 +20,5 @@ public class SnippetSearchRequest extends BaseSearchRequest {
     private String categoryPath;
     private String categoryName;
     private Long categoryId;
+    private Integer pinned;
 }

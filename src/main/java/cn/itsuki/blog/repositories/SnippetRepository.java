@@ -30,8 +30,9 @@ public interface SnippetRepository extends BaseRepository<Snippet> {
             "and (:categoryName is null or sc.name = :categoryName)" +
             "and (:categoryPath is null or sc.path = :categoryPath)" +
             "and (:categoryId is null or sc.id = :categoryId)" +
+            "and (:pinned is null or s.pinned = :pinned)" +
             "")
     Page<Snippet> search(@Param("keyword") String keyword, @Param("status") Integer status, @Param("ranks") Integer ranks,
                          @Param("categoryName") String categoryName, @Param("categoryPath") String categoryPath,
-                         @Param("categoryId") Long categoryId, Pageable pageable);
+                         @Param("categoryId") Long categoryId, @Param("pinned") Integer pinned, Pageable pageable);
 }
