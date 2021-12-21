@@ -90,4 +90,9 @@ public class ArticleCreateRequest {
     @NotNull
     private Integer banner;
 
+    /**
+     * 轮播类型: 0 -> 无轮播, 1 -> 轮播
+     */
+    @NotNull
+    private Integer pinned;
 }

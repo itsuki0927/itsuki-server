@@ -6,6 +6,7 @@ import lombok.ToString;
 
 import javax.persistence.Entity;
 import javax.validation.constraints.Email;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -25,6 +26,7 @@ public class SystemSettings extends IdentifiableEntity {
      * 喜欢
      */
     @NotNull
+    @Min(0)
     private Integer liking;
 
     /**

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -16,6 +17,8 @@ import java.util.List;
 @Getter
 @Setter
 public class SystemSettingsRequest {
+    @NotNull
+    private Integer liking;
     @NotBlank
     private String title;
     @NotBlank

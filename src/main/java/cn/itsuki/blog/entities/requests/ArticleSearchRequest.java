@@ -54,4 +54,9 @@ public class ArticleSearchRequest extends BaseSearchRequest {
      * 分类
      */
     private String category;
+
+    /**
+     * 排行榜
+     */
+    private Integer hot;
 }

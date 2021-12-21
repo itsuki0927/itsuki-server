@@ -1,5 +1,7 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.db.sql.Direction;
+import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
@@ -10,6 +12,9 @@ import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -42,8 +47,11 @@ public class SiteInfoService {
         List<Category> categories = categoryRepository.findAll();
         siteInfoResponse.setCategories(categories);
 
-        SystemSettingsResponse settingsResponse = settingsService.get();
-        siteInfoResponse.setSite(settingsResponse);
+        SystemSettingsResponse settings = settingsService.get();
+        siteInfoResponse.setSite(settings);
+
+        Page<Article> articles = articleService.getHotArticles();
+        siteInfoResponse.setHotArticles(articles.getContent());
 
         return siteInfoResponse;
     }

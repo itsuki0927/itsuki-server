@@ -14,6 +14,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -177,10 +178,23 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         }
     }
 
+    public Page<Article> getHotArticles() {
+        Sort sort =
+                Sort.by(Sort.Direction.DESC, "reading");
+        Pageable pageable = new OffsetLimitPageRequest(0, 8, sort);
+
+        return normalizeArticles(((ArticleRepository) repository).queryArticlesByPublish(PublishState.Published, pageable));
+    }
+
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         Long tagId = null;
         Long categoryId = null;
+
+        if (criteria.getHot() != null && criteria.getHot() == 1) {
+            return getHotArticles();
+        }
+
         if (criteria.getTag() != null) {
             tagId = tagService.getTagByName(criteria.getTag()).getId();
         }
@@ -189,6 +203,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         }
         Page<Article> articles = ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner(), criteria.getPinned(), pageable);
+        return normalizeArticles(articles);
+    }
+
+    private Page<Article> normalizeArticles(Page<Article> articles) {
         return articles.map(article -> {
             Article result = new Article();
             BeanUtils.copyProperties(article, result);
@@ -249,7 +267,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     public TreeMap<String, TreeMap<String, List<ArticleArchive>>> getArchive() {
         List<ArticleArchive> archives = ((ArticleRepository) repository).archive();
         TreeMap<String, TreeMap<String, List<ArticleArchive>>> response;
-        response = new TreeMap((Comparator<String>) Comparator.reverseOrder());
+        response = new TreeMap(Comparator.reverseOrder());
         archives.forEach(archive -> {
             String year = DateUtil.format(archive.getCreateAt(), "yyyy");
             String date = DateUtil.format(archive.getCreateAt(), "MM月");

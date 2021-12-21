@@ -51,6 +51,8 @@ public interface ArticleRepository extends BaseRepository<Article> {
                          @Param("open") Integer open, @Param("tag") Long tag, @Param("category") Long category,
                          @Param("banner") Integer banner, @Param("pinned") Integer pinned, Pageable pageable);
 
+    Page<Article> queryArticlesByPublish(@Param("publish") Integer publish, Pageable pageable);
+
     @Query("select count(a.id) from article a left join article_tag t on t.articleId = a.id left join article_category  ac on ac.articleId = a.id " +
             "where " +
             "(" +
