@@ -146,9 +146,9 @@ public class Article extends IdentifiableEntity {
         if (getOrigin() == null) {
             setOrigin(ArticleOpen.Password);
         }
-        // 默认情况pinned
+        // 默认情况UnPinned
         if (getPinned() == null) {
-            setOrigin(CommonState.SHUT_DOWN);
+            setPinned(CommonState.SHUT_DOWN);
         }
     }
 }
