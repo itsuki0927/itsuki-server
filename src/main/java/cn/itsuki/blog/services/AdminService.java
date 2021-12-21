@@ -78,15 +78,13 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> {
 
     public Admin save(AdminSaveRequest request) {
         Admin currentAdmin = getCurrentAdmin();
-        Admin admin = new Admin();
 
-        BeanUtil.copyProperties(request, admin);
-        admin.setId(currentAdmin.getId());
-        admin.setRole(currentAdmin.getRole());
-        admin.setUsername(currentAdmin.getUsername());
+        currentAdmin.setNickname(request.getNickname());
+        currentAdmin.setAvatar(request.getAvatar());
+        currentAdmin.setDescription(request.getDescription());
 
-        repository.saveAndFlush(admin);
-        return admin;
+        repository.saveAndFlush(currentAdmin);
+        return currentAdmin;
     }
 
     public Admin updatePassword(AdminUpdatePasswordRequest request) {
