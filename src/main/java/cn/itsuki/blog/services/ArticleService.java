@@ -196,11 +196,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         }
 
         if (criteria.getTag() != null) {
-            tagId = tagService.getTagByName(criteria.getTag()).getId();
+            tagId = tagService.getTagByNameOrPath(criteria.getTag()).getId();
         }
+
         if (criteria.getCategory() != null) {
             categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
         }
+
         Page<Article> articles = ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner(), criteria.getPinned(), pageable);
         return normalizeArticles(articles);
@@ -225,7 +227,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         Long tagId = null;
         Long categoryId = null;
         if (criteria.getTag() != null) {
-            tagId = tagService.getTagByName(criteria.getTag()).getId();
+            tagId = tagService.getTagByNameOrPath(criteria.getTag()).getId();
         }
         if (criteria.getCategory() != null) {
             categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
@@ -266,13 +268,12 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
     public TreeMap<String, TreeMap<String, List<ArticleArchive>>> getArchive() {
         List<ArticleArchive> archives = ((ArticleRepository) repository).archive();
-        TreeMap<String, TreeMap<String, List<ArticleArchive>>> response;
-        response = new TreeMap(Comparator.reverseOrder());
+        TreeMap<String, TreeMap<String, List<ArticleArchive>>> response = new TreeMap<>(Comparator.reverseOrder());
         archives.forEach(archive -> {
             String year = DateUtil.format(archive.getCreateAt(), "yyyy");
             String date = DateUtil.format(archive.getCreateAt(), "MM月");
 
-            TreeMap<String, List<ArticleArchive>> map = response.getOrDefault(year, new TreeMap<>((o1, o2) -> o2.compareTo(o1)));
+            TreeMap<String, List<ArticleArchive>> map = response.getOrDefault(year, new TreeMap<>(Comparator.reverseOrder()));
             List<ArticleArchive> articleArchiveList = map.getOrDefault(date, new ArrayList<>());
             articleArchiveList.add(archive);
             map.put(date, articleArchiveList);

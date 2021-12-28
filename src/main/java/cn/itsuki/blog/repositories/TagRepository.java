@@ -16,4 +16,6 @@ import javax.validation.constraints.NotBlank;
 @Repository
 public interface TagRepository extends BaseRepository<Tag> {
     Page<Tag> findByNameContainingOrPathContaining(@NotBlank String name, @NotBlank String path, Pageable pageable);
+
+    Tag findTagByNameEqualsOrPathEquals(String name, String path);
 }

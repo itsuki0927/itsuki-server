@@ -1,5 +1,6 @@
 package cn.itsuki.blog.services;
 
+import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
 import cn.itsuki.blog.repositories.TagRepository;
@@ -48,6 +49,16 @@ public class TagService extends BaseService<Tag, TagSearchRequest> {
             return ((TagRepository) repository).findByNameContainingOrPathContaining(name, name, pageable);
         }
         return repository.findAll(pageable);
+    }
+
+    public Tag getTagByNameOrPath(String name) {
+        Category probe = new Category();
+        probe.setName(name);
+        Tag tag = (((TagRepository) repository).findTagByNameEqualsOrPathEquals(name, name));
+        if (tag == null) {
+            throw new IllegalArgumentException("Tag 不存在");
+        }
+        return tag;
     }
 
     public Tag getTagByName(String name) {

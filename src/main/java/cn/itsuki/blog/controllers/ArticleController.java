@@ -47,7 +47,7 @@ public class ArticleController {
     }
 
     @GetMapping("/archive")
-    public WrapperResponse<TreeMap<String, TreeMap<String, List<ArticleArchive>>>> getArchive() {
+    public WrapperResponse<TreeMap<String, TreeMap<String, List<ArticleArchive>>>> archive() {
         return WrapperResponse.build(service.getArchive());
     }
 
