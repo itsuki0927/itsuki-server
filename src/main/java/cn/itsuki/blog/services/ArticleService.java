@@ -8,6 +8,7 @@ import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.ArticleSummary;
+import cn.itsuki.blog.entities.responses.ArticleDetailResponse;
 import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
 import cn.itsuki.blog.repositories.*;
 import org.springframework.beans.BeanUtils;
@@ -145,6 +146,18 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         return 1;
     }
 
+    public int patchLike(Long id) {
+        Article article = ensureExist(repository, id, "article");
+        if (article.getPublish() != PublishState.Published) {
+            throw new RuntimeException("文章未发布");
+        }
+
+        article.setLiking(article.getLiking() + 1);
+
+        repository.saveAndFlush(article);
+        return article.getLiking();
+    }
+
     /**
      * 确保是管理员操作
      */
@@ -190,6 +203,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         Long tagId = null;
         Long categoryId = null;
+        Integer publish = Optional.ofNullable(criteria.getPublish()).orElse(PublishState.Published);
 
         if (criteria.getHot() != null && criteria.getHot() == 1) {
             return getHotArticles();
@@ -281,4 +295,31 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         });
         return response;
     }
+
+    public List<ArticleId> getPaths() {
+        return ((ArticleRepository) repository).ids();
+    }
+
+    public ArticleDetailResponse get(long id) {
+        Article article = ensureExist(repository, id, "Article");
+        ArticleDetailResponse response = new ArticleDetailResponse();
+        BeanUtil.copyProperties(article, response);
+
+        response.setPrevArticle(((ArticleRepository) repository).prev(id));
+        response.setNextArticle(((ArticleRepository) repository).next(id));
+
+        return response;
+    }
+
+    public int patchRead(Long id) {
+        Article article = ensureExist(repository, id, "article");
+        if (article.getPublish() != PublishState.Published) {
+            throw new RuntimeException("文章未发布");
+        }
+        article.setReading(article.getReading() + 1);
+
+        repository.saveAndFlush(article);
+        return article.getReading();
+    }
+
 }

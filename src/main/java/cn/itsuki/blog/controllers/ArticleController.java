@@ -2,11 +2,13 @@ package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleArchive;
+import cn.itsuki.blog.entities.ArticleId;
 import cn.itsuki.blog.entities.Comment;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
 import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
+import cn.itsuki.blog.entities.responses.ArticleDetailResponse;
 import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
@@ -36,6 +38,11 @@ public class ArticleController {
         return WrapperResponse.build(service.create(article), "创建成功");
     }
 
+    @GetMapping("/paths")
+    public WrapperResponse<List<ArticleId>> getPaths() {
+        return WrapperResponse.build(service.getPaths());
+    }
+
     @GetMapping("/{id}/comments")
     public WrapperResponse<List<Comment>> getComments(@PathVariable("id") Long articleId) {
         return WrapperResponse.build(service.getComments(articleId));
@@ -52,7 +59,7 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public WrapperResponse<Article> get(@PathVariable("id") Long id) {
+    public WrapperResponse<ArticleDetailResponse> get(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.get(id));
     }
 
@@ -79,6 +86,16 @@ public class ArticleController {
     @PatchMapping("/{id}")
     public WrapperResponse<Integer> patch(@PathVariable("id") Long id, @Valid @RequestBody ArticleMetaPatchRequest request) {
         return WrapperResponse.build(service.patchMeta(id, request));
+    }
+
+    @PatchMapping("/{id}/like")
+    public WrapperResponse<Integer> patchLike(@PathVariable("id") Long id) {
+        return WrapperResponse.build(service.patchLike(id));
+    }
+
+    @PatchMapping("/{id}/read")
+    public WrapperResponse<Integer> patchRead(@PathVariable("id") Long id) {
+        return WrapperResponse.build(service.patchRead(id));
     }
 
     @PatchMapping

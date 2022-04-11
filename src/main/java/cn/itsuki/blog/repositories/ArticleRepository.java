@@ -2,6 +2,7 @@ package cn.itsuki.blog.repositories;
 
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleArchive;
+import cn.itsuki.blog.entities.ArticleId;
 import cn.itsuki.blog.entities.ArticleSummary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +32,15 @@ public interface ArticleRepository extends BaseRepository<Article> {
 
     @Query(value = "select new cn.itsuki.blog.entities.ArticleArchive(a.id , a.title, a.createAt, a.description) from article a where a.publish = 1 order by a.createAt desc")
     List<ArticleArchive> archive();
+
+    @Query(value = "select new cn.itsuki.blog.entities.ArticleId(a.id) from article a where a.publish = 1")
+    List<ArticleId> ids();
+
+    @Query(value = "select * from article where id = (select id from article where id>:articleId and publish = 1 order by id asc limit 1)", nativeQuery = true)
+    Article next(@Param("articleId") long articleId);
+
+    @Query(value = "select * from article where id = (select id from article where id<:articleId and publish = 1 order by id desc limit 1)", nativeQuery = true)
+    Article prev(@Param("articleId") long articleId);
 
     @Query("select distinct a from article a left join article_tag t on t.articleId = a.id left join article_category  ac on ac.articleId = a.id " +
             "where " +
