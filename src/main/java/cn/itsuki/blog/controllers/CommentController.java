@@ -59,6 +59,11 @@ public class CommentController {
         return WrapperResponse.build(service.patchMeta(id, request));
     }
 
+    @PatchMapping("/{id}/like")
+    public WrapperResponse<Integer> patchLike(@PathVariable("id") Long id) {
+        return WrapperResponse.build(service.patchLike(id));
+    }
+
     @DeleteMapping("/{id}")
     public WrapperResponse<Integer> delete(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.delete(id));

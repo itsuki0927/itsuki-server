@@ -111,7 +111,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     private void ensureReplySameArticle(Comment comment) {
         Long parentId = comment.getParentId();
-        if (parentId != null && parentId != 0) {
+        if (parentId != null && parentId != 0 && parentId != -1) {
             Comment parent = ensureExist(repository, parentId, "comment");
             // 如果当前评论和回复的评论文章不是同一篇
             if (!parent.getArticleId().equals(comment.getArticleId())) {
@@ -191,5 +191,13 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
 
     public Integer count(Long articleId) {
         return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, states);
+    }
+
+    public int patchLike(Long id) {
+        Comment comment = ensureExist(repository, id, "article");
+
+        comment.setLiking(comment.getLiking() + 1);
+        repository.saveAndFlush(comment);
+        return comment.getLiking();
     }
 }
