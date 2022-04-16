@@ -77,6 +77,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
     }
 
     public Comment create(CommentCreateRequest entity) {
+        if (entity.getNickname().length() >= 10) {
+            throw new IllegalArgumentException("昵称太长了, 最长: 10, 当前长度:" + entity.getNickname().length());
+        }
         Comment comment = new Comment();
         BeanUtil.copyProperties(entity, comment);
 
