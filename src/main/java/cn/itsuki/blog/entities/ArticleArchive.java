@@ -21,6 +21,7 @@ public class ArticleArchive {
     private String createAtString;
     private String description;
 
+
     public ArticleArchive(Long id, String title, Date createAt, String description) {
         this.id = id;
         this.title = title;

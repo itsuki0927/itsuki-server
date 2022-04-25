@@ -30,6 +30,12 @@ public class Article extends IdentifiableEntity {
     private String title;
 
     /**
+     * 路径
+     */
+    @NotBlank
+    private String path;
+
+    /**
      * 描述
      */
     @NotBlank
@@ -105,11 +111,6 @@ public class Article extends IdentifiableEntity {
      */
     private Integer banner;
 
-    /**
-     * 是否显示在首页: 0 -> 不显示, 1 -> 显示
-     */
-    private Integer pinned;
-
     @ManyToMany
     @JoinTable(
             name = "article_tag",
@@ -145,10 +146,6 @@ public class Article extends IdentifiableEntity {
         // 默认情况私密
         if (getOrigin() == null) {
             setOrigin(ArticleOpen.Password);
-        }
-        // 默认情况UnPinned
-        if (getPinned() == null) {
-            setPinned(CommonState.SHUT_DOWN);
         }
     }
 }

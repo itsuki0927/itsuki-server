@@ -136,10 +136,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
                 ensureAdminOperate(article);
                 article.setBanner(request.getValue());
                 break;
-            case "pinned":
-                ensureAdminOperate(article);
-                article.setPinned(request.getValue());
-                break;
         }
 
         repository.saveAndFlush(article);
@@ -192,8 +188,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     }
 
     public Page<Article> getHotArticles() {
-        Sort sort =
-                Sort.by(Sort.Direction.DESC, "reading");
+        Sort sort = Sort.by(Sort.Direction.DESC, "reading");
         Pageable pageable = new OffsetLimitPageRequest(0, 8, sort);
 
         return normalizeArticles(((ArticleRepository) repository).queryArticlesByPublish(PublishState.Published, pageable));
@@ -218,7 +213,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         }
 
         Page<Article> articles = ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), criteria.getPinned(), pageable);
+                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
         return normalizeArticles(articles);
     }
 

@@ -53,13 +53,12 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:origin is null or a.origin = :origin)" +
             "and (:open is null or a.open = :open)" +
             "and (:banner is null or a.banner = :banner)" +
-            "and (:pinned is null or a.pinned = :pinned)" +
             "and (:tag is null or t.tagId = :tag)" +
             "and (:category is null or ac.categoryId = :category) " +
             "")
     Page<Article> search(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
                          @Param("open") Integer open, @Param("tag") Long tag, @Param("category") Long category,
-                         @Param("banner") Integer banner, @Param("pinned") Integer pinned, Pageable pageable);
+                         @Param("banner") Integer banner, Pageable pageable);
 
     Page<Article> queryArticlesByPublish(@Param("publish") Integer publish, Pageable pageable);
 

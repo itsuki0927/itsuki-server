@@ -36,11 +36,6 @@ public class ArticleSearchRequest extends BaseSearchRequest {
     private Integer banner;
 
     /**
-     * Pinned状态
-     */
-    private Integer pinned;
-
-    /**
      * 公开状态
      */
     private Integer open;
