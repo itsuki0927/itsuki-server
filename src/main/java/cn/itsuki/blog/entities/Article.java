@@ -111,19 +111,15 @@ public class Article extends IdentifiableEntity {
      */
     private Integer banner;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Category category;
+
     @ManyToMany
     @JoinTable(
             name = "article_tag",
             joinColumns = @JoinColumn(name = "article_id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id"))
     private Set<Tag> tags;
-
-    @ManyToMany
-    @JoinTable(
-            name = "article_category",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "category_id"))
-    private Set<Category> categories;
 
     @OneToMany(fetch = FetchType.LAZY)
     @JoinColumn(name = "article_id")

@@ -34,8 +34,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     @Autowired
     private ArticleTagRepository articleTagRepository;
     @Autowired
-    private ArticleCategoryRepository articleCategoryRepository;
-    @Autowired
     private TagService tagService;
     @Autowired
     private CategoryService categoryService;
@@ -71,17 +69,14 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         Article article = super.create(entity);
 
         saveAllTags(request.getTagIds(), article.getId());
-        saveAllCategories(request.getCategoryIds(), article.getId());
+        Category category = categoryService.get(request.getCategoryId());
+        article.setCategory(category);
 
         return article;
     }
 
     private void deleteTag(long articleId) {
         articleTagRepository.deleteAllByArticleIdEquals(articleId);
-    }
-
-    private void deleteCategory(long articleId) {
-        articleCategoryRepository.deleteAllByArticleIdEquals(articleId);
     }
 
     private void deleteComment(long articleId) {
@@ -93,11 +88,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
         // 删除当前文章的tag、category
         deleteTag(id);
-        deleteCategory(id);
 
         // 添加tag、category
         saveAllTags(entity.getTagIds(), id);
-        saveAllCategories(entity.getCategoryIds(), id);
+        if (article.getCategory().getId() != entity.getCategoryId()) {
+            Category category = categoryService.get(entity.getCategoryId());
+            article.setCategory(category);
+        }
 
         BeanUtil.copyProperties(entity, article, CopyOptions.create().ignoreNullValue());
 
@@ -108,7 +105,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     public int delete(long id) {
         int result = super.delete(id);
 
-        deleteCategory(id);
         deleteTag(id);
         deleteComment(id);
 
@@ -172,18 +168,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
     private void ensureArticleMetaExist(String meta) {
         if (!meta.equals("reading") && !meta.equals("liking") && !meta.equals("banner") && !meta.equals("pinned")) {
             throw new IllegalArgumentException("meta can only be one of reading、liking、banner and pinned");
-        }
-    }
-
-    private void saveAllCategories(List<Long> categoryIds, Long articleId) {
-        if (categoryIds != null) {
-            List<ArticleCategory> categoryList = categoryIds.stream().map(categoryId -> {
-                ArticleCategory category = new ArticleCategory();
-                category.setCategoryId(categoryId);
-                category.setArticleId(articleId);
-                return category;
-            }).collect(Collectors.toList());
-            articleCategoryRepository.saveAll(categoryList);
         }
     }
 

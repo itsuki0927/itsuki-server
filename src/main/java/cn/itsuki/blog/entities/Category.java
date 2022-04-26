@@ -5,11 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
+import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 /**
  * 分类 实体
@@ -56,21 +54,19 @@ public class Category extends IdentifiableEntity {
      */
     @Min(0)
     private Integer count;
+//
+//    @OneToMany
+//    @JoinColumn(name = "category_id")
+//    @OrderBy(value = "createAt")
+//    private List<Article> articles;
 
-    /**
-     * 父类id
-     */
-    @NotNull
-    @Column(name = "parent_id")
-    private Long parentId;
+//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
+//    private List<Article> articles;
 
     @Override
     protected void onCreateAction() {
         setSort(CommonState.INIT_VALUE);
         setCount(CommonState.INIT_VALUE);
-        if (getParentId() == null) {
-            setParentId(CommonState.NO_PARENT);
-        }
     }
 }
 

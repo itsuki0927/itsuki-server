@@ -58,8 +58,8 @@ public class ArticleCreateRequest {
     /**
      * 分类id
      */
-    @NotEmpty
-    private List<Long> categoryIds;
+    @NotNull
+    private Long categoryId;
 
     /**
      * 标签id
