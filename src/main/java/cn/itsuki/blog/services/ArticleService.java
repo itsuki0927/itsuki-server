@@ -124,6 +124,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         ensureArticleMetaExist(meta);
 
         Article article = ensureExist(repository, id, "article");
+        ensureAdminOperate();
 
         switch (meta) {
             case "reading":
@@ -133,7 +134,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
                 article.setLiking(article.getLiking() + 1);
                 break;
             case "banner":
-                ensureAdminOperate(article);
                 article.setBanner(request.getValue());
                 break;
         }
@@ -157,10 +157,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     /**
      * 确保是管理员操作
      */
-    private void ensureAdminOperate(Article article) {
+    private void ensureAdminOperate() {
         if (adminService.getCurrentAdmin() == null) {
             throw new IllegalArgumentException("没有权限");
         }
+    }
+
+    private void ensureArticleAllowOperate(Article article) {
         if (article.getPublish() != PublishState.Published) {
             throw new IllegalArgumentException("文章还没发布");
         }
@@ -319,6 +322,41 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public int updateArticleState(List<Long> ids, Integer publish) {
+        ensureAdminOperate();
         return ((ArticleRepository) repository).batchUpdateState(publish, ids);
+    }
+
+    public int updateArticleBanner(List<Long> ids, Integer banner) {
+        ensureAdminOperate();
+
+        List<Article> articles = ids.stream().map(id -> {
+            Article article = ensureExist(repository, id, "article");
+            if (article.getPublish() != PublishState.Published) {
+                return null;
+            }
+            article.setBanner(banner);
+            return article;
+        }).filter(Objects::nonNull).collect(Collectors.toList());
+
+        repository.saveAll(articles);
+        return articles.size();
+    }
+
+    public int incrementArticleReading(Long id) {
+        Article article = ensureExist(repository, id, "article");
+        ensureArticleAllowOperate(article);
+        article.setReading(article.getReading() + 1);
+
+        repository.save(article);
+        return article.getReading();
+    }
+
+    public int incrementArticleLiking(Long id) {
+        Article article = ensureExist(repository, id, "article");
+        ensureArticleAllowOperate(article);
+        article.setLiking(article.getLiking() + 1);
+
+        repository.save(article);
+        return article.getLiking();
     }
 }
