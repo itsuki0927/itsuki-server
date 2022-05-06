@@ -1,0 +1,31 @@
+type Mutation{
+    createArticle(input: CreateArticleInput!): Article
+#    createComment(input: CreateCommentInput!): Comment
+}
+
+input CreateArticleInput {
+    title:String!
+    path:String!
+    description:String!
+    keywords: String!
+    content:String!
+    cover:String!
+    categoryId:Int!
+    password:String
+    publish: Int!
+    origin:Int!
+    open:Int!
+    banner:Int!
+    tagIds: [Int]
+}
+
+input CreateCommentInput{
+    nickname:String
+    email:String
+    website:String
+    agent:String
+    content:String
+    expand:String
+    parentId:ID
+    articleId:ID
+}

@@ -1,0 +1,22 @@
+input BaseSearchRequest {
+    current:Int
+    pageSize:Int
+    sortBy:String
+    sortOrder:String
+}
+
+input ArticleSearchRequest {
+    current:Int = 1
+    pageSize:Int = 10
+    sortBy:String
+    sortOrder:String
+    name:String
+    publish:Int
+    origin:Int
+    banner:Int
+    open:Int
+    tag:String
+    category:String
+    hot:Int
+}
+

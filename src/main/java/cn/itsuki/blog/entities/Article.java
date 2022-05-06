@@ -111,19 +111,7 @@ public class Article extends IdentifiableEntity {
      */
     private Integer banner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    private Category category;
-
-    @ManyToMany
-    @JoinTable(
-            name = "article_tag",
-            joinColumns = @JoinColumn(name = "article_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
-    private Set<Tag> tags;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "article_id")
-    private Set<Comment> comments;
+    private Long categoryId;
 
     @Override
     protected void onCreateAction() {

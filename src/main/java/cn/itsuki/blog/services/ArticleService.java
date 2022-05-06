@@ -69,8 +69,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         Article article = super.create(entity);
 
         saveAllTags(request.getTagIds(), article.getId());
-        Category category = categoryService.get(request.getCategoryId());
-        article.setCategory(category);
+//         Category category = categoryService.get(request.getCategoryId());
+//         article.setCategory(category);
 
         return article;
     }
@@ -91,10 +91,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
 
         // 添加tag、category
         saveAllTags(entity.getTagIds(), id);
-        if (article.getCategory().getId() != entity.getCategoryId()) {
-            Category category = categoryService.get(entity.getCategoryId());
-            article.setCategory(category);
-        }
+        // if (article.getCategory().getId() != entity.getCategoryId()) {
+        //     Category category = categoryService.get(entity.getCategoryId());
+        //     article.setCategory(category);
+        // }
 
         BeanUtil.copyProperties(entity, article, CopyOptions.create().ignoreNullValue());
 
@@ -206,12 +206,12 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
             Article result = new Article();
             BeanUtils.copyProperties(article, result);
             result.setContent("content placeholder");
-            result.setComments(result.getComments().stream().map(item -> {
-                Comment comment = new Comment();
-                BeanUtils.copyProperties(item, comment);
-                comment.setContent("comment placeholder");
-                return comment;
-            }).collect(Collectors.toSet()));
+            //    result.setComments(result.getComments().stream().map(item -> {
+            //        Comment comment = new Comment();
+            //        BeanUtils.copyProperties(item, comment);
+            //        comment.setContent("comment placeholder");
+            //        return comment;
+            //    }).collect(Collectors.toSet()));
             return result;
         });
     }

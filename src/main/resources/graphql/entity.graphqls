@@ -1,0 +1,62 @@
+type Comment {
+    id:ID!
+    nickname:String
+    email:String
+    website:String
+    content:String
+    liking:Int
+    ip:String
+    agent:String
+    city:String
+    province:String
+    status:Int
+    fix:Int
+    expand:String
+    articleTitle:String
+    articleDescription:String
+    parentNickName:String
+    parentId:ID
+    articleId:ID!
+}
+
+type Article {
+    id:ID!
+    createAt: Date
+    updateAt: Date
+    title:String
+    path:String
+    description:String
+    keywords: String
+    content:String
+    cover:String
+    commenting:Int
+    author:String
+    liking:Int
+    reading:Int
+    password:String
+    publish: Int
+    origin:Int
+    open:Int
+    banner:Int
+    tags: [Tag]
+}
+
+type Tag{
+    id:ID!
+    name:String
+    path:String
+    description:String
+    expand:String
+    sort:Int
+    count:Int
+}
+
+type Category {
+    id:ID!
+    name: String
+    path: String
+    description: String
+    expand: String
+    sort: Int
+    count: Int
+}

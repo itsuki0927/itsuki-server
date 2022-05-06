@@ -54,11 +54,27 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:open is null or a.open = :open)" +
             "and (:banner is null or a.banner = :banner)" +
             "and (:tag is null or t.tagId = :tag)" +
-            "and (:category is null or a.category.id = :category) " +
+            "and (:category is null or a.categoryId = :category) " +
             "")
     Page<Article> search(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
                          @Param("open") Integer open, @Param("tag") Long tag, @Param("category") Long category,
                          @Param("banner") Integer banner, Pageable pageable);
+
+
+    @Query("select distinct a from article a " +
+            "where " +
+            "(" +
+            "   :name is null or a.title like %:name% " +
+            "                 or a.keywords like %:name% " +
+            "                 or a.description like  %:name%" +
+            ")" +
+            "and (:publish is null or a.publish = :publish)" +
+            "and (:origin is null or a.origin = :origin)" +
+            "and (:open is null or a.open = :open)" +
+            "and (:banner is null or a.banner = :banner)" +
+            "")
+    Page<Article> search2(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
+                          @Param("open") Integer open, @Param("banner") Integer banner, Pageable pageable);
 
     Page<Article> queryArticlesByPublish(@Param("publish") Integer publish, Pageable pageable);
 
@@ -74,7 +90,7 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:open is null or a.open = :open)" +
             "and (:banner is null or a.banner = :banner)" +
             "and (:tagId is null or t.id = :tagId)" +
-            "and (:categoryId is null or a.category.id = :categoryId)" +
+            "and (:categoryId is null or a.categoryId = :categoryId)" +
             "")
     int count(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
               @Param("open") Integer open, @Param("tagId") Long tagId, @Param("categoryId") Long categoryId, @Param("banner") Integer banner);

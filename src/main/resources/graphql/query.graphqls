@@ -1,0 +1,18 @@
+type Page {
+    total:Int
+    data: [Article]
+}
+
+type Query {
+    categories: [Category]
+    articles(search: ArticleSearchRequest): Page
+    tags: [Tag]
+}
+
+scalar Date
+scalar DateTime
+
+schema {
+    query: Query
+    mutation: Mutation
+}
