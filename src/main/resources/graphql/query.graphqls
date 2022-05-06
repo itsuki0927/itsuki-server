@@ -1,12 +1,21 @@
-type Page {
+interface SearchResponse {
+    total:Int
+}
+
+type SearchArticleResponse implements SearchResponse {
     total:Int
     data: [Article]
 }
 
+type SearchTagResponse implements SearchResponse{
+    total:Int
+    data: [Tag]
+}
+
 type Query {
     categories: [Category]
-    articles(search: ArticleSearchRequest): Page
-    tags: [Tag]
+    articles(search: ArticleSearchRequest): SearchArticleResponse
+    tags(search: TagSearchRequest): SearchTagResponse
 }
 
 scalar Date

@@ -8,6 +8,7 @@ import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -29,7 +30,7 @@ import java.util.stream.Collectors;
  * @create: 2021-10-03 16:34
  **/
 @Service
-public class CommentService extends BaseService<Comment, CommentSearchRequest> {
+public class CommentService extends BaseService<Comment, CommentSearchRequest> implements GraphQLQueryResolver {
 
     @Autowired
     private BlackIpService ipService;
@@ -202,5 +203,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> {
         comment.setLiking(comment.getLiking() + 1);
         repository.saveAndFlush(comment);
         return comment.getLiking();
+    }
+
+    public List<Comment> comments(Long articleId) {
+        return repository.findAll();
     }
 }

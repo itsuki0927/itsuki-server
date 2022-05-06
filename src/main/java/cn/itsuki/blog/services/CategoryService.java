@@ -3,12 +3,14 @@ package cn.itsuki.blog.services;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.repositories.CategoryRepository;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -18,7 +20,7 @@ import java.util.Optional;
  * @create: 2021-09-21 18:18
  **/
 @Service
-public class CategoryService extends BaseService<Category, BaseSearchRequest> {
+public class CategoryService extends BaseService<Category, BaseSearchRequest> implements GraphQLQueryResolver {
     /**
      * 创建一个service实例
      */
@@ -30,6 +32,10 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> {
     public Category create(Category entity) {
         ensureCategoryExist(entity);
         return super.create(entity);
+    }
+
+    public List<Category> categories() {
+        return repository.findAll();
     }
 
     @Override

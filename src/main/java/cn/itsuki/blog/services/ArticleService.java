@@ -10,7 +10,10 @@ import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.ArticleSummary;
 import cn.itsuki.blog.entities.responses.ArticleDetailResponse;
 import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
+import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
+import graphql.kickstart.tools.GraphQLMutationResolver;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,7 +31,7 @@ import java.util.stream.Collectors;
  * @create: 2021-09-20 22:19
  **/
 @Service
-public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
+public class ArticleService extends BaseService<Article, ArticleSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
     @Autowired
     private AdminService adminService;
     @Autowired
@@ -62,6 +65,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
             articleTagRepository.saveAll(tagList);
         }
     }
+
 
     public Article create(ArticleCreateRequest request) {
         Article entity = new Article();
@@ -196,9 +200,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
             categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
         }
 
-        Page<Article> articles = ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
-        return normalizeArticles(articles);
+        return ((ArticleRepository) repository).search2(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
+                criteria.getOpen(), criteria.getBanner(), pageable);
     }
 
     private Page<Article> normalizeArticles(Page<Article> articles) {
@@ -301,4 +304,21 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> {
         return article.getReading();
     }
 
+    public SearchResponse<Article> articles(ArticleSearchRequest criteria) {
+        return search(criteria);
+    }
+
+    public Article createArticle(ArticleCreateRequest request) {
+        Article entity = new Article();
+        BeanUtils.copyProperties(request, entity);
+        Article article = super.create(entity);
+
+        saveAllTags(request.getTagIds(), article.getId());
+
+        return article;
+    }
+
+    public int updateArticleState(List<Long> ids, Integer publish) {
+        return ((ArticleRepository) repository).batchUpdateState(publish, ids);
+    }
 }

@@ -1,6 +1,7 @@
 type Mutation{
     createArticle(input: CreateArticleInput!): Article
-#    createComment(input: CreateCommentInput!): Comment
+    # 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
+    updateArticleState(ids: [ID]!, state: Int!): Int
 }
 
 input CreateArticleInput {

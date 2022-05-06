@@ -3,7 +3,9 @@ package cn.itsuki.blog.services;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
+import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.TagRepository;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,7 +21,7 @@ import java.util.Optional;
  * @create: 2021-09-21 18:18
  **/
 @Service
-public class TagService extends BaseService<Tag, TagSearchRequest> {
+public class TagService extends BaseService<Tag, TagSearchRequest> implements GraphQLQueryResolver {
     /**
      * 创建一个service实例
      */
@@ -69,5 +71,9 @@ public class TagService extends BaseService<Tag, TagSearchRequest> {
             throw new IllegalArgumentException("tag 不存在");
         }
         return optional.get();
+    }
+
+    public SearchResponse<Tag> tags(TagSearchRequest criteria) {
+        return search(criteria);
     }
 }

@@ -46,9 +46,19 @@ public class ArticleSearchRequest extends BaseSearchRequest {
     private String tag;
 
     /**
+     * 标签路径
+     */
+    private String tagPath;
+
+    /**
      * 分类
      */
     private String category;
+
+    /**
+     * 分类
+     */
+    private String categoryPath;
 
     /**
      * 排行榜

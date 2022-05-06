@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 @Component
-public class TagResolver implements GraphQLResolver<Article> {
+public class TagGraphqlResolver implements GraphQLResolver<Article> {
     @Autowired
     private TagRepository tagRepository;
     @Autowired

@@ -20,3 +20,11 @@ input ArticleSearchRequest {
     hot:Int
 }
 
+input TagSearchRequest {
+    current:Int = 1
+    pageSize:Int = 10
+    sortBy:String
+    sortOrder:String
+    name:String
+}
+
