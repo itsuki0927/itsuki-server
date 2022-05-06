@@ -312,6 +312,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public Article createArticle(ArticleCreateRequest request) {
+        ensureAdminOperate();
+
         Article entity = new Article();
         BeanUtils.copyProperties(request, entity);
         Article article = super.create(entity);
@@ -319,6 +321,21 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         saveAllTags(request.getTagIds(), article.getId());
 
         return article;
+    }
+
+    public Article updateArticle(Long id, ArticleCreateRequest entity) {
+        ensureAdminOperate();
+
+        Article article = ensureExist(repository, id, "article");
+
+        // 删除当前文章的tag、category
+        deleteTag(id);
+        // 添加tag、category
+        saveAllTags(entity.getTagIds(), id);
+
+        BeanUtil.copyProperties(entity, article);
+
+        return super.update(id, article);
     }
 
     public int updateArticleState(List<Long> ids, Integer publish) {
