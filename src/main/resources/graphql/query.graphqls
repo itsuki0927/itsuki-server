@@ -17,6 +17,7 @@ type Query {
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
     article(id:ID!): Article
+    comments(articleId:ID!): [Comment]
 }
 
 scalar Date

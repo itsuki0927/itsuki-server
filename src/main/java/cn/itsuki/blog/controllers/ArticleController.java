@@ -43,11 +43,6 @@ public class ArticleController {
         return WrapperResponse.build(service.getPaths());
     }
 
-    @GetMapping("/{id}/comments")
-    public WrapperResponse<List<Comment>> getComments(@PathVariable("id") Long articleId) {
-        return WrapperResponse.build(service.getComments(articleId));
-    }
-
     @GetMapping("/summary")
     public WrapperResponse<ArticleSummaryResponse> getSummary() {
         return WrapperResponse.build(service.getSummary());

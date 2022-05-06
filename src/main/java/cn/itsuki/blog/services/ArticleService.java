@@ -235,10 +235,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner());
     }
 
-    public List<Comment> getComments(Long articleId) {
-        return commentRepository.findCommentsByArticleIdAndStatusIsIn(articleId, states);
-    }
-
     public ArticleSummaryResponse getSummary() {
         List<ArticleSummary> summaries = ((ArticleRepository) repository).summary();
 

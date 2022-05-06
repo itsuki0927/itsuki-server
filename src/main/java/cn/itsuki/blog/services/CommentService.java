@@ -206,6 +206,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     public List<Comment> comments(Long articleId) {
-        return repository.findAll();
+        List<Integer> states = new ArrayList<>();
+        states.add(CommentState.Auditing);
+        states.add(CommentState.Published);
+        return ((CommentRepository) repository).findCommentsByArticleIdAndStatusIsIn(articleId, states);
     }
 }
