@@ -1,8 +1,11 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
+import cn.itsuki.blog.entities.requests.CategoryActionInput;
 import cn.itsuki.blog.repositories.CategoryRepository;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -20,22 +23,12 @@ import java.util.Optional;
  * @create: 2021-09-21 18:18
  **/
 @Service
-public class CategoryService extends BaseService<Category, BaseSearchRequest> implements GraphQLQueryResolver {
+public class CategoryService extends BaseService<Category, BaseSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
     /**
      * 创建一个service实例
      */
     public CategoryService() {
         super("id", new String[]{"id", "sort"});
-    }
-
-    @Override
-    public Category create(Category entity) {
-        ensureCategoryExist(entity);
-        return super.create(entity);
-    }
-
-    public List<Category> categories() {
-        return repository.findAll();
     }
 
     @Override
@@ -60,5 +53,34 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
             throw new IllegalArgumentException("category 不存在");
         }
         return category;
+    }
+
+    public List<Category> categories() {
+        return repository.findAll();
+    }
+
+    public Category createCategory(CategoryActionInput entity) {
+        Category probe = new Category();
+        BeanUtil.copyProperties(entity, probe);
+        ensureCategoryExist(probe);
+        return super.create(probe);
+    }
+
+    public Category updateCategory(Long categoryId, CategoryActionInput input) {
+        Category oldCategory = ensureExist(repository, categoryId, "Entity");
+        Category entity = new Category();
+        BeanUtil.copyProperties(input, entity);
+
+        entity.setId(categoryId);
+        entity.setCount(oldCategory.getCount());
+        entity.setCreateAt(oldCategory.getCreateAt());
+
+        ensureCategoryExist(entity);
+        validateEntity(entity);
+        return repository.saveAndFlush(entity);
+    }
+
+    public int deleteCategory(Long categoryId) {
+        return super.delete(categoryId);
     }
 }

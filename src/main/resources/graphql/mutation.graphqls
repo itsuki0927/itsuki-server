@@ -7,6 +7,10 @@ type Mutation {
     updateArticleBanner(ids: [ID]!, banner: Int!):Int
     incrementArticleReading(id:ID!): Int
     incrementArticleLiking(id:ID!): Int
+
+    createCategory(input: CategoryActionInput!): Category
+    updateCategory(categoryId:ID!, input: CategoryActionInput!): Category
+    deleteCategory(categoryId: ID!):Int
 }
 
 input CreateArticleInput {
@@ -34,4 +38,22 @@ input CreateCommentInput{
     expand:String
     parentId:ID
     articleId:ID
+}
+
+input CategoryActionInput{
+    name: String
+    path: String
+    description: String
+    expand: String
+    sort: Int
+}
+
+fragment CategoryFragment on Category{
+    name
+    id
+    path
+    description
+    count
+    sort
+    expand
 }
