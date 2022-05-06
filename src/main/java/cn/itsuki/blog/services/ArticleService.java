@@ -338,6 +338,15 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return super.update(id, article);
     }
 
+    public int deleteArticle(Long articleId) {
+        ensureAdminOperate();
+
+        deleteTag(articleId);
+        deleteComment(articleId);
+        return super.delete(articleId);
+    }
+
+
     public int updateArticleState(List<Long> ids, Integer publish) {
         ensureAdminOperate();
         return ((ArticleRepository) repository).batchUpdateState(publish, ids);

@@ -3,7 +3,6 @@ package cn.itsuki.blog.controllers;
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleArchive;
 import cn.itsuki.blog.entities.ArticleId;
-import cn.itsuki.blog.entities.Comment;
 import cn.itsuki.blog.entities.requests.ArticleCreateRequest;
 import cn.itsuki.blog.entities.requests.ArticleMetaPatchRequest;
 import cn.itsuki.blog.entities.requests.ArticlePatchRequest;
