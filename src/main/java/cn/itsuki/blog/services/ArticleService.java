@@ -311,6 +311,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return search(criteria);
     }
 
+    public Article article(Long id) {
+        return get(id);
+    }
+
     public Article createArticle(ArticleCreateRequest request) {
         ensureAdminOperate();
 

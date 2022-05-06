@@ -16,6 +16,7 @@ type Query {
     categories: [Category]
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
+    article(id:ID!): Article
 }
 
 scalar Date

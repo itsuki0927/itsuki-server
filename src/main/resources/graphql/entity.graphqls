@@ -38,7 +38,9 @@ type Article {
     origin:Int
     open:Int
     banner:Int
+    categoryId: ID
     tags: [Tag]
+    category: Category
 }
 
 type Tag{
