@@ -3,6 +3,8 @@ package cn.itsuki.blog.entities.requests;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * 评论搜索 请求类
  *

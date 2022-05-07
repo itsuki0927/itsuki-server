@@ -12,12 +12,16 @@ type SearchTagResponse implements SearchResponse{
     data: [Tag]
 }
 
+type SearchCommentResponse implements SearchResponse{
+    total:Int
+    data:[Comment]
+}
+
 type Query {
     categories: [Category]
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
-    article(id:ID!): Article
-    comments(articleId:ID!): [Comment]
+    comments(input: CommentSearchRequest): SearchCommentResponse
 }
 
 scalar Date

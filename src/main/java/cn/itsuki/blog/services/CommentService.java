@@ -5,6 +5,7 @@ import cn.hutool.core.bean.copier.CopyOptions;
 import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
+import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -205,10 +206,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return comment.getLiking();
     }
 
-    public List<Comment> comments(Long articleId) {
-        List<Integer> states = new ArrayList<>();
-        states.add(CommentState.Auditing);
-        states.add(CommentState.Published);
-        return ((CommentRepository) repository).findCommentsByArticleIdAndStatusIsIn(articleId, states);
+    public SearchResponse<Comment> comments(CommentSearchRequest input) {
+        return search(input);
     }
 }

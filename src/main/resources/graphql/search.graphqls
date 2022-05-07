@@ -27,3 +27,13 @@ input TagSearchRequest {
     sortOrder:String
     name:String
 }
+
+input CommentSearchRequest {
+    current:Int = 1
+    pageSize:Int = 10
+    sortBy:String
+    sortOrder:String
+    articleId:ID
+    keyword:String
+    status:Int
+}
