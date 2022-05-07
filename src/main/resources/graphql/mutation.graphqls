@@ -1,7 +1,7 @@
 type Mutation {
     createArticle(input: CreateArticleInput!): Article
     updateArticle(id: ID!, input: CreateArticleInput!): Article
-    deleteArticle(articleId: ID!): Int
+    deleteArticle(id: ID!): Int
     # 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
     updateArticleState(ids: [ID]!, state: Int!): Int
     updateArticleBanner(ids: [ID]!, banner: Int!):Int
@@ -9,8 +9,8 @@ type Mutation {
     incrementArticleLiking(id:ID!): Int
 
     createCategory(input: CategoryActionInput!): Category
-    updateCategory(categoryId:ID!, input: CategoryActionInput!): Category
-    deleteCategory(categoryId: ID!):Int
+    updateCategory(id:ID!, input: CategoryActionInput!): Category
+    deleteCategory(id: ID!):Int
 }
 
 input CreateArticleInput {

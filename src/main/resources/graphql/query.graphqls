@@ -19,6 +19,7 @@ type SearchCommentResponse implements SearchResponse{
 
 type Query {
     categories: [Category]
+    article(id:ID!): Article
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
     comments(input: CommentSearchRequest): SearchCommentResponse
