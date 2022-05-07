@@ -9,6 +9,7 @@ import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +32,7 @@ import java.util.stream.Collectors;
  * @create: 2021-10-03 16:34
  **/
 @Service
-public class CommentService extends BaseService<Comment, CommentSearchRequest> implements GraphQLQueryResolver {
+public class CommentService extends BaseService<Comment, CommentSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
 
     @Autowired
     private BlackIpService ipService;
@@ -45,6 +46,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private RequestUtil requestUtil;
     @Autowired
     private AkismetService akismetService;
+    @Autowired
+    private AdminService adminService;
     @Value("${mode.isDev}")
     private boolean isDev;
     private String devIP = "220.169.96.10";
@@ -56,6 +59,16 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         states.add(CommentState.Auditing);
         states.add(CommentState.Published);
     }
+
+    /**
+     * 确保是管理员操作
+     */
+    private void ensureAdminOperate() {
+        if (adminService.getCurrentAdmin() == null) {
+            throw new IllegalArgumentException("没有权限");
+        }
+    }
+
 
     private Article ensureArticleExist(Long articleId) {
         if (articleId == null) {
@@ -208,5 +221,19 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     public SearchResponse<Comment> comments(CommentSearchRequest input) {
         return search(input);
+    }
+
+    public int deleteComment(Long id) {
+        Comment comment = ensureExist(repository, id, "Comment");
+        ensureAdminOperate();
+        ensureCanDelete(comment);
+        repository.deleteById(id);
+        return 1;
+    }
+
+    private void ensureCanDelete(Comment comment) {
+        if (comment.getStatus() == CommentState.Auditing || comment.getStatus() == CommentState.Published) {
+            throw new IllegalArgumentException("只有在回收站、已删除的评论才能彻底删除");
+        }
     }
 }

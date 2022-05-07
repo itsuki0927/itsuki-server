@@ -132,7 +132,7 @@ public class Comment extends IdentifiableEntity {
     @Override
     protected void onCreateAction() {
         if (getParentId() == null) {
-            setParentId((long) CommonState.NO_PARENT);
+            setParentId(CommonState.NO_PARENT);
         }
         // 没有文章id, 默认为留言板
         if (getArticleId() == null) {
