@@ -20,6 +20,6 @@ public class CommentPatchRequest {
     private List<Long> ids;
 
     @NotNull
-    private Integer status;
+    private Integer state;
 }
 

@@ -18,7 +18,7 @@ public class LoginResponse {
     /**
      * 登陆状态： OK->登陆成功, FALSE->登陆失败
      */
-    private OperateState status;
+    private OperateState state;
     /**
      * 生成的token
      */

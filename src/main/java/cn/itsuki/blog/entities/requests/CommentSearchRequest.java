@@ -27,5 +27,5 @@ public class CommentSearchRequest extends BaseSearchRequest {
     /**
      * 状态
      */
-    private Integer status;
+    private Integer state;
 }

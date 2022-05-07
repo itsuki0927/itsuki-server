@@ -28,6 +28,7 @@ public class BlackIpService {
         repository.deleteAll();
     }
 
+
     public void save(List<String> ipList) {
         List<BlackIp> blackIpList = ipList.stream().map(v -> {
             BlackIp blackIp = new BlackIp();
@@ -37,6 +38,13 @@ public class BlackIpService {
         repository.saveAll(blackIpList);
     }
 
+
+    public void save(String ip) {
+        BlackIp blackIp = new BlackIp();
+        blackIp.setIp(ip);
+        repository.save(blackIp);
+    }
+
     public void clearAndSave(List<String> ipList) {
         clear();
         save(ipList);
@@ -44,6 +52,10 @@ public class BlackIpService {
 
     public void remove(List<String> ipList) {
         repository.deleteBlackIpsByIpIn(ipList);
+    }
+
+    public void remove(String ip) {
+        repository.deleteBlackIpByIpEquals(ip);
     }
 
     public boolean isInBlackList(String ip) {

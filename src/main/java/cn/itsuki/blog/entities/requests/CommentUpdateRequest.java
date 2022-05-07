@@ -54,5 +54,5 @@ public class CommentUpdateRequest {
      * 状态
      */
     @NotNull
-    private Integer status;
+    private Integer state;
 }

@@ -15,7 +15,7 @@ public class ArticleSummary {
     private Integer publish;
     private Long value;
     private String title;
-    private String status;
+    private String state;
 
     public ArticleSummary(Integer publish, Long value) {
         this.publish = publish;

@@ -9,7 +9,7 @@ type Comment {
     agent:String
     city:String
     province:String
-    status:Int
+    state:Int
     fix:Int
     expand:String
     articleTitle:String

@@ -242,20 +242,20 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         summaries.forEach(summary -> {
             if (summary.getPublish() == PublishState.Draft) {
                 summary.setTitle("草稿");
-                summary.setStatus("warning");
+                summary.setState("warning");
                 response.setDraft(summary);
             } else if (summary.getPublish() == PublishState.Published) {
                 summary.setTitle("已发布");
-                summary.setStatus("success");
+                summary.setState("success");
                 response.setPublished(summary);
             } else if (summary.getPublish() == PublishState.Recycle) {
                 summary.setTitle("回收站");
-                summary.setStatus("error");
+                summary.setState("error");
                 response.setRecycle(summary);
             }
         });
         ArticleSummary total = new ArticleSummary(0, summaries.stream().map(ArticleSummary::getValue).reduce(0L, Long::sum));
-        total.setStatus("processing");
+        total.setState("processing");
         total.setTitle("全部");
         response.setTotal(total);
         return response;

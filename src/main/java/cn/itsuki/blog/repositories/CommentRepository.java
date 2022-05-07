@@ -21,12 +21,17 @@ import java.util.List;
 public interface CommentRepository extends BaseRepository<Comment> {
     @Modifying
     @Transactional
-    @Query(value = "update comment  c set c.status = :status where c.id in :ids")
-    int batchPatchStatus(@Param("ids") List<Long> ids, @Param("status") Integer status);
+    @Query(value = "update comment  c set c.state = :state where c.id in :ids")
+    int batchPatchStatus(@Param("ids") List<Long> ids, @Param("state") Integer state);
 
-    List<Comment> findCommentsByArticleIdAndStatusIsIn(Long articleId, List<Integer> status);
+    @Modifying
+    @Transactional
+    @Query(value = "update comment  c set c.state = :state where c.id = :id")
+    int updateState(@Param("id") Long id, @Param("state") Integer state);
 
-    int countCommentsByArticleIdEqualsAndStatusIsIn(Long articleId, List<Integer> status);
+    List<Comment> findCommentsByArticleIdAndStateIsIn(Long articleId, List<Integer> state);
+
+    int countCommentsByArticleIdEqualsAndStateIsIn(Long articleId, List<Integer> state);
 
     List<Comment> findCommentsByIdIn(List<Long> ids);
 
@@ -35,7 +40,7 @@ public interface CommentRepository extends BaseRepository<Comment> {
     /**
      * @param keyword   关键字
      * @param articleId 文章id
-     * @param status    状态
+     * @param state     状态
      * @param pageable  分页
      * @return 分页列表
      */
@@ -48,8 +53,8 @@ public interface CommentRepository extends BaseRepository<Comment> {
             "                  or c.articleTitle like %:keyword%" +
             ")" +
             "and (:articleId is null or c.articleId = :articleId)" +
-            "and (:status is null or c.status = :status)" +
+            "and (:state is null or c.state = :state)" +
             "")
     Page<Comment> search(@Param("keyword") String keyword, @Param("articleId") Long articleId,
-                         @Param("status") Integer status, Pageable pageable);
+                         @Param("state") Integer state, Pageable pageable);
 }

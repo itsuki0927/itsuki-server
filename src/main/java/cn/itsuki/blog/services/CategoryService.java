@@ -44,7 +44,6 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         }
     }
 
-
     @Override
     protected Page<Category> searchWithPageable(BaseSearchRequest criteria, Pageable pageable) {
         return repository.findAll(pageable);

@@ -152,12 +152,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     @Override
     protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
         return ((CommentRepository) repository).search(
-                criteria.getKeyword(), criteria.getArticleId(), criteria.getStatus(), pageable);
+                criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), pageable);
     }
 
     public Integer patch(CommentPatchRequest request) {
         // 是否为垃圾评论
-        boolean isSpam = request.getStatus() == CommentState.Spam;
+        boolean isSpam = request.getState() == CommentState.Spam;
 
         List<Comment> comments = ((CommentRepository) repository).findCommentsByIdIn(request.getIds());
         List<String> ipList = comments.stream().map(Comment::getIp).collect(Collectors.toList());
@@ -177,7 +177,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
         updateArticleCommentCount(comments.stream().map(Comment::getArticleId).collect(Collectors.toList()));
 
-        return ((CommentRepository) repository).batchPatchStatus(request.getIds(), request.getStatus());
+        return ((CommentRepository) repository).batchPatchStatus(request.getIds(), request.getState());
     }
 
     /**
@@ -188,7 +188,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void updateArticleCommentCount(List<Long> articleIdList) {
         articleIdList.forEach(articleId -> {
             Article article = articleRepository.getById(articleId);
-            int count = ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, states);
+            int count = ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStateIsIn(articleId, states);
             article.setCommenting(count);
             articleRepository.save(article);
         });
@@ -208,7 +208,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     public Integer count(Long articleId) {
-        return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStatusIsIn(articleId, states);
+        return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStateIsIn(articleId, states);
     }
 
     public int patchLike(Long id) {
@@ -232,7 +232,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     private void ensureCanDelete(Comment comment) {
-        if (comment.getStatus() == CommentState.Auditing || comment.getStatus() == CommentState.Published) {
+        if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
             throw new IllegalArgumentException("只有在回收站、已删除的评论才能彻底删除");
         }
     }

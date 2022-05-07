@@ -37,6 +37,12 @@ public class BlackEmailService {
         repository.saveAll(blackIpList);
     }
 
+    public void save(String email) {
+        BlackEmail blackEmail = new BlackEmail();
+        blackEmail.setEmail(email);
+        repository.save(blackEmail);
+    }
+
     public void clearAndSave(List<String> emailList) {
         clear();
         save(emailList);
@@ -44,6 +50,10 @@ public class BlackEmailService {
 
     public void remove(List<String> ipList) {
         repository.deleteBlackEmailByEmailIn(ipList);
+    }
+
+    public void remove(String ip) {
+        repository.deleteBlackEmailByEmailEquals(ip);
     }
 
     public boolean isInBlackList(String email) {

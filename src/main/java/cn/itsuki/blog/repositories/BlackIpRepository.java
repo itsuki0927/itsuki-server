@@ -14,4 +14,6 @@ import java.util.List;
 @Repository
 public interface BlackIpRepository extends BaseRepository<BlackIp> {
     void deleteBlackIpsByIpIn(List<String> ips);
+
+    void deleteBlackIpByIpEquals(String ips);
 }

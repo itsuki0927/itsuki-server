@@ -35,5 +35,5 @@ input CommentSearchRequest {
     sortOrder:String
     articleId:ID
     keyword:String
-    status:Int
+    state:Int
 }

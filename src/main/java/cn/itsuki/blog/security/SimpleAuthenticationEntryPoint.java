@@ -19,9 +19,7 @@ public class SimpleAuthenticationEntryPoint implements AuthenticationEntryPoint,
     private static final long serialVersionUID = -3689082180290503236L;
     private static final String ERROR_MESSAGE = "{ \"message\": \"%s\" }";
 
-
     @Override
-
     public void commence(HttpServletRequest httpServletRequest, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

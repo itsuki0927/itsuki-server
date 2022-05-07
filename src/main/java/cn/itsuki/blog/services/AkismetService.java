@@ -73,7 +73,10 @@ public class AkismetService {
         paramMap.put("comment_author_email", comment.getEmail());
         paramMap.put("comment_author_url", comment.getWebsite());
         paramMap.put("comment_content", comment.getContent());
-        paramMap.put("is_test", isDev);
+
+        if (isDev) {
+            paramMap.put("is_test", isDev);
+        }
 
         // paramMap.put("user_role", "administrator");
         return paramMap;

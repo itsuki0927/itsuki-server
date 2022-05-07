@@ -21,7 +21,7 @@ public class WrapperResponse<T> {
     /**
      * 状态码
      */
-    protected int status;
+    protected int state;
     /**
      * 描述信息
      */
@@ -31,9 +31,9 @@ public class WrapperResponse<T> {
      */
     protected boolean success;
 
-    public WrapperResponse(T data, int status, String message, boolean success) {
+    public WrapperResponse(T data, int state, String message, boolean success) {
         this.data = data;
-        this.status = status;
+        this.state = state;
         this.message = message;
         this.success = success;
     }
@@ -42,8 +42,8 @@ public class WrapperResponse<T> {
         return new WrapperResponse<>(data, 200, message, true);
     }
 
-    public static <T> WrapperResponse<T> buildFailed(int status, String message) {
-        return new WrapperResponse<>(null, status, message, false);
+    public static <T> WrapperResponse<T> buildFailed(int state, String message) {
+        return new WrapperResponse<>(null, state, message, false);
     }
 
     public static <T> WrapperResponse<T> build(T data) {
@@ -54,7 +54,7 @@ public class WrapperResponse<T> {
         return buildSuccess(data, message);
     }
 
-    public static <T> WrapperResponse<T> failed(int status, String message) {
-        return failed(status, message);
+    public static <T> WrapperResponse<T> failed(int state, String message) {
+        return failed(state, message);
     }
 }

@@ -13,5 +13,7 @@ import java.util.List;
  **/
 @Repository
 public interface BlackEmailRepository extends BaseRepository<BlackEmail> {
-    int deleteBlackEmailByEmailIn(List<String> emails);
+    void deleteBlackEmailByEmailIn(List<String> emails);
+
+    int deleteBlackEmailByEmailEquals(String email);
 }

@@ -84,7 +84,7 @@ public class Comment extends IdentifiableEntity {
     /**
      * 状态
      */
-    private Integer status;
+    private Integer state;
 
     /**
      * 是否置顶
@@ -139,7 +139,7 @@ public class Comment extends IdentifiableEntity {
             setArticleId(CommonState.GUESTBOOK);
         }
         // 默认待审核
-        setStatus(CommentState.Auditing);
+        setState(CommentState.Auditing);
         // 关闭fix
         setFix(CommonState.SHUT_DOWN);
         // 初始0
