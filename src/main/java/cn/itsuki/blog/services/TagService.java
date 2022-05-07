@@ -1,17 +1,23 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
+import cn.itsuki.blog.entities.requests.CategoryActionInput;
+import cn.itsuki.blog.entities.requests.TagActionInput;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.TagRepository;
+import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -21,7 +27,11 @@ import java.util.Optional;
  * @create: 2021-09-21 18:18
  **/
 @Service
-public class TagService extends BaseService<Tag, TagSearchRequest> implements GraphQLQueryResolver {
+public class TagService extends BaseService<Tag, TagSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
+
+    @Autowired
+    private AdminService adminService;
+
     /**
      * 创建一个service实例
      */
@@ -29,7 +39,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         super("id", new String[]{"id", "sort"});
     }
 
-    public void ensureTagExist(Tag entity) {
+    private void ensureTagExist(Tag entity) {
         Tag probe = new Tag();
         probe.setName(entity.getName());
         Optional<Tag> optionalEntity = repository.findOne(Example.of(probe));
@@ -38,10 +48,13 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         }
     }
 
-    @Override
-    public Tag create(Tag entity) {
-        ensureTagExist(entity);
-        return super.create(entity);
+    /**
+     * 确保是管理员操作
+     */
+    private void ensureAdminOperate() {
+        if (adminService.getCurrentAdmin() == null) {
+            throw new IllegalArgumentException("没有权限");
+        }
     }
 
     @Override
@@ -63,17 +76,38 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         return tag;
     }
 
-    public Tag getTagByName(String name) {
-        Tag probe = new Tag();
-        probe.setName(name);
-        Optional<Tag> optional = repository.findOne(Example.of(probe));
-        if (!optional.isPresent()) {
-            throw new IllegalArgumentException("tag 不存在");
-        }
-        return optional.get();
-    }
-
     public SearchResponse<Tag> tags(TagSearchRequest criteria) {
         return search(criteria);
     }
+
+    public Tag createTag(TagActionInput entity) {
+        Tag probe = new Tag();
+        BeanUtil.copyProperties(entity, probe);
+        ensureTagExist(probe);
+        ensureAdminOperate();
+        System.out.println(probe.toString());
+        return super.create(probe);
+    }
+
+    public Tag updateTag(Long id, TagActionInput input) {
+        Tag oldTag = ensureExist(repository, id, "Tag");
+        Tag entity = new Tag();
+        BeanUtil.copyProperties(input, entity);
+
+        ensureAdminOperate();
+
+        entity.setId(id);
+        entity.setCount(oldTag.getCount());
+        entity.setCreateAt(oldTag.getCreateAt());
+
+        ensureTagExist(entity);
+        validateEntity(entity);
+        return repository.saveAndFlush(entity);
+    }
+
+    public int deleteTag(Long categoryId) {
+        ensureAdminOperate();
+        return super.delete(categoryId);
+    }
 }
+

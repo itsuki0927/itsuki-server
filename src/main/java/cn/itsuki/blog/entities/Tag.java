@@ -57,7 +57,7 @@ public class Tag extends IdentifiableEntity {
 
     @Override
     protected void onCreateAction() {
-        if (getSort() != null) {
+        if (getSort() == null) {
             setSort(CommonState.INIT_VALUE);
         }
         setCount(CommonState.INIT_VALUE);

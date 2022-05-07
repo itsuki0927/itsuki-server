@@ -11,6 +11,10 @@ type Mutation {
     createCategory(input: CategoryActionInput!): Category
     updateCategory(id:ID!, input: CategoryActionInput!): Category
     deleteCategory(id: ID!):Int
+
+    createTag(input: TagActionInput!): Tag
+    updateTag(id:ID!, input: TagActionInput!): Tag
+    deleteTag(id:ID!): Int
 }
 
 input CreateArticleInput {
@@ -40,7 +44,15 @@ input CreateCommentInput{
     articleId:ID
 }
 
-input CategoryActionInput{
+input CategoryActionInput {
+    name: String
+    path: String
+    description: String
+    expand: String
+    sort: Int
+}
+
+input TagActionInput {
     name: String
     path: String
     description: String

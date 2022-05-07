@@ -22,7 +22,7 @@ type Query {
     article(id:ID!): Article
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
-    comments(input: CommentSearchRequest): SearchCommentResponse
+    comments(search: CommentSearchRequest): SearchCommentResponse
 }
 
 scalar Date
