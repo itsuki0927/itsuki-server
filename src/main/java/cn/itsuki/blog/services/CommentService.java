@@ -231,6 +231,31 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return 1;
     }
 
+    public int updateCommentState(Long id, Integer state) {
+        // 是否为垃圾评论
+        boolean isSpam = state == CommentState.Spam;
+        Comment comment = ensureExist(repository, id, "Comment");
+        String ip = comment.getIp();
+        String email = comment.getEmail();
+
+        // 如果是垃圾评论，则加入黑名单，以及 submitSpam
+        // 如果不是垃圾评论，则移出黑名单，以及 submitHam
+        if (isSpam) {
+            ipService.save(ip);
+            emailService.save(email);
+            akismetService.submitSpam(comment);
+        } else {
+            ipService.remove(ip);
+            emailService.remove(email);
+            akismetService.submitHam(comment);
+        }
+
+        // TODO: 更新文章评论数
+        // updateArticleCommentCount(comments.stream().map(Comment::getArticleId).collect(Collectors.toList()));
+
+        return ((CommentRepository) repository).updateState(id, state);
+    }
+
     private void ensureCanDelete(Comment comment) {
         if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
             throw new IllegalArgumentException("只有在回收站、已删除的评论才能彻底删除");

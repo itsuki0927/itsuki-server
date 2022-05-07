@@ -17,6 +17,7 @@ type Mutation {
     deleteTag(id:ID!): Int
 
     deleteComment(id:ID!): Int
+    updateCommentState(id:ID!, state:Int!):Int
 }
 
 input CreateArticleInput {
