@@ -54,18 +54,12 @@ public class Category extends IdentifiableEntity {
      */
     @Min(0)
     private Integer count;
-//
-//    @OneToMany
-//    @JoinColumn(name = "category_id")
-//    @OrderBy(value = "createAt")
-//    private List<Article> articles;
-
-//    @OneToMany(fetch = FetchType.LAZY, mappedBy = "category")
-//    private List<Article> articles;
 
     @Override
     protected void onCreateAction() {
-        setSort(CommonState.INIT_VALUE);
+        if (getSort() == null) {
+            setSort(CommonState.INIT_VALUE);
+        }
         setCount(CommonState.INIT_VALUE);
     }
 }
