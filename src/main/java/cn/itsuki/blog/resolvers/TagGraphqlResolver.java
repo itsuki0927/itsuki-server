@@ -26,7 +26,7 @@ public class TagGraphqlResolver implements GraphQLResolver<Article> {
     @Autowired
     private ArticleTagRepository articleTagRepository;
 
-    public Iterable<Tag> tags(Article article) {
+    public List<Tag> tags(Article article) {
         ArticleTag probe = new ArticleTag();
         probe.setArticleId(article.getId());
         List<ArticleTag> articleTags = articleTagRepository.findAll(Example.of(probe));

@@ -23,11 +23,6 @@ public class CommentController {
     @Autowired
     private CommentService service;
 
-    @PostMapping
-    public WrapperResponse<Comment> create(@RequestBody @Valid CommentCreateRequest request) {
-        return WrapperResponse.build(service.create(request));
-    }
-
     @GetMapping("/count/{articleId}")
     public WrapperResponse<Integer> count(@PathVariable("articleId") Long articleId) {
         return WrapperResponse.build(service.count(articleId));
@@ -46,12 +41,6 @@ public class CommentController {
     @PutMapping("/{id}")
     public WrapperResponse<Comment> update(@PathVariable("id") Long id, @RequestBody @Valid CommentUpdateRequest request) {
         return WrapperResponse.build(service.update(id, request));
-    }
-
-
-    @PatchMapping
-    public WrapperResponse<Integer> patch(@Valid @RequestBody CommentPatchRequest request) {
-        return WrapperResponse.build(service.patch(request));
     }
 
     @PatchMapping("/{id}")

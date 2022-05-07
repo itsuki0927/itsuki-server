@@ -3,6 +3,8 @@ package cn.itsuki.blog.repositories;
 import cn.itsuki.blog.entities.ArticleTag;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * 文章-标签 仓库
  *
@@ -12,4 +14,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ArticleTagRepository extends BaseRepository<ArticleTag> {
     int deleteAllByArticleIdEquals(Long articleId);
+
+    int countArticleTagByTagIdEquals(Long tagId);
+
+    List<ArticleTag> findAllByArticleIdEquals(Long articleId);
 }
