@@ -16,6 +16,7 @@ type Mutation {
     updateTag(id:ID!, input: TagActionInput!): Tag
     deleteTag(id:ID!): Int
 
+    createComment(input: CreateCommentInput!): Comment
     deleteComment(id:ID!): Int
     updateCommentState(id:ID!, state:Int!):Int
 }
@@ -36,15 +37,15 @@ input CreateArticleInput {
     tagIds: [Int]
 }
 
-input CreateCommentInput{
-    nickname:String
-    email:String
-    website:String
-    agent:String
-    content:String
+input CreateCommentInput {
+    nickname:String!
+    email:String!
+    website:String!
+    agent:String!
+    content:String!
     expand:String
     parentId:ID
-    articleId:ID
+    articleId:ID!
 }
 
 input CategoryActionInput {

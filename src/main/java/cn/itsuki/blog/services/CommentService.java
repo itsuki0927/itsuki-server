@@ -9,21 +9,19 @@ import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import com.alibaba.fastjson.JSONObject;
+import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
+import graphql.schema.DataFetchingEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * 评论 服务
@@ -41,7 +39,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     @Autowired
     private BlackKeywordService keywordService;
     @Autowired
-    private ArticleRepository articleRepository;
+    private ArticleService articleService;
     @Autowired
     private RequestUtil requestUtil;
     @Autowired
@@ -51,10 +49,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     @Value("${mode.isDev}")
     private boolean isDev;
     private String devIP = "220.169.96.10";
-    private List<Integer> states;
+    private final List<Integer> states;
 
     CommentService() {
-        super("id", new String[]{"id"});
+        super("id", "id");
         states = new ArrayList<>();
         states.add(CommentState.Auditing);
         states.add(CommentState.Published);
@@ -69,16 +67,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         }
     }
 
-
     private Article ensureArticleExist(Long articleId) {
-        if (articleId == null) {
-            throw new IllegalArgumentException("article id must be not null");
-        }
-        Optional<Article> optionalArticle = articleRepository.findById(articleId);
-        if (!optionalArticle.isPresent()) {
-            throw new IllegalArgumentException("article id: " + articleId + " not exist");
-        }
-        return optionalArticle.get();
+        return articleService.get(articleId);
     }
 
     private void ensureIsInBlackList(Comment entity) {
@@ -89,42 +79,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         if (ipService.isInBlackList(ip) || emailService.isInBlackList(email) || keywordService.isInBlackList(content)) {
             throw new IllegalArgumentException("ip | 邮箱 | 内容 -> 不合法");
         }
-    }
-
-    public Comment create(CommentCreateRequest entity) {
-        if (entity.getNickname().length() >= 10) {
-            throw new IllegalArgumentException("昵称太长了, 最长: 10, 当前长度:" + entity.getNickname().length());
-        }
-        Comment comment = new Comment();
-        BeanUtil.copyProperties(entity, comment);
-
-        Article article = ensureArticleExist(comment.getArticleId());
-        comment.setArticleTitle(article.getTitle());
-        comment.setArticleDescription(article.getDescription());
-
-        if (isDev) {
-            comment.setIp(devIP);
-        } else {
-            ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
-            HttpServletRequest request = attributes.getRequest();
-            comment.setIp(requestUtil.getRequestIp(request));
-        }
-
-        // 确保回复的是同一篇文章
-        // 检查是否为垃圾评论
-        ensureReplySameArticle(comment);
-        ensureIsInBlackList(comment);
-        akismetService.checkComment(comment);
-
-        // 更新文章评论数
-        article.setCommenting(article.getCommenting() + 1);
-        articleRepository.save(article);
-
-        JSONObject object = requestUtil.findLocationByIp(devIP);
-        comment.setCity((String) object.get("city"));
-        comment.setProvince((String) object.get("province"));
-
-        return super.create(comment);
     }
 
     private void ensureReplySameArticle(Comment comment) {
@@ -155,43 +109,14 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
                 criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), pageable);
     }
 
-    public Integer patch(CommentPatchRequest request) {
-        // 是否为垃圾评论
-        boolean isSpam = request.getState() == CommentState.Spam;
-
-        List<Comment> comments = ((CommentRepository) repository).findCommentsByIdIn(request.getIds());
-        List<String> ipList = comments.stream().map(Comment::getIp).collect(Collectors.toList());
-        List<String> emailList = comments.stream().map(Comment::getEmail).collect(Collectors.toList());
-
-        // 如果是垃圾评论，则加入黑名单，以及 submitSpam
-        // 如果不是垃圾评论，则移出黑名单，以及 submitHam
-        if (isSpam) {
-            ipService.save(ipList);
-            emailService.save(emailList);
-            comments.forEach(comment -> akismetService.submitSpam(comment));
-        } else {
-            ipService.remove(ipList);
-            emailService.remove(emailList);
-            comments.forEach(comment -> akismetService.submitHam(comment));
-        }
-
-        updateArticleCommentCount(comments.stream().map(Comment::getArticleId).collect(Collectors.toList()));
-
-        return ((CommentRepository) repository).batchPatchStatus(request.getIds(), request.getState());
-    }
-
     /**
      * 更新文章评论数
-     *
-     * @param articleIdList 文章id列表
      */
-    private void updateArticleCommentCount(List<Long> articleIdList) {
-        articleIdList.forEach(articleId -> {
-            Article article = articleRepository.getById(articleId);
-            int count = ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStateIsIn(articleId, states);
-            article.setCommenting(count);
-            articleRepository.save(article);
-        });
+    private void updateArticleCommentCount(Long articleId) {
+        Article article = ensureArticleExist(articleId);
+        int count = count(articleId);
+        article.setCommenting(count);
+        articleService.update(articleId, article);
     }
 
     public int patchMeta(Long id, CommentMetaPatchRequest request) {
@@ -250,10 +175,53 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
             akismetService.submitHam(comment);
         }
 
-        // TODO: 更新文章评论数
-        // updateArticleCommentCount(comments.stream().map(Comment::getArticleId).collect(Collectors.toList()));
+        ((CommentRepository) repository).updateState(id, state);
 
-        return ((CommentRepository) repository).updateState(id, state);
+        // 更新文章评论数
+        updateArticleCommentCount(comment.getArticleId());
+
+        return 1;
+    }
+
+    public Comment createComment(CommentCreateRequest input, DataFetchingEnvironment environment) {
+        if (input.getNickname().length() >= 10) {
+            throw new IllegalArgumentException("昵称太长了, 最长: 10, 当前长度:" + input.getNickname().length());
+        }
+
+        Comment comment = new Comment();
+        BeanUtil.copyProperties(input, comment);
+
+        Article article = ensureArticleExist(comment.getArticleId());
+        comment.setArticleTitle(article.getTitle());
+        comment.setArticleDescription(article.getDescription());
+
+        GraphQLServletContext context = environment.getContext();
+        HttpServletRequest request = context.getHttpServletRequest();
+        if (isDev) {
+            comment.setIp(devIP);
+        } else {
+            comment.setIp(requestUtil.getRequestIp(request));
+        }
+
+        // 确保回复的是同一篇文章
+        ensureReplySameArticle(comment);
+        // 是否在黑名单中
+        ensureIsInBlackList(comment);
+        // 检查是否为垃圾评论
+        akismetService.checkComment(comment);
+
+        // 更新文章评论数
+        article.setCommenting(article.getCommenting() + 1);
+        articleService.update(article.getId(), article);
+
+        JSONObject address = requestUtil.findLocationByIp(comment.getIp());
+        if (address != null) {
+            comment.setCity((String) address.get("city"));
+            comment.setProvince((String) address.get("province"));
+        }
+        comment.setId(null);
+
+        return repository.save(comment);
     }
 
     private void ensureCanDelete(Comment comment) {

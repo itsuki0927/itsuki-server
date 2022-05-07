@@ -103,9 +103,11 @@ public class RequestUtil {
         try {
             JSONObject json = readJsonFromUrl(ip);
 
-            JSONObject obj = (JSONObject) ((JSONObject) json.get("content")).get("address_detail");
-
-            return obj;
+            var content = ((JSONObject) json.get("content"));
+            if (content != null) {
+                return (JSONObject) content.get("address_detail");
+            }
+            return null;
         } catch (IOException e) {
             e.printStackTrace();
         }

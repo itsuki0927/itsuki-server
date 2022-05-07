@@ -58,13 +58,11 @@ public class CommentCreateRequest {
     /**
      * 父id
      */
-    @Column(name = "parent_id")
     private Long parentId;
 
     /**
      * 文章id
      */
     @NotNull
-    @Column(name = "article_id")
     private Long articleId;
 }
