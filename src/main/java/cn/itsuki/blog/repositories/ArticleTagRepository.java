@@ -13,9 +13,9 @@ import java.util.List;
  **/
 @Repository
 public interface ArticleTagRepository extends BaseRepository<ArticleTag> {
-    int deleteAllByArticleIdEquals(Long articleId);
+    List<ArticleTag> deleteAllByArticleIdEquals(Long articleId);
 
-    int countArticleTagByTagIdEquals(Long tagId);
+    List<ArticleTag> findAllByTagIdEquals(Long tagId);
 
     List<ArticleTag> findAllByArticleIdEquals(Long articleId);
 }

@@ -95,5 +95,7 @@ public interface ArticleRepository extends BaseRepository<Article> {
     int count(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
               @Param("open") Integer open, @Param("tagId") Long tagId, @Param("categoryId") Long categoryId, @Param("banner") Integer banner);
 
-    int countArticlesByCategoryIdEquals(Long categoryId);
+    int countArticlesByIdEqualsAndPublishEquals(Long id, Integer publish);
+
+    int countArticlesByIdInAndPublishEquals(List<Long> ids, Integer publish);
 }

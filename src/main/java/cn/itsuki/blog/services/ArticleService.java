@@ -11,11 +11,11 @@ import cn.itsuki.blog.entities.responses.ArticleDetailResponse;
 import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
-import cn.itsuki.blog.resolvers.TagGraphqlResolver;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -283,7 +283,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public int patchRead(Long id) {
-        Article article = ensureExist(repository, id, "article");
+        Article article = get(id);
         if (article.getPublish() != PublishState.Published) {
             throw new RuntimeException("文章未发布");
         }
@@ -295,6 +295,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
     public SearchResponse<Article> articles(ArticleSearchRequest criteria) {
         return search(criteria);
+    }
+
+    public List<Long> getArticleTagIds(Long articleId) {
+        return articleTagRepository.findAllByArticleIdEquals(articleId).stream().map(ArticleTag::getTagId).collect(Collectors.toList());
     }
 
     public Article article(Long id) {
@@ -311,7 +315,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         saveAllTags(request.getTagIds(), article.getId());
 
         // 更新category count
-        updateCategoryCount();
+        updateCategoryCount(request.getCategoryId());
         // 更新tag count
         updateTagCount(request.getTagIds());
 
@@ -321,12 +325,20 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     /**
      * 更新文章分类count, 因为文章分类比较少, 并且关系是一对一, 所以直接全部更新count
      */
-    private void updateCategoryCount() {
+    private void updateAllCategoryCount() {
         categoryService.categories().forEach(category -> {
-            int count = ((ArticleRepository) repository).countArticlesByCategoryIdEquals(category.getId());
-            category.setCount(count);
-            categoryService.update(category.getId(), category);
+            updateCategoryCount(category.getId());
         });
+    }
+
+    private void updateCategoryCount(Long categoryId) {
+        Category category = categoryService.get(categoryId);
+        Article article = new Article();
+        article.setCategoryId(categoryId);
+        article.setPublish(PublishState.Published);
+        int count = (int) repository.count(Example.of(article));
+        category.setCount(count);
+        categoryService.update(category.getId(), category);
     }
 
     /**
@@ -337,7 +349,11 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     private void updateTagCount(List<Long> tagIds) {
         tagIds.forEach(tagId -> {
             Tag tag = tagService.get(tagId);
-            int count = articleTagRepository.countArticleTagByTagIdEquals(tagId);
+            // 找到当前tag的记录
+            List<ArticleTag> articleTags = articleTagRepository.findAllByTagIdEquals(tagId);
+            List<Long> ids = articleTags.stream().map(ArticleTag::getArticleId).collect(Collectors.toList());
+            // 获取当前tag的已发布文章数
+            int count = ((ArticleRepository) repository).countArticlesByIdInAndPublishEquals(ids, PublishState.Published);
             tag.setCount(count);
             tagService.update(tagId, tag);
         });
@@ -348,12 +364,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         Article article = get(id);
 
-        // 更新旧的tag count
-        updateOldTagCount(id);
-
+        List<Long> oldTagIds = getArticleTagIds(id);
         // 删除当前文章的tag
         deleteTag(id);
-        // 添加tag、category
+        // 添加新的tag
         saveAllTags(entity.getTagIds(), id);
 
         // 更新文章
@@ -361,48 +375,57 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         Article update = super.update(id, article);
 
         // 更新新的category、tag count
-        updateCategoryCount();
+        updateAllCategoryCount();
         updateTagCount(entity.getTagIds());
+        // 更新旧的tag count
+        updateTagCount(oldTagIds);
 
         return update;
-    }
-
-    private void updateOldTagCount(Long id) {
-        List<Long> oldTagIds = articleTagRepository.findAllByArticleIdEquals(id).stream().map(ArticleTag::getTagId).collect(Collectors.toList());
-        updateTagCount(oldTagIds);
     }
 
     public int deleteArticle(Long articleId) {
         ensureAdminOperate();
 
+        Article oldArticle = get(articleId);
+        List<Long> oldTagIds = getArticleTagIds(articleId);
         deleteTag(articleId);
         deleteComment(articleId);
+
+        updateTagCount(oldTagIds);
+        updateCategoryCount(oldArticle.getCategoryId());
+
         return super.delete(articleId);
     }
 
     public int updateArticleState(List<Long> ids, Integer publish) {
         ensureAdminOperate();
-        return ((ArticleRepository) repository).batchUpdateState(publish, ids);
+
+        int state = ((ArticleRepository) repository).batchUpdateState(publish, ids);
+
+        ids.forEach(id -> {
+            Article article = get(id);
+            List<Long> tagIds = getArticleTagIds(id);
+            updateCategoryCount(article.getCategoryId());
+            updateTagCount(tagIds);
+        });
+
+        return state;
     }
 
     public int updateArticleBanner(List<Long> ids, Integer banner) {
         ensureAdminOperate();
 
-        List<Article> articles = ids.stream().map(id -> {
-            Article article = ensureExist(repository, id, "article");
-            if (article.getPublish() != PublishState.Published) {
-                return null;
-            }
-            article.setBanner(banner);
-            return article;
-        }).filter(Objects::nonNull).collect(Collectors.toList());
+        List<Article> articles = repository
+                .findAllById(ids).stream()
+                .filter(v -> v.getPublish() == PublishState.Published)
+                .peek(article -> article.setBanner(banner)).collect(Collectors.toList());
 
         repository.saveAll(articles);
         return articles.size();
     }
 
     public int incrementArticleReading(Long id) {
-        Article article = ensureExist(repository, id, "article");
+        Article article = get(id);
         ensureArticleAllowOperate(article);
         article.setReading(article.getReading() + 1);
 
@@ -411,7 +434,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public int incrementArticleLiking(Long id) {
-        Article article = ensureExist(repository, id, "article");
+        Article article = get(id);
         ensureArticleAllowOperate(article);
         article.setLiking(article.getLiking() + 1);
 
