@@ -54,7 +54,7 @@ public class ArticleController {
 
     @GetMapping("/{id}")
     public WrapperResponse<ArticleDetailResponse> get(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.get(id));
+        return WrapperResponse.build(service.detail(id));
     }
 
     @GetMapping

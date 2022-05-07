@@ -281,8 +281,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return ((ArticleRepository) repository).ids();
     }
 
-    public ArticleDetailResponse get(long id) {
-        Article article = ensureExist(repository, id, "Article");
+    public ArticleDetailResponse detail(long id) {
+        Article article = get(id);
         ArticleDetailResponse response = new ArticleDetailResponse();
         BeanUtil.copyProperties(article, response);
 
