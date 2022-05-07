@@ -7,6 +7,7 @@ import cn.itsuki.blog.entities.requests.CategoryActionInput;
 import cn.itsuki.blog.repositories.CategoryRepository;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,6 +25,9 @@ import java.util.Optional;
  **/
 @Service
 public class CategoryService extends BaseService<Category, BaseSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
+    @Autowired
+    private AdminService adminService;
+
     /**
      * 创建一个service实例
      */
@@ -31,12 +35,22 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         super("id", new String[]{"id", "sort"});
     }
 
+    /**
+     * 确保是管理员操作
+     */
+    private void ensureAdminOperate() {
+        if (adminService.getCurrentAdmin() == null) {
+            throw new IllegalArgumentException("没有权限");
+        }
+    }
+
+
     @Override
     protected Page<Category> searchWithPageable(BaseSearchRequest criteria, Pageable pageable) {
         return repository.findAll(pageable);
     }
 
-    public void ensureCategoryExist(Category entity) {
+    private void ensureCategoryExist(Category entity) {
         Category probe = new Category();
         probe.setName(entity.getName());
         Optional<Category> optionalEntity = repository.findOne(Example.of(probe));
@@ -63,6 +77,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         Category probe = new Category();
         BeanUtil.copyProperties(entity, probe);
         ensureCategoryExist(probe);
+        ensureAdminOperate();
         return super.create(probe);
     }
 
@@ -70,6 +85,8 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         Category oldCategory = ensureExist(repository, categoryId, "Entity");
         Category entity = new Category();
         BeanUtil.copyProperties(input, entity);
+
+        ensureAdminOperate();
 
         entity.setId(categoryId);
         entity.setCount(oldCategory.getCount());
@@ -81,6 +98,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
     }
 
     public int deleteCategory(Long categoryId) {
+        ensureAdminOperate();
         return super.delete(categoryId);
     }
 }
