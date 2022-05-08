@@ -8,6 +8,7 @@ import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
+import cn.itsuki.blog.utils.UrlUtil;
 import com.alibaba.fastjson.JSONObject;
 import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.kickstart.tools.GraphQLMutationResolver;
@@ -42,6 +43,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private AkismetService akismetService;
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private EmailService emailService;
+    @Autowired
+    private UrlUtil urlUtil;
+    @Value("${mail.admin}")
+    private String adminEmail;
     @Value("${mode.isDev}")
     private boolean isDev;
     private String devIP = "220.169.96.10";
@@ -66,6 +73,32 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
         return ((CommentRepository) repository).search(
                 criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), pageable);
+    }
+
+    private void sendEmailToReplyTarget(Comment comment, String to) {
+        ArrayList<String> tos = new ArrayList<>();
+        tos.add(to);
+        boolean isComment = comment.getArticleId() == null;
+        String text = isComment ? "评论" : "留言";
+        String content = buildEmailContent(comment);
+        emailService.sendEmail("你在 itsuki.cn 有一条" + text + "回复", content, tos);
+    }
+
+    private void sendEmailToAdmin(Comment comment) {
+        ArrayList<String> tos = new ArrayList<>();
+        tos.add(adminEmail);
+        boolean isComment = comment.getArticleId() == null;
+        String text = isComment ? "评论" : "留言";
+        String content = buildEmailContent(comment);
+        emailService.sendEmail("滴滴, 博客添加了一条" + text, content, tos);
+    }
+
+    private String buildEmailContent(Comment comment) {
+        boolean isComment = comment.getArticleId() == null;
+        String text = isComment ? "评论" : "留言";
+        String path = isComment ? urlUtil.getArticleUrl(comment.getArticleId()) : urlUtil.getGuestBookUrl();
+        return "<p>昵称: " + comment.getNickname() + "</p>" + "<p>" + text + "内容: "
+                + comment.getContent() + "</p>" + "<a href=\"" + path + "" + "\">[点击查看详情]</a>";
     }
 
     /**
@@ -173,7 +206,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         }
 
         // 确保回复的是同一篇文章
-        ensureReplySameArticle(comment);
+        Comment parentComment = ensureReplySameArticle(comment);
         // 是否在黑名单中
         ensureIsInBlackList(comment);
         // 检查是否为垃圾评论
@@ -182,6 +215,11 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         // 更新文章评论数
         article.setCommenting(article.getCommenting() + 1);
         articleService.update(article.getId(), article);
+
+        if (parentComment != null) {
+            sendEmailToReplyTarget(comment, parentComment.getEmail());
+        }
+        sendEmailToAdmin(comment);
 
         JSONObject address = requestUtil.findLocationByIp(comment.getIp());
         if (address != null) {
@@ -214,16 +252,18 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         }
     }
 
-    private void ensureReplySameArticle(Comment comment) {
+    private Comment ensureReplySameArticle(Comment comment) {
         Long parentId = comment.getParentId();
         if (parentId != null && parentId != 0 && parentId != -1) {
-            Comment parent = ensureExist(repository, parentId, "comment");
+            Comment parentComment = get(parentId);
             // 如果当前评论和回复的评论文章不是同一篇
-            if (!parent.getArticleId().equals(comment.getArticleId())) {
+            if (!parentComment.getArticleId().equals(comment.getArticleId())) {
                 throw new IllegalArgumentException("The replied article is not the same, comment article id:"
-                        + comment.getArticleId() + " ---> parent comment article id: " + parent.getArticleId());
+                        + comment.getArticleId() + " ---> parent comment article id: " + parentComment.getArticleId());
             }
-            comment.setParentNickName(parent.getNickname());
+            comment.setParentNickName(parentComment.getNickname());
+            return parentComment;
         }
+        return null;
     }
 }
