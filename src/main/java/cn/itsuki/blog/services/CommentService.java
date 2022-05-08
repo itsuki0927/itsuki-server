@@ -115,7 +115,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     public Comment updateComment(Long id, UpdateCommentInput input) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         Comment comment = get(id);
         Integer oldState = comment.getState();
@@ -133,14 +133,14 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     public int deleteComment(Long id) {
         Comment comment = get(id);
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
         ensureCanDelete(comment);
         repository.deleteById(id);
         return 1;
     }
 
     public int updateCommentState(Long id, Integer state) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
         // 是否为垃圾评论
         boolean isSpam = state == CommentState.Spam;
         Comment comment = get(id);
@@ -209,15 +209,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void ensureCanDelete(Comment comment) {
         if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
             throw new IllegalArgumentException("只有在回收站、已删除的评论才能彻底删除");
-        }
-    }
-
-    /**
-     * 确保是管理员操作
-     */
-    private void ensureAdminOperate() {
-        if (adminService.getCurrentAdmin() == null) {
-            throw new IllegalArgumentException("没有权限");
         }
     }
 

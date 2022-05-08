@@ -17,7 +17,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -48,15 +47,6 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         }
     }
 
-    /**
-     * 确保是管理员操作
-     */
-    private void ensureAdminOperate() {
-        if (adminService.getCurrentAdmin() == null) {
-            throw new IllegalArgumentException("没有权限");
-        }
-    }
-
     @Override
     protected Page<Tag> searchWithPageable(TagSearchRequest criteria, Pageable pageable) {
         String name = criteria.getName();
@@ -84,7 +74,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         Tag probe = new Tag();
         BeanUtil.copyProperties(entity, probe);
         ensureTagExist(probe);
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
         return super.create(probe);
     }
 
@@ -93,7 +83,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         Tag entity = new Tag();
         BeanUtil.copyProperties(input, entity);
 
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         entity.setId(id);
         entity.setCount(oldTag.getCount());
@@ -105,7 +95,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     }
 
     public int deleteTag(Long categoryId) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
         return super.delete(categoryId);
     }
 }

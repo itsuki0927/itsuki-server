@@ -20,6 +20,8 @@ import org.springframework.stereotype.Service;
 public class BlackListService implements GraphQLQueryResolver, GraphQLMutationResolver {
     @Autowired
     private BlackListRepository repository;
+    @Autowired
+    private AdminService adminService;
 
     public BlackList blacklist() {
 //        long blackListId = 1L;
@@ -28,6 +30,7 @@ public class BlackListService implements GraphQLQueryResolver, GraphQLMutationRe
     }
 
     public BlackList updateBlackList(UpdateBlackListInput input) {
+        adminService.ensureAdminOperate();
         BlackList probe = blacklist();
         BeanUtil.copyProperties(input, probe);
         repository.save(probe);

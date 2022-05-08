@@ -35,15 +35,6 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         super("id", new String[]{"id", "sort"});
     }
 
-    /**
-     * 确保是管理员操作
-     */
-    private void ensureAdminOperate() {
-        if (adminService.getCurrentAdmin() == null) {
-            throw new IllegalArgumentException("没有权限");
-        }
-    }
-
     @Override
     protected Page<Category> searchWithPageable(BaseSearchRequest criteria, Pageable pageable) {
         return repository.findAll(pageable);
@@ -76,7 +67,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         Category probe = new Category();
         BeanUtil.copyProperties(entity, probe);
         ensureCategoryExist(probe);
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
         return super.create(probe);
     }
 
@@ -85,7 +76,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         Category entity = new Category();
         BeanUtil.copyProperties(input, entity);
 
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         entity.setId(categoryId);
         entity.setCount(oldCategory.getCount());
@@ -97,7 +88,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
     }
 
     public int deleteCategory(Long categoryId) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
         return super.delete(categoryId);
     }
 }

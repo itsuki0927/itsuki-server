@@ -69,15 +69,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         commentRepository.deleteCommentsByArticleIdEquals(articleId);
     }
 
-    /**
-     * 确保是管理员操作
-     */
-    private void ensureAdminOperate() {
-        if (adminService.getCurrentAdmin() == null) {
-            throw new IllegalArgumentException("没有权限");
-        }
-    }
-
     private void ensureArticleAllowOperate(Article article) {
         if (article.getPublish() != PublishState.Published) {
             throw new IllegalArgumentException("文章还没发布");
@@ -207,7 +198,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public Article createArticle(ArticleCreateRequest request) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         Article entity = new Article();
         BeanUtils.copyProperties(request, entity);
@@ -261,7 +252,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public Article updateArticle(Long id, ArticleCreateRequest entity) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         Article article = get(id);
 
@@ -285,7 +276,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public int deleteArticle(Long articleId) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         Article oldArticle = get(articleId);
         List<Long> oldTagIds = getArticleTagIds(articleId);
@@ -299,7 +290,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public int updateArticleState(List<Long> ids, Integer publish) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         int state = ((ArticleRepository) repository).batchUpdateState(publish, ids);
 
@@ -314,7 +305,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public int updateArticleBanner(List<Long> ids, Integer banner) {
-        ensureAdminOperate();
+        adminService.ensureAdminOperate();
 
         List<Article> articles = repository
                 .findAllById(ids).stream()
