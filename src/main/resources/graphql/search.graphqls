@@ -16,8 +16,11 @@ input ArticleSearchRequest {
     banner:Int
     open:Int
     tag:String
-    category:String
-    hot:Int
+    categoryId:ID
+    categoryPath:String
+    tagId:ID
+    tagPath: String
+    hot:Boolean
 }
 
 input TagSearchRequest {

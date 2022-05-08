@@ -41,9 +41,9 @@ public class ArticleSearchRequest extends BaseSearchRequest {
     private Integer open;
 
     /**
-     * 标签
+     * 标签id
      */
-    private String tag;
+    private Long tagId;
 
     /**
      * 标签路径
@@ -51,17 +51,17 @@ public class ArticleSearchRequest extends BaseSearchRequest {
     private String tagPath;
 
     /**
-     * 分类
+     * 分类id
      */
-    private String category;
+    private Long categoryId;
 
     /**
-     * 分类
+     * 分类路径
      */
     private String categoryPath;
 
     /**
      * 排行榜
      */
-    private Integer hot;
+    private Boolean hot;
 }

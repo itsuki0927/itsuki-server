@@ -93,33 +93,34 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
-        Long tagId = null;
-        Long categoryId = null;
+        Long tagId = criteria.getTagId();
+        Long categoryId = criteria.getCategoryId();
 
-        if (criteria.getHot() != null && criteria.getHot() == 1) {
+        Boolean isHot = Optional.ofNullable(criteria.getHot()).orElse(false);
+        if (isHot) {
             return getHotArticles();
         }
 
-        if (criteria.getTag() != null) {
-            tagId = tagService.getTagByNameOrPath(criteria.getTag()).getId();
+        if (tagId == null && criteria.getTagPath() != null) {
+            tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
         }
 
-        if (criteria.getCategory() != null) {
-            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
+        if (categoryId == null && criteria.getCategoryPath() != null) {
+            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategoryPath()).getId();
         }
 
-        return ((ArticleRepository) repository).search2(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), criteria.getBanner(), pageable);
+        return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
+                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
     }
 
     public Integer count(ArticleSearchRequest criteria) {
-        Long tagId = null;
-        Long categoryId = null;
-        if (criteria.getTag() != null) {
-            tagId = tagService.getTagByNameOrPath(criteria.getTag()).getId();
+        Long tagId = criteria.getTagId();
+        Long categoryId = criteria.getCategoryId();
+        if (tagId == null && criteria.getTagPath() != null) {
+            tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
         }
-        if (criteria.getCategory() != null) {
-            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategory()).getId();
+        if (categoryId == null && criteria.getCategoryPath() != null) {
+            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategoryPath()).getId();
         }
         return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner());

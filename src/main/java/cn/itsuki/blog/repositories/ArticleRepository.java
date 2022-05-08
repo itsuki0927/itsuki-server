@@ -61,21 +61,6 @@ public interface ArticleRepository extends BaseRepository<Article> {
                          @Param("banner") Integer banner, Pageable pageable);
 
 
-    @Query("select distinct a from article a " +
-            "where " +
-            "(" +
-            "   :name is null or a.title like %:name% " +
-            "                 or a.keywords like %:name% " +
-            "                 or a.description like  %:name%" +
-            ")" +
-            "and (:publish is null or a.publish = :publish)" +
-            "and (:origin is null or a.origin = :origin)" +
-            "and (:open is null or a.open = :open)" +
-            "and (:banner is null or a.banner = :banner)" +
-            "")
-    Page<Article> search2(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
-                          @Param("open") Integer open, @Param("banner") Integer banner, Pageable pageable);
-
     Page<Article> queryArticlesByPublish(@Param("publish") Integer publish, Pageable pageable);
 
     @Query("select count(a.id) from article a left join article_tag t on t.articleId = a.id " +
@@ -94,8 +79,6 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "")
     int count(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
               @Param("open") Integer open, @Param("tagId") Long tagId, @Param("categoryId") Long categoryId, @Param("banner") Integer banner);
-
-    int countArticlesByIdEqualsAndPublishEquals(Long id, Integer publish);
 
     int countArticlesByIdInAndPublishEquals(List<Long> ids, Integer publish);
 }
