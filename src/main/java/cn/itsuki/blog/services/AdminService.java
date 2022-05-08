@@ -3,6 +3,7 @@ package cn.itsuki.blog.services;
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Admin;
 import cn.itsuki.blog.entities.OperateState;
+import cn.itsuki.blog.entities.Role;
 import cn.itsuki.blog.entities.requests.AdminSaveRequest;
 import cn.itsuki.blog.entities.requests.AdminUpdatePasswordRequest;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
@@ -77,7 +78,15 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         return get(currentAdmin.getId());
     }
 
+    public void ensureAdminOperate() {
+        Admin currentAdmin = getCurrentAdmin();
+        if (currentAdmin.getRole() != Role.ADMIN) {
+            throw new AccessDeniedException("权限不足");
+        }
+    }
+
     public Admin save(AdminSaveRequest request) {
+
         Admin currentAdmin = getCurrentAdmin();
 
         currentAdmin.setNickname(request.getNickname());
@@ -89,6 +98,8 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
     }
 
     public Admin updateAdmin(AdminSaveRequest request) {
+        ensureAdminOperate();
+
         Admin currentAdmin = getCurrentAdmin();
 
         currentAdmin.setNickname(request.getNickname());
@@ -107,6 +118,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         Admin probe = new Admin();
         BeanUtil.copyProperties(currentAdmin, probe);
 
+        ensureAdminOperate();
         if (password.equals(newPassword)) {
             throw new IllegalArgumentException("新旧密码一样");
         }
@@ -132,7 +144,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         Admin probe = new Admin();
         BeanUtil.copyProperties(currentAdmin, probe);
 
-        System.out.println(currentAdmin.toString());
+        ensureAdminOperate();
         if (password.equals(newPassword)) {
             throw new IllegalArgumentException("新旧密码一样");
         }
