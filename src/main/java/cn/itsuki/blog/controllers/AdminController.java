@@ -25,23 +25,8 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
-    @PostMapping("/login")
-    public WrapperResponse<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        return WrapperResponse.build(adminService.login(request), "登陆成功");
-    }
-
     @GetMapping("/current-admin")
     public WrapperResponse<Admin> getCurrentAdmin() {
         return WrapperResponse.build(adminService.getCurrentAdmin(), "获取信息成功");
-    }
-
-    @PutMapping
-    public WrapperResponse<Admin> update(@Valid @RequestBody AdminSaveRequest request) {
-        return WrapperResponse.build(adminService.save(request), "保存成功");
-    }
-
-    @PutMapping("/password")
-    public WrapperResponse<Admin> updatePassword(@Valid @RequestBody AdminUpdatePasswordRequest request) {
-        return WrapperResponse.build(adminService.updatePassword(request), "更新成功");
     }
 }

@@ -85,18 +85,6 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         }
     }
 
-    public Admin save(AdminSaveRequest request) {
-
-        Admin currentAdmin = getCurrentAdmin();
-
-        currentAdmin.setNickname(request.getNickname());
-        currentAdmin.setAvatar(request.getAvatar());
-        currentAdmin.setDescription(request.getDescription());
-
-        repository.saveAndFlush(currentAdmin);
-        return currentAdmin;
-    }
-
     public Admin updateAdmin(AdminSaveRequest request) {
         ensureAdminOperate();
 
@@ -130,31 +118,6 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
             throw new IllegalArgumentException("旧密码错误");
         }
         SecurityUtils.clearCurrentAdmin();
-        // 设置加密后的新密码
-        probe.setPassword(passwordEncoder.encode(newPassword));
-        repository.saveAndFlush(probe);
-        return probe;
-    }
-
-    public Admin updatePassword(AdminUpdatePasswordRequest request) {
-        String password = request.getPassword();
-        String newPassword = request.getNewPassword();
-        String confirm = request.getConfirm();
-        Admin currentAdmin = getCurrentAdmin();
-        Admin probe = new Admin();
-        BeanUtil.copyProperties(currentAdmin, probe);
-
-        ensureAdminOperate();
-        if (password.equals(newPassword)) {
-            throw new IllegalArgumentException("新旧密码一样");
-        }
-        if (!newPassword.equals(confirm)) {
-            throw new IllegalArgumentException("新密码确认密码错误");
-        }
-        // 密码验证
-        if (!passwordEncoder.matches(password, currentAdmin.getPassword())) {
-            throw new IllegalArgumentException("旧密码错误");
-        }
         // 设置加密后的新密码
         probe.setPassword(passwordEncoder.encode(newPassword));
         repository.saveAndFlush(probe);

@@ -28,33 +28,8 @@ public class CommentController {
         return WrapperResponse.build(service.count(articleId));
     }
 
-    @GetMapping("/{id}")
-    public WrapperResponse<Comment> get(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.get(id));
-    }
-
-    @GetMapping
-    public WrapperResponse<SearchResponse<Comment>> search(@Valid @ModelAttribute CommentSearchRequest criteria) {
-        return WrapperResponse.build(service.search(criteria));
-    }
-
-    @PutMapping("/{id}")
-    public WrapperResponse<Comment> update(@PathVariable("id") Long id, @RequestBody @Valid CommentUpdateRequest request) {
-        return WrapperResponse.build(service.update(id, request));
-    }
-
-    @PatchMapping("/{id}")
-    public WrapperResponse<Integer> patch(@PathVariable("id") Long id, @Valid @RequestBody CommentMetaPatchRequest request) {
-        return WrapperResponse.build(service.patchMeta(id, request));
-    }
-
     @PatchMapping("/{id}/like")
     public WrapperResponse<Integer> patchLike(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.patchLike(id));
-    }
-
-    @DeleteMapping("/{id}")
-    public WrapperResponse<Integer> delete(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.delete(id));
     }
 }

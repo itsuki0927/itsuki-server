@@ -78,19 +78,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         articleService.update(articleId, article);
     }
 
-    public int patchMeta(Long id, CommentMetaPatchRequest request) {
-        String meta = request.getMeta();
-        if (!meta.equals("liking")) {
-            throw new IllegalArgumentException("meta can only be one of reading and liking");
-        }
-
-        Comment comment = ensureExist(repository, id, "article");
-
-        comment.setLiking(comment.getLiking() + 1);
-        repository.saveAndFlush(comment);
-        return 1;
-    }
-
     /**
      * 获取当前文章的评论数(待审核、已发布)
      */
