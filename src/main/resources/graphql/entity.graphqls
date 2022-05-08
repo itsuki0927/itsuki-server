@@ -1,3 +1,16 @@
+enum Role {
+   ADMIN
+}
+
+type Admin {
+    nickname:String
+    avatar:String
+    role:Role
+    username:String
+    password:String
+    description:String
+}
+
 type Comment {
     id:ID!
     nickname:String

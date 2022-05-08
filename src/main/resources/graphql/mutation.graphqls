@@ -22,6 +22,7 @@ type Mutation {
     updateComment(id:ID!, input: UpdateCommentInput!): Comment
 
     login(input: LoginRequest!):LoginResponse
+    updateAdmin(input: UpdateAdminInput): Admin
 }
 
 enum OperateState {
@@ -37,6 +38,12 @@ type LoginResponse {
 input LoginRequest {
     username: String!
     password: String!
+}
+
+input UpdateAdminInput {
+    avatar: String
+    nickname: String
+    description: String
 }
 
 input CreateArticleInput {
