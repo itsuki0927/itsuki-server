@@ -7,7 +7,6 @@ type Admin {
     avatar:String
     role:Role
     username:String
-    password:String
     description:String
 }
 

@@ -15,9 +15,15 @@ public abstract class SecurityUtils {
     }
 
     public static Admin getCurrentAdmin() {
-        if (SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof Admin) {
-            return (Admin) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (principal instanceof Admin) {
+            return (Admin) principal;
         }
         return null;
+    }
+
+    public static void clearCurrentAdmin() {
+        SecurityContextHolder.getContext().setAuthentication(null);
+        SecurityContextHolder.clearContext();
     }
 }
