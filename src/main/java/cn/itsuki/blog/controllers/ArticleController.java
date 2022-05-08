@@ -32,11 +32,6 @@ public class ArticleController {
     @Autowired
     ArticleService service;
 
-    @PostMapping
-    public WrapperResponse<Article> create(@Valid @RequestBody ArticleCreateRequest article) {
-        return WrapperResponse.build(service.create(article), "创建成功");
-    }
-
     @GetMapping("/paths")
     public WrapperResponse<List<ArticleId>> getPaths() {
         return WrapperResponse.build(service.getPaths());
@@ -57,43 +52,13 @@ public class ArticleController {
         return WrapperResponse.build(service.detail(id));
     }
 
-    @GetMapping
-    public WrapperResponse<SearchResponse<Article>> search(@Valid @ModelAttribute ArticleSearchRequest criteria) {
-        return WrapperResponse.build(service.search(criteria));
-    }
-
     @GetMapping("/count")
     public WrapperResponse<Integer> count(@Valid @ModelAttribute ArticleSearchRequest criteria) {
         return WrapperResponse.build(service.count(criteria));
     }
 
-    @PutMapping("/{id}")
-    public WrapperResponse<Article> put(@PathVariable("id") Long id, @Valid @RequestBody ArticleCreateRequest article) {
-        return WrapperResponse.build(service.update(id, article));
-    }
-
-    @DeleteMapping("/{id}")
-    public WrapperResponse<Integer> delete(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.delete(id));
-    }
-
-    @PatchMapping("/{id}")
-    public WrapperResponse<Integer> patch(@PathVariable("id") Long id, @Valid @RequestBody ArticleMetaPatchRequest request) {
-        return WrapperResponse.build(service.patchMeta(id, request));
-    }
-
-    @PatchMapping("/{id}/like")
-    public WrapperResponse<Integer> patchLike(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.patchLike(id));
-    }
-
     @PatchMapping("/{id}/read")
     public WrapperResponse<Integer> patchRead(@PathVariable("id") Long id) {
         return WrapperResponse.build(service.patchRead(id));
-    }
-
-    @PatchMapping
-    public WrapperResponse<Integer> patch(@Valid @RequestBody ArticlePatchRequest request) {
-        return WrapperResponse.build(service.patch(request));
     }
 }

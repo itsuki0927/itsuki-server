@@ -1,7 +1,6 @@
 package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.hutool.core.date.DateUtil;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
@@ -62,86 +61,12 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         }
     }
 
-
-    public Article create(ArticleCreateRequest request) {
-        Article entity = new Article();
-        BeanUtils.copyProperties(request, entity);
-        Article article = super.create(entity);
-
-        saveAllTags(request.getTagIds(), article.getId());
-
-        return article;
-    }
-
     private void deleteTag(long articleId) {
         articleTagRepository.deleteAllByArticleIdEquals(articleId);
     }
 
     private void deleteComment(long articleId) {
         commentRepository.deleteCommentsByArticleIdEquals(articleId);
-    }
-
-    public Article update(long id, ArticleCreateRequest entity) {
-        Article article = ensureExist(repository, id, "article");
-
-        // 删除当前文章的tag、category
-        deleteTag(id);
-
-        // 添加tag、category
-        saveAllTags(entity.getTagIds(), id);
-
-        BeanUtil.copyProperties(entity, article, CopyOptions.create().ignoreNullValue());
-
-        return super.update(id, article);
-    }
-
-    @Override
-    public int delete(long id) {
-        int result = super.delete(id);
-
-        deleteTag(id);
-        deleteComment(id);
-
-        return result;
-    }
-
-    public int patch(ArticlePatchRequest request) {
-        return ((ArticleRepository) repository).batchUpdateState(request.getState(), request.getIds());
-    }
-
-    public int patchMeta(Long id, ArticleMetaPatchRequest request) {
-        String meta = request.getMeta();
-        ensureArticleMetaExist(meta);
-
-        Article article = ensureExist(repository, id, "article");
-        ensureAdminOperate();
-
-        switch (meta) {
-            case "reading":
-                article.setReading(article.getReading() + 1);
-                break;
-            case "liking":
-                article.setLiking(article.getLiking() + 1);
-                break;
-            case "banner":
-                article.setBanner(request.getValue());
-                break;
-        }
-
-        repository.saveAndFlush(article);
-        return 1;
-    }
-
-    public int patchLike(Long id) {
-        Article article = ensureExist(repository, id, "article");
-        if (article.getPublish() != PublishState.Published) {
-            throw new RuntimeException("文章未发布");
-        }
-
-        article.setLiking(article.getLiking() + 1);
-
-        repository.saveAndFlush(article);
-        return article.getLiking();
     }
 
     /**
@@ -159,27 +84,17 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         }
     }
 
-    /**
-     * 确保更新的meta是允许更新的
-     */
-    private void ensureArticleMetaExist(String meta) {
-        if (!meta.equals("reading") && !meta.equals("liking") && !meta.equals("banner") && !meta.equals("pinned")) {
-            throw new IllegalArgumentException("meta can only be one of reading、liking、banner and pinned");
-        }
-    }
-
     public Page<Article> getHotArticles() {
         Sort sort = Sort.by(Sort.Direction.DESC, "reading");
         Pageable pageable = new OffsetLimitPageRequest(0, 8, sort);
 
-        return normalizeArticles(((ArticleRepository) repository).queryArticlesByPublish(PublishState.Published, pageable));
+        return ((ArticleRepository) repository).queryArticlesByPublish(PublishState.Published, pageable);
     }
 
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         Long tagId = null;
         Long categoryId = null;
-        Integer publish = Optional.ofNullable(criteria.getPublish()).orElse(PublishState.Published);
 
         if (criteria.getHot() != null && criteria.getHot() == 1) {
             return getHotArticles();
@@ -195,21 +110,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         return ((ArticleRepository) repository).search2(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), criteria.getBanner(), pageable);
-    }
-
-    private Page<Article> normalizeArticles(Page<Article> articles) {
-        return articles.map(article -> {
-            Article result = new Article();
-            BeanUtils.copyProperties(article, result);
-            result.setContent("content placeholder");
-            //    result.setComments(result.getComments().stream().map(item -> {
-            //        Comment comment = new Comment();
-            //        BeanUtils.copyProperties(item, comment);
-            //        comment.setContent("comment placeholder");
-            //        return comment;
-            //    }).collect(Collectors.toSet()));
-            return result;
-        });
     }
 
     public Integer count(ArticleSearchRequest criteria) {
