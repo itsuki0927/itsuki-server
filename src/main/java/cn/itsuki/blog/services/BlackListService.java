@@ -1,15 +1,14 @@
 package cn.itsuki.blog.services;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.BlackList;
+import cn.itsuki.blog.entities.requests.UpdateBlackListInput;
 import cn.itsuki.blog.repositories.BlackListRepository;
-import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.JSONArray;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * 黑名单 服务
@@ -22,39 +21,39 @@ public class BlackListService implements GraphQLQueryResolver, GraphQLMutationRe
     @Autowired
     private BlackListRepository repository;
 
-    private final long blackListId = 1L;
-
     public BlackList blacklist() {
-        return repository.getById(blackListId);
+//        long blackListId = 1L;
+//        return repository.getById(blackListId);
+        return repository.findAll().get(0);
     }
 
-    public BlackList update(BlackList input) {
-        input.setId(blackListId);
-        repository.save(input);
-        return input;
+    public BlackList updateBlackList(UpdateBlackListInput input) {
+        BlackList probe = blacklist();
+        BeanUtil.copyProperties(input, probe);
+        repository.save(probe);
+        return probe;
     }
 
     public void add(String ip, String email) {
-        BlackList blackList = new BlackList();
-        List<String> ipList = (List<String>) JSONObject.parseObject(blackList.getIp());
+        BlackList blackList = blacklist();
+        JSONArray ipList = JSONArray.parseArray(blackList.getIp());
         ipList.add(ip);
-        List<String> emailList = (List<String>) JSONObject.parseObject(blackList.getEmail());
+        JSONArray emailList = JSONArray.parseArray(blackList.getEmail());
         emailList.add(email);
         blackList.setIp(ipList.toString());
         blackList.setEmail(emailList.toString());
-        blackList.setId(blackListId);
         repository.save(blackList);
     }
 
     public void delete(String ip, String email) {
-        BlackList blackList = new BlackList();
-        List<String> ipList = (List<String>) JSONObject.parseObject(blackList.getIp());
+        BlackList blackList = blacklist();
+        JSONArray ipList = JSONArray.parseArray(blackList.getIp());
         ipList.remove(ip);
         blackList.setIp(ipList.toString());
-        List<String> emailList = (List<String>) JSONObject.parseObject(blackList.getEmail());
+
+        JSONArray emailList = JSONArray.parseArray(blackList.getEmail());
         emailList.remove(email);
         blackList.setEmail(emailList.toString());
-        blackList.setId(blackListId);
         repository.save(blackList);
     }
 }

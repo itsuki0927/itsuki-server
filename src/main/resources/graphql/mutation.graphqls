@@ -24,4 +24,6 @@ type Mutation {
     login(input: LoginRequest!):LoginResponse
     updateAdmin(input: UpdateAdminInput!): Admin
     updateAdminPassword(input: UpdateAdminPasswordInput!): Admin
+
+    updateBlackList(input: UpdateBlackListInput!): BlackList
 }

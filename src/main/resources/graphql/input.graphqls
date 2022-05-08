@@ -68,3 +68,9 @@ input TagActionInput {
     expand: String
     sort: Int
 }
+
+input UpdateBlackListInput{
+    ip:String
+    email:String
+    keyword:String
+}
