@@ -1,0 +1,28 @@
+interface SearchResponse {
+    total:Int
+}
+
+type SearchArticleResponse implements SearchResponse {
+    total:Int
+    data: [Article]
+}
+
+type SearchTagResponse implements SearchResponse{
+    total:Int
+    data: [Tag]
+}
+
+type SearchCommentResponse implements SearchResponse{
+    total:Int
+    data:[Comment]
+}
+
+enum OperateState {
+    OK,
+    NOT_OK
+}
+type LoginResponse {
+    state: OperateState
+    token: String
+    expiration: Int
+}

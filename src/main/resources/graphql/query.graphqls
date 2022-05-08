@@ -1,22 +1,3 @@
-interface SearchResponse {
-    total:Int
-}
-
-type SearchArticleResponse implements SearchResponse {
-    total:Int
-    data: [Article]
-}
-
-type SearchTagResponse implements SearchResponse{
-    total:Int
-    data: [Tag]
-}
-
-type SearchCommentResponse implements SearchResponse{
-    total:Int
-    data:[Comment]
-}
-
 type Query {
     categories: [Category]
     article(id:ID!): Article
@@ -25,9 +6,6 @@ type Query {
     comments(search: CommentSearchRequest): SearchCommentResponse
     comment(id:ID!): Comment
 }
-
-scalar Date
-scalar DateTime
 
 schema {
     query: Query
