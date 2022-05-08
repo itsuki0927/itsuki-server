@@ -20,6 +20,23 @@ type Mutation {
     deleteComment(id:ID!): Int
     updateCommentState(id:ID!, state:Int!):Int
     updateComment(id:ID!, input: UpdateCommentInput!): Comment
+
+    login(input: LoginRequest!):LoginResponse
+}
+
+enum OperateState {
+    OK,
+    NOT_OK
+}
+type LoginResponse {
+    state: OperateState
+    token: String
+    expiration: Int
+}
+
+input LoginRequest {
+    username: String!
+    password: String!
 }
 
 input CreateArticleInput {
