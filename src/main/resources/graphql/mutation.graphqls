@@ -19,6 +19,7 @@ type Mutation {
     createComment(input: CreateCommentInput!): Comment
     deleteComment(id:ID!): Int
     updateCommentState(id:ID!, state:Int!):Int
+    updateComment(id:ID!, input: UpdateCommentInput!): Comment
 }
 
 input CreateArticleInput {
@@ -46,6 +47,17 @@ input CreateCommentInput {
     expand:String
     parentId:ID
     articleId:ID!
+}
+
+input UpdateCommentInput {
+    nickname:String
+    email:String
+    website:String
+    content:String
+    liking:Int
+    state:Int
+    fix:Int
+    expand:String
 }
 
 input CategoryActionInput {

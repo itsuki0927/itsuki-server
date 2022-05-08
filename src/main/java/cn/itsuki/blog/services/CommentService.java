@@ -58,42 +58,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         states.add(CommentState.Published);
     }
 
-    /**
-     * 确保是管理员操作
-     */
-    private void ensureAdminOperate() {
-        if (adminService.getCurrentAdmin() == null) {
-            throw new IllegalArgumentException("没有权限");
-        }
-    }
-
-    private Article ensureArticleExist(Long articleId) {
-        return articleService.get(articleId);
-    }
-
-    private void ensureIsInBlackList(Comment entity) {
-        String ip = entity.getIp();
-        String email = entity.getEmail();
-        String content = entity.getContent();
-
-        if (ipService.isInBlackList(ip) || emailService.isInBlackList(email) || keywordService.isInBlackList(content)) {
-            throw new IllegalArgumentException("ip | 邮箱 | 内容 -> 不合法");
-        }
-    }
-
-    private void ensureReplySameArticle(Comment comment) {
-        Long parentId = comment.getParentId();
-        if (parentId != null && parentId != 0 && parentId != -1) {
-            Comment parent = ensureExist(repository, parentId, "comment");
-            // 如果当前评论和回复的评论文章不是同一篇
-            if (!parent.getArticleId().equals(comment.getArticleId())) {
-                throw new IllegalArgumentException("The replied article is not the same, comment article id:"
-                        + comment.getArticleId() + " ---> parent comment article id: " + parent.getArticleId());
-            }
-            comment.setParentNickName(parent.getNickname());
-        }
-    }
-
     public Comment update(long id, CommentUpdateRequest request) {
         Comment comment = ensureExist(repository, id, "comment");
 
@@ -101,7 +65,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
         return super.update(id, comment);
     }
-
 
     @Override
     protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
@@ -132,6 +95,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return 1;
     }
 
+    /**
+     * 获取当前文章的评论数(待审核、已发布)
+     */
     public Integer count(Long articleId) {
         return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStateIsIn(articleId, states);
     }
@@ -146,6 +112,27 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     public SearchResponse<Comment> comments(CommentSearchRequest input) {
         return search(input);
+    }
+
+    public Comment comment(Long id) {
+        return get(id);
+    }
+
+    public Comment updateComment(Long id, UpdateCommentInput input) {
+        ensureAdminOperate();
+
+        Comment comment = get(id);
+        Integer oldState = comment.getState();
+        Integer newState = input.getState();
+        BeanUtil.copyProperties(input, comment);
+
+        Comment update = super.update(id, comment);
+
+        if (newState != null && !newState.equals(oldState)) {
+            updateArticleCommentCount(comment.getArticleId());
+        }
+
+        return update;
     }
 
     public int deleteComment(Long id) {
@@ -227,6 +214,42 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void ensureCanDelete(Comment comment) {
         if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
             throw new IllegalArgumentException("只有在回收站、已删除的评论才能彻底删除");
+        }
+    }
+
+    /**
+     * 确保是管理员操作
+     */
+    private void ensureAdminOperate() {
+        if (adminService.getCurrentAdmin() == null) {
+            throw new IllegalArgumentException("没有权限");
+        }
+    }
+
+    private Article ensureArticleExist(Long articleId) {
+        return articleService.get(articleId);
+    }
+
+    private void ensureIsInBlackList(Comment entity) {
+        String ip = entity.getIp();
+        String email = entity.getEmail();
+        String content = entity.getContent();
+
+        if (ipService.isInBlackList(ip) || emailService.isInBlackList(email) || keywordService.isInBlackList(content)) {
+            throw new IllegalArgumentException("ip | 邮箱 | 内容 -> 不合法");
+        }
+    }
+
+    private void ensureReplySameArticle(Comment comment) {
+        Long parentId = comment.getParentId();
+        if (parentId != null && parentId != 0 && parentId != -1) {
+            Comment parent = ensureExist(repository, parentId, "comment");
+            // 如果当前评论和回复的评论文章不是同一篇
+            if (!parent.getArticleId().equals(comment.getArticleId())) {
+                throw new IllegalArgumentException("The replied article is not the same, comment article id:"
+                        + comment.getArticleId() + " ---> parent comment article id: " + parent.getArticleId());
+            }
+            comment.setParentNickName(parent.getNickname());
         }
     }
 }
