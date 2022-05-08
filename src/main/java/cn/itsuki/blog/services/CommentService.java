@@ -136,7 +136,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     public int deleteComment(Long id) {
-        Comment comment = ensureExist(repository, id, "Comment");
+        Comment comment = get(id);
         ensureAdminOperate();
         ensureCanDelete(comment);
         repository.deleteById(id);
@@ -144,9 +144,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     public int updateCommentState(Long id, Integer state) {
+        ensureAdminOperate();
         // 是否为垃圾评论
         boolean isSpam = state == CommentState.Spam;
-        Comment comment = ensureExist(repository, id, "Comment");
+        Comment comment = get(id);
         String ip = comment.getIp();
         String email = comment.getEmail();
 

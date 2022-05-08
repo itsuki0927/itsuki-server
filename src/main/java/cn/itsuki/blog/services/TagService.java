@@ -85,12 +85,11 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         BeanUtil.copyProperties(entity, probe);
         ensureTagExist(probe);
         ensureAdminOperate();
-        System.out.println(probe.toString());
         return super.create(probe);
     }
 
     public Tag updateTag(Long id, TagActionInput input) {
-        Tag oldTag = ensureExist(repository, id, "Tag");
+        Tag oldTag = get(id);
         Tag entity = new Tag();
         BeanUtil.copyProperties(input, entity);
 
