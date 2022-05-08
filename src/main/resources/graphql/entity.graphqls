@@ -74,3 +74,10 @@ type Category {
     sort: Int
     count: Int
 }
+
+type BlackList {
+    id:ID!
+    ip: String
+    email: String
+    keyword: String
+}

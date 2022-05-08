@@ -33,11 +33,7 @@ import java.util.List;
 public class CommentService extends BaseService<Comment, CommentSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
 
     @Autowired
-    private BlackIpService ipService;
-    @Autowired
-    private BlackEmailService emailService;
-    @Autowired
-    private BlackKeywordService keywordService;
+    private BlackListService blackListService;
     @Autowired
     private ArticleService articleService;
     @Autowired
@@ -154,12 +150,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         // 如果是垃圾评论，则加入黑名单，以及 submitSpam
         // 如果不是垃圾评论，则移出黑名单，以及 submitHam
         if (isSpam) {
-            ipService.save(ip);
-            emailService.save(email);
+            blackListService.add(ip, email);
             akismetService.submitSpam(comment);
         } else {
-            ipService.remove(ip);
-            emailService.remove(email);
+            blackListService.delete(ip, email);
             akismetService.submitHam(comment);
         }
 
@@ -235,8 +229,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         String ip = entity.getIp();
         String email = entity.getEmail();
         String content = entity.getContent();
+        BlackList blackList = blackListService.blacklist();
 
-        if (ipService.isInBlackList(ip) || emailService.isInBlackList(email) || keywordService.isInBlackList(content)) {
+        if (blackList.getIp().contains(ip) || blackList.getEmail().contains(email) || blackList.getKeyword().contains(content)) {
             throw new IllegalArgumentException("ip | 邮箱 | 内容 -> 不合法");
         }
     }

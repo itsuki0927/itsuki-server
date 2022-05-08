@@ -1,20 +1,17 @@
 package cn.itsuki.blog.services;
 
-import cn.hutool.db.sql.Direction;
 import cn.itsuki.blog.entities.Article;
+import cn.itsuki.blog.entities.BlackList;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.entities.responses.SiteInfoResponse;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
-import cn.itsuki.blog.entities.responses.SystemSettingsResponse;
 import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,7 +31,7 @@ public class SiteInfoService {
     @Autowired
     private ArticleService articleService;
     @Autowired
-    private SystemSettingsService settingsService;
+    private BlackListService blackListService;
     @Autowired
     private CommentRepository commentRepository;
 
@@ -47,8 +44,8 @@ public class SiteInfoService {
         List<Category> categories = categoryRepository.findAll();
         siteInfoResponse.setCategories(categories);
 
-        SystemSettingsResponse settings = settingsService.get();
-        siteInfoResponse.setSite(settings);
+        BlackList blackList = blackListService.blacklist();
+        siteInfoResponse.setBlackList(blackList);
 
         Page<Article> articles = articleService.getHotArticles();
         siteInfoResponse.setHotArticles(articles.getContent());

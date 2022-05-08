@@ -5,6 +5,7 @@ type Query {
     tags(search: TagSearchRequest): SearchTagResponse
     comments(search: CommentSearchRequest): SearchCommentResponse
     comment(id:ID!): Comment
+    blacklist: BlackList
 }
 
 schema {
