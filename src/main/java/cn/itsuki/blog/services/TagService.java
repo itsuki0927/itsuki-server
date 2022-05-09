@@ -3,11 +3,11 @@ package cn.itsuki.blog.services;
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
-import cn.itsuki.blog.entities.requests.CategoryActionInput;
 import cn.itsuki.blog.entities.requests.TagActionInput;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.TagRepository;
+import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,12 +30,16 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
 
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private SeoService seoService;
+    @Autowired
+    private UrlUtil urlUtil;
 
     /**
      * 创建一个service实例
      */
     public TagService() {
-        super("id", new String[]{"id", "sort"});
+        super("id", "id", "sort");
     }
 
     private void ensureTagExist(Tag entity) {
@@ -75,6 +79,9 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         BeanUtil.copyProperties(entity, probe);
         ensureTagExist(probe);
         adminService.ensureAdminOperate();
+
+        seoService.push(urlUtil.getTagUrl(probe.getPath()));
+
         return super.create(probe);
     }
 
@@ -91,12 +98,20 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
 
         ensureTagExist(entity);
         validateEntity(entity);
+
+        seoService.update(urlUtil.getTagUrl(entity.getPath()));
+
         return repository.saveAndFlush(entity);
     }
 
-    public int deleteTag(Long categoryId) {
+    public int deleteTag(Long id) {
         adminService.ensureAdminOperate();
-        return super.delete(categoryId);
+
+        Tag tag = get(id);
+
+        seoService.delete(urlUtil.getTagUrl(tag.getPath()));
+
+        return super.delete(id);
     }
 }
 

@@ -5,6 +5,7 @@ import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.requests.CategoryActionInput;
 import cn.itsuki.blog.repositories.CategoryRepository;
+import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,10 @@ import java.util.Optional;
 public class CategoryService extends BaseService<Category, BaseSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private SeoService seoService;
+    @Autowired
+    private UrlUtil urlUtil;
 
     /**
      * 创建一个service实例
@@ -68,6 +73,9 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         BeanUtil.copyProperties(entity, probe);
         ensureCategoryExist(probe);
         adminService.ensureAdminOperate();
+
+        seoService.push(urlUtil.getCategoryUrl(probe.getPath()));
+
         return super.create(probe);
     }
 
@@ -84,11 +92,19 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
 
         ensureCategoryExist(entity);
         validateEntity(entity);
+
+        seoService.update(urlUtil.getCategoryUrl(entity.getPath()));
+
         return repository.saveAndFlush(entity);
     }
 
     public int deleteCategory(Long categoryId) {
         adminService.ensureAdminOperate();
+
+        Category category = get(categoryId);
+
+        seoService.delete(urlUtil.getCategoryUrl(category.getPath()));
+
         return super.delete(categoryId);
     }
 }

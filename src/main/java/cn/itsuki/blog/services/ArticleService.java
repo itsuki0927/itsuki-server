@@ -10,6 +10,7 @@ import cn.itsuki.blog.entities.responses.ArticleDetailResponse;
 import cn.itsuki.blog.entities.responses.ArticleSummaryResponse;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
+import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.BeanUtils;
@@ -42,6 +43,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     private CategoryService categoryService;
     @Autowired
     private CommentRepository commentRepository;
+    @Autowired
+    private SeoService seoService;
+    @Autowired
+    private UrlUtil urlUtil;
 
     /**
      * 创建一个service实例
@@ -212,6 +217,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         // 更新tag count
         updateTagCount(request.getTagIds());
 
+        if (request.getPublish() == PublishState.Published) {
+            seoService.push(urlUtil.getArticleUrl(article.getId()));
+        }
+
         return article;
     }
 
@@ -273,6 +282,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         // 更新旧的tag count
         updateTagCount(oldTagIds);
 
+        seoService.update(urlUtil.getArticleUrl(id));
+
         return update;
     }
 
@@ -286,6 +297,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         updateTagCount(oldTagIds);
         updateCategoryCount(oldArticle.getCategoryId());
+
+        seoService.delete(urlUtil.getArticleUrl(articleId));
 
         return super.delete(articleId);
     }

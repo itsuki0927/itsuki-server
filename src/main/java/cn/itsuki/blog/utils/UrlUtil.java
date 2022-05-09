@@ -19,4 +19,12 @@ public class UrlUtil {
     public String getGuestBookUrl() {
         return webUrl + "/guestbook";
     }
+
+    public String getCategoryUrl(String path) {
+        return webUrl + "/category/" + path;
+    }
+
+    public String getTagUrl(String path) {
+        return webUrl + "/tag/" + path;
+    }
 }
