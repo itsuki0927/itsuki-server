@@ -1,16 +1,10 @@
 package cn.itsuki.blog.controllers;
 
 import cn.itsuki.blog.entities.Admin;
-import cn.itsuki.blog.entities.requests.AdminSaveRequest;
-import cn.itsuki.blog.entities.requests.AdminUpdatePasswordRequest;
-import cn.itsuki.blog.entities.requests.LoginRequest;
-import cn.itsuki.blog.entities.responses.LoginResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import cn.itsuki.blog.services.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-
-import javax.validation.Valid;
 
 /**
  * 管理员 控制器
