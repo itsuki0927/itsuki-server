@@ -1,8 +1,11 @@
 package cn.itsuki.blog;
 
+import lombok.extern.log4j.Log4j2;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.format.Formatter;
 
 import java.text.ParseException;
@@ -11,11 +14,20 @@ import java.time.Instant;
 import java.util.Date;
 import java.util.Locale;
 
+@Log4j2
 @SpringBootApplication
 public class BlogApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(BlogApplication.class, args);
+    }
+
+    @Bean
+    ApplicationRunner applicationRunner(Environment environment) {
+        String mode = environment.getProperty("spring.profiles.active");
+        return args -> {
+            log.info("Itsuki Server Run！mode: " + mode);
+        };
     }
 
     /**
