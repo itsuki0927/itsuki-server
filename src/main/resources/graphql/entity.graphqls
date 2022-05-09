@@ -1,3 +1,9 @@
+interface IdentifiableEntity {
+    id:ID!
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
+}
+
 enum Role {
     ADMIN
 }
@@ -10,8 +16,10 @@ type Admin {
     description:String
 }
 
-type Comment {
+type Comment implements IdentifiableEntity{
     id:ID!
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
     nickname:String
     email:String
     website:String
@@ -31,10 +39,10 @@ type Comment {
     articleId:ID!
 }
 
-type Article {
+type Article implements IdentifiableEntity{
     id:ID!
-    createAt: Date
-    updateAt: Date
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
     title:String
     path:String
     description:String
@@ -55,8 +63,10 @@ type Article {
     tags: [Tag]
 }
 
-type Tag{
+type Tag implements IdentifiableEntity{
     id:ID!
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
     name:String
     path:String
     description:String
@@ -65,8 +75,10 @@ type Tag{
     count:Int
 }
 
-type Category {
+type Category implements IdentifiableEntity{
     id:ID!
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
     name: String
     path: String
     description: String
@@ -75,8 +87,10 @@ type Category {
     count: Int
 }
 
-type BlackList {
+type BlackList implements IdentifiableEntity{
     id:ID!
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
     ip: String
     email: String
     keyword: String

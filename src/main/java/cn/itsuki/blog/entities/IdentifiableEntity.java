@@ -1,14 +1,14 @@
 package cn.itsuki.blog.entities;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * 具有 id 属性的所有实体的基类
@@ -26,20 +26,18 @@ public class IdentifiableEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "create_at")
-    private Date createAt;
+    private LocalDateTime createAt;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(style = "yyyy-MM-dd HH:mm:ss")
     @Column(name = "update_at")
-    private Date updateAt;
+    private LocalDateTime updateAt;
 
     @PrePersist
     protected void onCreate() {
-        setCreateAt(new Date());
-        setUpdateAt(new Date());
+        setCreateAt(LocalDateTime.now());
+        setUpdateAt(LocalDateTime.now());
         onCreateAction();
     }
 
@@ -58,7 +56,7 @@ public class IdentifiableEntity {
 
     @PreUpdate
     protected void onUpdate() {
-        setUpdateAt(new Date());
+        setUpdateAt(LocalDateTime.now());
         onUpdateAction();
     }
 }

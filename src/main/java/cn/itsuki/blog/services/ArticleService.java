@@ -1,7 +1,7 @@
 package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.DateUtil;
+import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -46,7 +47,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
      * 创建一个service实例
      */
     public ArticleService() {
-        super("createAt", new String[]{"commenting", "liking", "reading", "createdAt"});
+        super("createAt", "commenting", "liking", "reading", "createdAt");
     }
 
     private void saveAllTags(List<Long> tagIds, Long articleId) {
@@ -147,8 +148,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         List<ArticleArchive> archives = ((ArticleRepository) repository).archive();
         TreeMap<String, TreeMap<String, List<ArticleArchive>>> response = new TreeMap<>(Comparator.reverseOrder());
         archives.forEach(archive -> {
-            String year = DateUtil.format(archive.getCreateAt(), "yyyy");
-            String date = DateUtil.format(archive.getCreateAt(), "MM月");
+            String year = LocalDateTimeUtil.format(archive.getCreateAt(), "yyyy");
+            String date = LocalDateTimeUtil.format(archive.getCreateAt(), "MM月");
 
             TreeMap<String, List<ArticleArchive>> map = response.getOrDefault(year, new TreeMap<>(Comparator.reverseOrder()));
             List<ArticleArchive> articleArchiveList = map.getOrDefault(date, new ArrayList<>());
