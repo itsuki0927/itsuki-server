@@ -151,22 +151,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return response;
     }
 
-    public TreeMap<String, TreeMap<String, List<ArticleArchive>>> getArchive() {
-        List<ArticleArchive> archives = ((ArticleRepository) repository).archive();
-        TreeMap<String, TreeMap<String, List<ArticleArchive>>> response = new TreeMap<>(Comparator.reverseOrder());
-        archives.forEach(archive -> {
-            String year = LocalDateTimeUtil.format(archive.getCreateAt(), "yyyy");
-            String date = LocalDateTimeUtil.format(archive.getCreateAt(), "MM月");
-
-            TreeMap<String, List<ArticleArchive>> map = response.getOrDefault(year, new TreeMap<>(Comparator.reverseOrder()));
-            List<ArticleArchive> articleArchiveList = map.getOrDefault(date, new ArrayList<>());
-            articleArchiveList.add(archive);
-            map.put(date, articleArchiveList);
-            response.put(year, map);
-        });
-        return response;
-    }
-
     public List<ArticleId> getPaths() {
         return ((ArticleRepository) repository).ids();
     }
@@ -328,7 +312,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return articles.size();
     }
 
-    public int incrementArticleReading(Long id) {
+    public int readArticle(Long id) {
         Article article = get(id);
         ensureArticleAllowOperate(article);
         article.setReading(article.getReading() + 1);
@@ -337,7 +321,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return article.getReading();
     }
 
-    public int incrementArticleLiking(Long id) {
+    public int likeArticle(Long id) {
         Article article = get(id);
         ensureArticleAllowOperate(article);
         article.setLiking(article.getLiking() + 1);

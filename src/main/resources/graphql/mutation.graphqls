@@ -5,8 +5,8 @@ type Mutation {
     # 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
     updateArticleState(ids: [ID]!, state: Int!): Int
     updateArticleBanner(ids: [ID]!, banner: Int!):Int
-    incrementArticleReading(id:ID!): Int
-    incrementArticleLiking(id:ID!): Int
+    readArticle(id:ID!): Int
+    likeArticle(id:ID!): Int
 
     createCategory(input: CategoryActionInput!): Category
     updateCategory(id:ID!, input: CategoryActionInput!): Category
