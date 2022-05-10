@@ -21,21 +21,15 @@ import java.util.List;
 public interface CommentRepository extends BaseRepository<Comment> {
     @Modifying
     @Transactional
-    @Query(value = "update comment  c set c.state = :state where c.id in :ids")
-    int batchPatchStatus(@Param("ids") List<Long> ids, @Param("state") Integer state);
-
-    @Modifying
-    @Transactional
     @Query(value = "update comment  c set c.state = :state where c.id = :id")
-    int updateState(@Param("id") Long id, @Param("state") Integer state);
+    void updateState(@Param("id") Long id, @Param("state") Integer state);
 
-    List<Comment> findCommentsByArticleIdAndStateIsIn(Long articleId, List<Integer> state);
-
-    int countCommentsByArticleIdEqualsAndStateIsIn(Long articleId, List<Integer> state);
+    @Query("select count(c.id) from comment c where c.articleId = :articleId and (c.state = 1 or c.state = 0)")
+    int countComments(@Param("articleId") Long articleId);
 
     List<Comment> findCommentsByIdIn(List<Long> ids);
 
-    int deleteCommentsByArticleIdEquals(Long articleId);
+    void deleteCommentsByArticleIdEquals(Long articleId);
 
     /**
      * @param keyword   关键字

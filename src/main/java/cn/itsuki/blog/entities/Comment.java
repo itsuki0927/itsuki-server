@@ -139,9 +139,13 @@ public class Comment extends IdentifiableEntity {
             setArticleId(CommonState.GUESTBOOK);
         }
         // 默认待审核
-        setState(CommentState.Auditing);
+        if (getState() == null) {
+            setState(CommentState.Auditing);
+        }
         // 关闭fix
-        setFix(CommonState.SHUT_DOWN);
+        if (getFix() == null) {
+            setFix(CommonState.SHUT_DOWN);
+        }
         // 初始0
         setLiking(CommonState.INIT_VALUE);
     }

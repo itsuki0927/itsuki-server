@@ -20,6 +20,7 @@ type Mutation {
     deleteComment(id:ID!): Int
     updateCommentState(id:ID!, state:Int!):Int
     updateComment(id:ID!, input: UpdateCommentInput!): Comment
+    adminComment(input: AdminCommentInput!): Comment
 
     login(input: LoginRequest!):LoginResponse
     updateAdmin(input: UpdateAdminInput!): Admin

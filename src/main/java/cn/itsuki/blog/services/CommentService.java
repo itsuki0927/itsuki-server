@@ -51,18 +51,16 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private String adminEmail;
     @Value("${mode.isDev}")
     private boolean isDev;
+    @Value("${cors.webUrl}")
+    private String webUrl;
     private String devIP = "220.169.96.10";
-    private final List<Integer> states;
 
     CommentService() {
         super("id", "id");
-        states = new ArrayList<>();
-        states.add(CommentState.Auditing);
-        states.add(CommentState.Published);
     }
 
     public Comment update(long id, CommentUpdateRequest request) {
-        Comment comment = ensureExist(repository, id, "comment");
+        Comment comment = get(id);
 
         BeanUtil.copyProperties(request, comment, CopyOptions.create().ignoreNullValue());
 
@@ -75,9 +73,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
                 criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), pageable);
     }
 
+    private List<String> humanizeList(String item) {
+        return List.of(item);
+    }
+
     private void sendEmailToReplyTarget(Comment comment, String to) {
-        ArrayList<String> tos = new ArrayList<>();
-        tos.add(to);
+        List<String> tos = humanizeList(to);
         boolean isComment = comment.getArticleId() == null;
         String text = isComment ? "评论" : "留言";
         String content = buildEmailContent(comment);
@@ -85,8 +86,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     private void sendEmailToAdmin(Comment comment) {
-        ArrayList<String> tos = new ArrayList<>();
-        tos.add(adminEmail);
+        List<String> tos = humanizeList(adminEmail);
         boolean isComment = comment.getArticleId() == null;
         String text = isComment ? "评论" : "留言";
         String content = buildEmailContent(comment);
@@ -115,7 +115,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
      * 获取当前文章的评论数(待审核、已发布)
      */
     public Integer count(Long articleId) {
-        return ((CommentRepository) repository).countCommentsByArticleIdEqualsAndStateIsIn(articleId, states);
+        return ((CommentRepository) repository).countComments(articleId);
     }
 
     public int patchLike(Long id) {
@@ -193,10 +193,70 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         Comment comment = new Comment();
         BeanUtil.copyProperties(input, comment);
 
+        Comment parentComment = ensureReplyCommentReadPermission(comment);
+        // 是否在黑名单中
+        ensureIsInBlackList(comment);
+        // 检查是否为垃圾评论
+        akismetService.checkComment(comment, false);
+
+        setCommentArticle(comment);
+        setCommentIp(comment, environment);
+        setCommentLocation(comment);
+        comment.setId(null);
+
+        if (parentComment != null) {
+            sendEmailToReplyTarget(comment, parentComment.getEmail());
+        }
+        sendEmailToAdmin(comment);
+
+        return repository.save(comment);
+    }
+
+    private void setCommentArticle(Comment comment) {
         Article article = ensureArticleExist(comment.getArticleId());
         comment.setArticleTitle(article.getTitle());
         comment.setArticleDescription(article.getDescription());
+        // 更新文章评论数
+        article.setCommenting(article.getCommenting() + 1);
+        articleService.update(article.getId(), article);
+    }
 
+    private void setCommentLocation(Comment comment) {
+        JSONObject address = requestUtil.findLocationByIp(comment.getIp());
+        if (address != null) {
+            comment.setCity((String) address.get("city"));
+            comment.setProvince((String) address.get("province"));
+        }
+    }
+
+    public Comment adminComment(AdminCommentInput input, DataFetchingEnvironment environment) {
+        Comment comment = new Comment();
+        BeanUtil.copyProperties(input, comment);
+
+        Comment parentComment = ensureReplyCommentReadPermission(comment);
+        akismetService.checkComment(comment, true);
+        comment.setState(CommentState.Published);
+        setCommentAdmin(comment);
+        setCommentArticle(comment);
+        setCommentIp(comment, environment);
+        setCommentLocation(comment);
+
+        if (parentComment != null) {
+            sendEmailToReplyTarget(comment, parentComment.getEmail());
+        }
+
+        return repository.save(comment);
+    }
+
+    private void setCommentAdmin(Comment comment) {
+        Admin admin = adminService.ensureAdminOperate();
+
+        comment.setEmail(adminEmail);
+        comment.setNickname(admin.getNickname());
+        comment.setWebsite(webUrl);
+    }
+
+    private void setCommentIp(Comment comment, DataFetchingEnvironment environment) {
         GraphQLServletContext context = environment.getContext();
         HttpServletRequest request = context.getHttpServletRequest();
         if (isDev) {
@@ -204,31 +264,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         } else {
             comment.setIp(requestUtil.getRequestIp(request));
         }
-
-        // 确保回复的是同一篇文章
-        Comment parentComment = ensureReplySameArticle(comment);
-        // 是否在黑名单中
-        ensureIsInBlackList(comment);
-        // 检查是否为垃圾评论
-        akismetService.checkComment(comment);
-
-        // 更新文章评论数
-        article.setCommenting(article.getCommenting() + 1);
-        articleService.update(article.getId(), article);
-
-        if (parentComment != null) {
-            sendEmailToReplyTarget(comment, parentComment.getEmail());
-        }
-        sendEmailToAdmin(comment);
-
-        JSONObject address = requestUtil.findLocationByIp(comment.getIp());
-        if (address != null) {
-            comment.setCity((String) address.get("city"));
-            comment.setProvince((String) address.get("province"));
-        }
-        comment.setId(null);
-
-        return repository.save(comment);
     }
 
     private void ensureCanDelete(Comment comment) {
@@ -252,14 +287,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         }
     }
 
-    private Comment ensureReplySameArticle(Comment comment) {
+    private Comment ensureReplyCommentReadPermission(Comment comment) {
         Long parentId = comment.getParentId();
         if (parentId != null && parentId != 0 && parentId != -1) {
             Comment parentComment = get(parentId);
-            // 如果当前评论和回复的评论文章不是同一篇
-            if (!parentComment.getArticleId().equals(comment.getArticleId())) {
-                throw new IllegalArgumentException("The replied article is not the same, comment article id:"
-                        + comment.getArticleId() + " ---> parent comment article id: " + parentComment.getArticleId());
+            if (parentComment.getState() == CommentState.Spam || parentComment.getState() == CommentState.Deleted) {
+                throw new IllegalArgumentException("当前评论不能进行回复");
             }
             comment.setParentNickName(parentComment.getNickname());
             return parentComment;

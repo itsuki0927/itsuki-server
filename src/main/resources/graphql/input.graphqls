@@ -74,3 +74,10 @@ input UpdateBlackListInput{
     email:String
     keyword:String
 }
+
+input AdminCommentInput {
+    content:String!
+    articleId:ID!
+    parentId:ID!
+    agent: String!
+}

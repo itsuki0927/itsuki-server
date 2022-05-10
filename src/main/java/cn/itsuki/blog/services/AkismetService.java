@@ -62,7 +62,7 @@ public class AkismetService {
         }
     }
 
-    private Map<String, Object> getRequestParams(Comment comment) {
+    private Map<String, Object> getRequestParams(Comment comment, boolean isAdmin) {
         Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("blog", blog);
         paramMap.put("user_ip", comment.getIp());
@@ -75,16 +75,18 @@ public class AkismetService {
         paramMap.put("comment_content", comment.getContent());
 
         if (isDev) {
-            paramMap.put("is_test", isDev);
+            paramMap.put("is_test", true);
         }
 
-        // paramMap.put("user_role", "administrator");
+        if (isAdmin) {
+            paramMap.put("user_role", "administrator");
+        }
         return paramMap;
     }
 
     // 检查评论
-    public void checkComment(Comment comment) {
-        Map<String, Object> paramMap = getRequestParams(comment);
+    public void checkComment(Comment comment, boolean isAdmin) {
+        Map<String, Object> paramMap = getRequestParams(comment, isAdmin);
 
         String url = buildPath(secretKey, "comment-check");
         String result = HttpUtil.createPost(url)
@@ -101,7 +103,7 @@ public class AkismetService {
 
     // 本应该是垃圾评论但是未标记未垃圾评论的
     public void submitSpam(Comment comment) {
-        Map<String, Object> paramMap = getRequestParams(comment);
+        Map<String, Object> paramMap = getRequestParams(comment, false);
 
         String url = buildPath(secretKey, "submit-spam");
         String result = HttpUtil.createPost(url)
@@ -115,7 +117,7 @@ public class AkismetService {
 
     // 本应该不是垃圾评论但是标记成垃圾评论的
     public void submitHam(Comment comment) {
-        Map<String, Object> paramMap = getRequestParams(comment);
+        Map<String, Object> paramMap = getRequestParams(comment, false);
 
         String url = buildPath(secretKey, "submit-ham");
         String result = HttpUtil.createPost(url)

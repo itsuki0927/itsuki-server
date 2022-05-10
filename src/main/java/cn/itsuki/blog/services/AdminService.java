@@ -78,11 +78,12 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         return get(currentAdmin.getId());
     }
 
-    public void ensureAdminOperate() {
+    public Admin ensureAdminOperate() {
         Admin currentAdmin = getCurrentAdmin();
         if (currentAdmin.getRole() != Role.ADMIN) {
             throw new AccessDeniedException("权限不足");
         }
+        return currentAdmin;
     }
 
     public Admin updateAdmin(AdminSaveRequest request) {
