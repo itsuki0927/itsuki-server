@@ -2,8 +2,10 @@ package cn.itsuki.blog.resolvers;
 
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.ArticleTag;
+import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.repositories.ArticleTagRepository;
+import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import graphql.kickstart.tools.GraphQLResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -20,7 +23,9 @@ import java.util.stream.Collectors;
  **/
 @Slf4j
 @Component
-public class TagGraphqlResolver implements GraphQLResolver<Article> {
+public class ArticleResolver implements GraphQLResolver<Article> {
+    @Autowired
+    private CategoryRepository categoryRepository;
     @Autowired
     private TagRepository tagRepository;
     @Autowired
@@ -31,6 +36,14 @@ public class TagGraphqlResolver implements GraphQLResolver<Article> {
         probe.setArticleId(article.getId());
         List<ArticleTag> articleTags = articleTagRepository.findAll(Example.of(probe));
         return tagRepository.findAllById(articleTags.stream().map(ArticleTag::getTagId).collect(Collectors.toList()));
+    }
+
+    public Category category(Article article) {
+        Optional<Category> optionalCategory = categoryRepository.findById(article.getCategoryId());
+        if (optionalCategory.isEmpty()) {
+            return null;
+        }
+        return optionalCategory.get();
     }
 
 }
