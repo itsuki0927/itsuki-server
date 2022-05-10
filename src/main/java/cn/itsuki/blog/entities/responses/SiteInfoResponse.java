@@ -19,5 +19,5 @@ public class SiteInfoResponse {
     private List<Tag> tags;
     private List<Category> categories;
     private List<Article> hotArticles;
-    private BlackList blackList;
+    private BlackList blacklist;
 }

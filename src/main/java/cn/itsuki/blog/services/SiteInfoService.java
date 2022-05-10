@@ -10,6 +10,7 @@ import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
 import cn.itsuki.blog.repositories.TagRepository;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import java.util.List;
  * @create: 2021-10-24 18:16
  **/
 @Service
-public class SiteInfoService {
+public class SiteInfoService implements GraphQLQueryResolver {
     @Autowired
     private TagRepository tagRepository;
     @Autowired
@@ -36,6 +37,10 @@ public class SiteInfoService {
     private CommentRepository commentRepository;
 
     public SiteInfoResponse get() {
+        return siteinfo();
+    }
+
+    public SiteInfoResponse siteinfo() {
         SiteInfoResponse siteInfoResponse = new SiteInfoResponse();
 
         List<Tag> tags = tagRepository.findAll();
@@ -45,7 +50,7 @@ public class SiteInfoService {
         siteInfoResponse.setCategories(categories);
 
         BlackList blackList = blackListService.blacklist();
-        siteInfoResponse.setBlackList(blackList);
+        siteInfoResponse.setBlacklist(blackList);
 
         Page<Article> articles = articleService.getHotArticles();
         siteInfoResponse.setHotArticles(articles.getContent());
