@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -51,6 +50,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private String adminEmail;
     @Value("${mode.isDev}")
     private boolean isDev;
+    @Value("${mode.isProd}")
+    private boolean isProd;
     @Value("${cors.webUrl}")
     private String webUrl;
     private String devIP = "220.169.96.10";
@@ -194,20 +195,21 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         BeanUtil.copyProperties(input, comment);
 
         Comment parentComment = ensureReplyCommentReadPermission(comment);
-        // 是否在黑名单中
+        setCommentIp(comment, environment);
         ensureIsInBlackList(comment);
         // 检查是否为垃圾评论
         akismetService.checkComment(comment, false);
 
         setCommentArticle(comment);
-        setCommentIp(comment, environment);
         setCommentLocation(comment);
         comment.setId(null);
 
-        if (parentComment != null) {
-            sendEmailToReplyTarget(comment, parentComment.getEmail());
+        if (isProd) {
+            if (parentComment != null) {
+                sendEmailToReplyTarget(comment, parentComment.getEmail());
+            }
+            sendEmailToAdmin(comment);
         }
-        sendEmailToAdmin(comment);
 
         return repository.save(comment);
     }
@@ -241,7 +243,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         setCommentIp(comment, environment);
         setCommentLocation(comment);
 
-        if (parentComment != null) {
+        if (parentComment != null && isProd) {
             sendEmailToReplyTarget(comment, parentComment.getEmail());
         }
 
