@@ -39,7 +39,7 @@ type Comment implements IdentifiableEntity{
     articleId:ID!
 }
 
-type Article implements IdentifiableEntity{
+type Article implements IdentifiableEntity {
     id:ID!
     createAt: LocalDateTime
     updateAt: LocalDateTime

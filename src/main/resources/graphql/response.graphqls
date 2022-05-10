@@ -26,3 +26,37 @@ type LoginResponse {
     token: String
     expiration: Int
 }
+
+# TODO: 和Article一样, 只是加了一个prevArticle、nextArticle
+type ArticleDetailResponse implements IdentifiableEntity{
+    id:ID!
+    createAt: LocalDateTime
+    updateAt: LocalDateTime
+    title:String
+    path:String
+    description:String
+    keywords: String
+    content:String
+    cover:String
+    commenting:Int
+    author:String
+    liking:Int
+    reading:Int
+    password:String
+    publish: Int
+    origin:Int
+    open:Int
+    banner:Int
+    categoryId: ID
+    category: Category
+    tags: [Tag]
+    prevArticle: Article
+    nextArticle: Article
+}
+
+type SiteInfoResponse {
+    tags: [Tag]
+    categories: [Category]
+    hotArticles: [Article]
+    blacklist: BlackList
+}

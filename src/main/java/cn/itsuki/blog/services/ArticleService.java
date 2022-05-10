@@ -169,7 +169,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return ((ArticleRepository) repository).ids();
     }
 
-    public ArticleDetailResponse detail(long id) {
+    public ArticleDetailResponse article(long id) {
         Article article = get(id);
         ArticleDetailResponse response = new ArticleDetailResponse();
         BeanUtil.copyProperties(article, response);
@@ -197,10 +197,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
     public List<Long> getArticleTagIds(Long articleId) {
         return articleTagRepository.findAllByArticleIdEquals(articleId).stream().map(ArticleTag::getTagId).collect(Collectors.toList());
-    }
-
-    public Article article(Long id) {
-        return get(id);
     }
 
     public Article createArticle(ArticleCreateRequest request) {
