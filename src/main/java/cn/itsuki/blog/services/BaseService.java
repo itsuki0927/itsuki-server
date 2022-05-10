@@ -132,11 +132,8 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
      */
     protected abstract Page<T> searchWithPageable(S criteria, Pageable pageable);
 
-
     protected Pageable createPageRequest(S criteria) {
-        if (criteria == null) {
-            criteria = (S) new BaseSearchRequest();
-        }
+        criteria = Optional.ofNullable(criteria).orElse((S) new BaseSearchRequest());
         // 设置默认下标
         if (criteria.getCurrent() == null) {
             criteria.setCurrent(DEFAULT_SEARCH_CURRENT);

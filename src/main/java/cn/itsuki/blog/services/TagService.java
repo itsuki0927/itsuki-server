@@ -53,6 +53,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
 
     @Override
     protected Page<Tag> searchWithPageable(TagSearchRequest criteria, Pageable pageable) {
+        criteria = criteria == null ? new TagSearchRequest() : criteria;
         String name = criteria.getName();
         if (name != null) {
             return ((TagRepository) repository).findByNameContainingOrPathContaining(name, name, pageable);

@@ -90,6 +90,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
+        criteria = Optional.ofNullable(criteria).orElse(new ArticleSearchRequest());
+
         Long tagId = criteria.getTagId();
         Long categoryId = criteria.getCategoryId();
 
