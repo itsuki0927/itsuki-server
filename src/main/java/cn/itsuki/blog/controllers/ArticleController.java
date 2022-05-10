@@ -26,28 +26,8 @@ public class ArticleController {
     @Autowired
     ArticleService service;
 
-    @GetMapping("/paths")
-    public WrapperResponse<List<ArticleId>> getPaths() {
-        return WrapperResponse.build(service.getPaths());
-    }
-
     @GetMapping("/summary")
     public WrapperResponse<ArticleSummaryResponse> getSummary() {
         return WrapperResponse.build(service.getSummary());
-    }
-
-    @GetMapping("/archive")
-    public WrapperResponse<TreeMap<String, TreeMap<String, List<ArticleArchive>>>> archive() {
-        return WrapperResponse.build(service.getArchive());
-    }
-
-    @GetMapping("/count")
-    public WrapperResponse<Integer> count(@Valid @ModelAttribute ArticleSearchRequest criteria) {
-        return WrapperResponse.build(service.count(criteria));
-    }
-
-    @PatchMapping("/{id}/read")
-    public WrapperResponse<Integer> patchRead(@PathVariable("id") Long id) {
-        return WrapperResponse.build(service.patchRead(id));
     }
 }
