@@ -1,6 +1,9 @@
 type Query {
     categories: [Category]
+    # 前端文章详情
     article(id:ID!): ArticleDetailResponse
+    # 后台管理文章详情
+    articleDetail(id:ID!): Article
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
     comments(search: CommentSearchRequest): SearchCommentResponse

@@ -21,7 +21,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -84,8 +83,9 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     public Page<Article> getHotArticles() {
         Sort sort = Sort.by(Sort.Direction.DESC, "reading");
         Pageable pageable = new OffsetLimitPageRequest(0, 8, sort);
-
-        return ((ArticleRepository) repository).queryArticlesByPublish(PublishState.Published, pageable);
+        Article probe = new Article();
+        probe.setPublish(PublishState.Published);
+        return repository.findAll(Example.of(probe), pageable);
     }
 
     @Override
@@ -151,30 +151,22 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return response;
     }
 
-    public List<ArticleId> getPaths() {
-        return ((ArticleRepository) repository).ids();
+    public Article articleDetail(long id) {
+        adminService.ensureAdminOperate();
+        return get(id);
     }
 
     public ArticleDetailResponse article(long id) {
-        Article article = get(id);
+        Article article = readArticle(id);
+
         ArticleDetailResponse response = new ArticleDetailResponse();
         BeanUtil.copyProperties(article, response);
 
+        response.setPassword(null);
         response.setPrevArticle(((ArticleRepository) repository).prev(id));
         response.setNextArticle(((ArticleRepository) repository).next(id));
 
         return response;
-    }
-
-    public int patchRead(Long id) {
-        Article article = get(id);
-        if (article.getPublish() != PublishState.Published) {
-            throw new RuntimeException("文章未发布");
-        }
-        article.setReading(article.getReading() + 1);
-
-        repository.saveAndFlush(article);
-        return article.getReading();
     }
 
     public SearchResponse<Article> articles(ArticleSearchRequest criteria) {
@@ -312,13 +304,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return articles.size();
     }
 
-    public int readArticle(Long id) {
+    public Article readArticle(Long id) {
         Article article = get(id);
         ensureArticleAllowOperate(article);
         article.setReading(article.getReading() + 1);
 
         repository.save(article);
-        return article.getReading();
+        return article;
     }
 
     public int likeArticle(Long id) {
