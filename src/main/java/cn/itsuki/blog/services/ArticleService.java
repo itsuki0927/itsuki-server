@@ -157,7 +157,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     public ArticleDetailResponse article(long id) {
-        Article article = readArticle(id);
+        Article article = get(id);
 
         ArticleDetailResponse response = new ArticleDetailResponse();
         BeanUtil.copyProperties(article, response);
@@ -304,13 +304,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return articles.size();
     }
 
-    public Article readArticle(Long id) {
+    public int readArticle(Long id) {
         Article article = get(id);
         ensureArticleAllowOperate(article);
         article.setReading(article.getReading() + 1);
 
         repository.save(article);
-        return article;
+        return article.getReading();
     }
 
     public int likeArticle(Long id) {

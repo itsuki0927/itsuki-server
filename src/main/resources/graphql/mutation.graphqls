@@ -6,6 +6,7 @@ type Mutation {
     updateArticleState(ids: [ID]!, state: Int!): Int
     updateArticleBanner(ids: [ID]!, banner: Int!):Int
     likeArticle(id:ID!): Int
+    readArticle(id:ID!): Int
 
     createCategory(input: CategoryActionInput!): Category
     updateCategory(id:ID!, input: CategoryActionInput!): Category
