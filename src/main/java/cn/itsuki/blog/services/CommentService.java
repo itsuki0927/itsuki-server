@@ -155,7 +155,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     public int deleteComment(Long id) {
         Comment comment = get(id);
         adminService.ensureAdminOperate();
-        ensureCanDelete(comment);
+        ensureCommentAllowOperate(comment);
         repository.deleteById(id);
         return 1;
     }
@@ -250,6 +250,14 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return repository.save(comment);
     }
 
+    public int likeComment(Long id) {
+        Comment comment = get(id);
+        ensureCommentAllowOperate(comment);
+        comment.setLiking(comment.getLiking() + 1);
+        repository.save(comment);
+        return comment.getLiking();
+    }
+
     private void setCommentAdmin(Comment comment) {
         Admin admin = adminService.ensureAdminOperate();
 
@@ -265,12 +273,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
             comment.setIp(devIP);
         } else {
             comment.setIp(requestUtil.getRequestIp(request));
-        }
-    }
-
-    private void ensureCanDelete(Comment comment) {
-        if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
-            throw new IllegalArgumentException("只有在回收站、已删除的评论才能彻底删除");
         }
     }
 
@@ -293,12 +295,16 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         Long parentId = comment.getParentId();
         if (parentId != null && parentId != 0 && parentId != -1) {
             Comment parentComment = get(parentId);
-            if (parentComment.getState() == CommentState.Spam || parentComment.getState() == CommentState.Deleted) {
-                throw new IllegalArgumentException("当前评论不能进行回复");
-            }
+            ensureCommentAllowOperate(parentComment);
             comment.setParentNickName(parentComment.getNickname());
             return parentComment;
         }
         return null;
+    }
+
+    private void ensureCommentAllowOperate(Comment comment) {
+        if (comment.getState() == CommentState.Spam || comment.getState() == CommentState.Deleted) {
+            throw new IllegalArgumentException("当前评论不能进行操作");
+        }
     }
 }

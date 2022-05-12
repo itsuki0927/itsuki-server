@@ -18,6 +18,7 @@ type Mutation {
 
     createComment(input: CreateCommentInput!): Comment
     deleteComment(id:ID!): Int
+    likeComment(id:ID!): Int
     updateCommentState(id:ID!, state:Int!):Int
     updateComment(id:ID!, input: UpdateCommentInput!): Comment
     adminComment(input: AdminCommentInput!): Comment
