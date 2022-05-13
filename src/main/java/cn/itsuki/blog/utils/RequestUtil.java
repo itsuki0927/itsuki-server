@@ -61,7 +61,6 @@ public class RequestUtil {
                 ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
             }
         }
-        System.out.println(ipAddress);
         return ipAddress;
     }
 

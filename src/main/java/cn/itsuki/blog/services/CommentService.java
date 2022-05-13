@@ -54,18 +54,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private boolean isProd;
     @Value("${cors.webUrl}")
     private String webUrl;
-    private String devIP = "220.169.96.10";
 
     CommentService() {
         super("id", "id");
-    }
-
-    public Comment update(long id, CommentUpdateRequest request) {
-        Comment comment = get(id);
-
-        BeanUtil.copyProperties(request, comment, CopyOptions.create().ignoreNullValue());
-
-        return super.update(id, comment);
     }
 
     @Override
@@ -117,14 +108,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
      */
     public Integer count(Long articleId) {
         return ((CommentRepository) repository).countComments(articleId);
-    }
-
-    public int patchLike(Long id) {
-        Comment comment = ensureExist(repository, id, "article");
-
-        comment.setLiking(comment.getLiking() + 1);
-        repository.saveAndFlush(comment);
-        return comment.getLiking();
     }
 
     public SearchResponse<Comment> comments(CommentSearchRequest input) {
@@ -269,11 +252,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void setCommentIp(Comment comment, DataFetchingEnvironment environment) {
         GraphQLServletContext context = environment.getContext();
         HttpServletRequest request = context.getHttpServletRequest();
-        if (isDev) {
-            comment.setIp(devIP);
-        } else {
-            comment.setIp(requestUtil.getRequestIp(request));
-        }
+//        if (isDev) {
+//            comment.setIp(devIP);
+//        } else {
+        System.out.println("ip: " + requestUtil.getRequestIp(request));
+        comment.setIp(requestUtil.getRequestIp(request));
+//        }
     }
 
     private Article ensureArticleExist(Long articleId) {

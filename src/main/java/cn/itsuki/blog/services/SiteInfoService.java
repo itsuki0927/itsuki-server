@@ -36,10 +36,6 @@ public class SiteInfoService implements GraphQLQueryResolver {
     @Autowired
     private CommentRepository commentRepository;
 
-    public SiteInfoResponse get() {
-        return siteinfo();
-    }
-
     public SiteInfoResponse siteinfo() {
         SiteInfoResponse siteInfoResponse = new SiteInfoResponse();
 

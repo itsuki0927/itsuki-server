@@ -21,11 +21,6 @@ public class SiteInfoController {
     @Autowired
     private SiteInfoService service;
 
-    @GetMapping
-    public WrapperResponse<SiteInfoResponse> get() {
-        return WrapperResponse.build(service.get(), "请求成功");
-    }
-
     @GetMapping("/summary")
     public WrapperResponse<SiteSummaryResponse> count() {
         return WrapperResponse.build(service.getSummary(), "请求成功");
