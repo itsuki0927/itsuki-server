@@ -42,7 +42,6 @@ public class Comment extends IdentifiableEntity {
     /**
      * 网址
      */
-    @NotBlank
     private String website;
 
     /**
