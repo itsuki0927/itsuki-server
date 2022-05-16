@@ -31,18 +31,14 @@ public class RequestUtil {
     public String getRequestIp(HttpServletRequest request) {
         //通过HTTP代理服务器转发时添加
         String ipAddress = request.getHeader("x-forwarded-for");
-        System.out.println(ipAddress);
         if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("Proxy-Client-IP");
-            System.out.println(ipAddress);
         }
         if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getHeader("WL-Proxy-Client-IP");
-            System.out.println(ipAddress);
         }
         if (ipAddress == null || ipAddress.length() == 0 || "unknown".equalsIgnoreCase(ipAddress)) {
             ipAddress = request.getRemoteAddr();
-            System.out.println(ipAddress);
             // 从本地访问时根据网卡取本机配置的IP
             if (ipAddress.equals("127.0.0.1") || ipAddress.equals("0:0:0:0:0:0:0:1")) {
                 InetAddress inetAddress = null;
@@ -52,7 +48,6 @@ public class RequestUtil {
                     e.printStackTrace();
                 }
                 ipAddress = inetAddress.getHostAddress();
-                System.out.println(ipAddress);
             }
         }
         // 通过多个代理转发的情况，第一个IP为客户端真实IP，多个IP会按照','分割
@@ -61,6 +56,7 @@ public class RequestUtil {
                 ipAddress = ipAddress.substring(0, ipAddress.indexOf(","));
             }
         }
+        System.out.println("ipAddress: " + ipAddress);
         return ipAddress;
     }
 
@@ -88,6 +84,7 @@ public class RequestUtil {
         try (InputStream is = new URL(url).openStream()) {
             BufferedReader rd = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String jsonText = readAll(rd);
+            System.out.println(jsonText);
             return JSONObject.parseObject(jsonText);
         }
     }
