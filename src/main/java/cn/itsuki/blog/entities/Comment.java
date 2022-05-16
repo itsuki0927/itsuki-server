@@ -145,6 +145,12 @@ public class Comment extends IdentifiableEntity {
         if (getFix() == null) {
             setFix(CommonState.SHUT_DOWN);
         }
+        if (getProvince() == null) {
+            setProvince("未知");
+        }
+        if (getCity() == null) {
+            setCity("未知");
+        }
         // 初始0
         setLiking(CommonState.INIT_VALUE);
     }
