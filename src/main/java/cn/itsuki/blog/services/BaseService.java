@@ -204,11 +204,10 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
             throw new IllegalArgumentException(entityName + " id必须>0");
         }
         Optional<E> optionalEntity = repository.findById(id);
-        if (!optionalEntity.isPresent()) {
-            throw new EntityNotFoundException(String.format("%s does not exist with id %s", entityName, id));
+        if (optionalEntity.isEmpty()) {
+            throw new EntityNotFoundException(String.format("%s id %s 不存在", entityName, id));
         }
         return optionalEntity.get();
-        // return repository.getById(id);
     }
 
     /**
