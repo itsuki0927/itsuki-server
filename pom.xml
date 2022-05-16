@@ -122,7 +122,42 @@
         </dependency>
     </dependencies>
 
+    <profiles>
+        <!-- 开发环境 打包命令mvn clean package -Pdev或mvn clean package -D profiles.active=dev -->
+        <profile>
+            <id>dev</id>
+            <properties>
+                <profiles.active>dev</profiles.active>
+            </properties>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+        </profile>
+        <!-- 生产环境 打包命令mvn clean package -Pprod -->
+        <profile>
+            <id>prod</id>
+            <properties>
+                <profiles.active>prod</profiles.active>
+            </properties>
+        </profile>
+    </profiles>
+
     <build>
+        <finalName>${project.artifactId}-${project.version}</finalName>
+        <resources>
+            <!--需要动态添加的资源-->
+            <resource>
+                <directory>src/main/resources</directory>
+                <!-- 开启过滤替换功能-->
+                <filtering>true</filtering>
+                <includes>
+                    <include>graphql/*</include>
+                    <!-- 项目打包完成的包中只包含当前环境文件 -->
+                    <include>application.properties</include>
+                    <include>application-${profiles.active}.properties</include>
+                </includes>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
