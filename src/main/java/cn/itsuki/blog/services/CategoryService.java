@@ -1,9 +1,12 @@
 package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.itsuki.blog.constants.PublishState;
+import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.requests.CategoryActionInput;
+import cn.itsuki.blog.repositories.ArticleRepository;
 import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
@@ -30,6 +33,8 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
     private AdminService adminService;
     @Autowired
     private SeoService seoService;
+    @Autowired
+    private ArticleRepository articleRepository;
     @Autowired
     private UrlUtil urlUtil;
 
@@ -106,5 +111,21 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         seoService.delete(urlUtil.getCategoryUrl(category.getPath()));
 
         return super.delete(categoryId);
+    }
+
+    /**
+     * 更新文章分类count, 因为文章分类比较少, 并且关系是一对一, 所以直接全部更新count
+     */
+    public void syncAllCategoryCount() {
+        categories().forEach(category -> syncCategoryCount(category));
+    }
+
+    public void syncCategoryCount(Category category) {
+        Article article = new Article();
+        article.setCategoryId(category.getId());
+        article.setPublish(PublishState.Published);
+        int count = (int) articleRepository.count(Example.of(article));
+        category.setCount(count);
+        update(category.getId(), category);
     }
 }
