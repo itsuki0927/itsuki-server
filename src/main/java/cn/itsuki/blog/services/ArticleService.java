@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 /**
  * 文章 服务
+ *
  * @author: itsuki
  * @create: 2021-09-20 22:19
  **/
@@ -39,7 +40,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     @Autowired
     private CategoryService categoryService;
     @Autowired
-    private CommentRepository commentRepository;
+    private CommentService commentService;
     @Autowired
     private SeoService seoService;
     @Autowired
@@ -66,10 +67,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
     private void deleteTag(long articleId) {
         articleTagRepository.deleteAllByArticleIdEquals(articleId);
-    }
-
-    private void deleteComment(long articleId) {
-        commentRepository.deleteCommentsByArticleIdEquals(articleId);
     }
 
     private void ensureArticleAllowOperate(Article article) {
@@ -241,7 +238,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         Article oldArticle = get(articleId);
         List<Long> oldTagIds = getArticleTagIds(articleId);
         deleteTag(articleId);
-        deleteComment(articleId);
+        commentService.deleteArticleComments(articleId);
 
         updateTagCount(oldTagIds);
 
@@ -297,5 +294,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         repository.save(article);
         return article.getLiking();
+    }
+
+    public int syncArticleCommentCount(List<Long> articleIds) {
+        articleIds.forEach(articleId -> commentService.updateArticleCommentCount(articleId));
+        return 1;
     }
 }

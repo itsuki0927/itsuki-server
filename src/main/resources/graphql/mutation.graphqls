@@ -31,4 +31,5 @@ type Mutation {
 
     syncAllCategoryCount: Int
     syncAllTagCount: Int
+    syncArticleCommentCount(ids:[ID]!):Int
 }

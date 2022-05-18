@@ -96,7 +96,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     /**
      * 更新文章评论数
      */
-    private void updateArticleCommentCount(Long articleId) {
+    public void updateArticleCommentCount(Long articleId) {
         Article article = ensureArticleExist(articleId);
         int count = count(articleId);
         article.setCommenting(count);
@@ -143,6 +143,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         }
         repository.deleteById(id);
         return 1;
+    }
+
+    public void deleteArticleComments(long articleId) {
+        ((CommentRepository) repository).deleteCommentsByArticleIdEquals(articleId);
     }
 
     public int updateCommentState(Long id, Integer state) {
