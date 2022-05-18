@@ -1,7 +1,6 @@
 package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.date.LocalDateTimeUtil;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
@@ -26,7 +25,6 @@ import java.util.stream.Collectors;
 
 /**
  * 文章 服务
- *
  * @author: itsuki
  * @create: 2021-09-20 22:19
  **/
@@ -186,8 +184,9 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         saveAllTags(request.getTagIds(), article.getId());
 
+        Category newCategory = categoryService.get(request.getCategoryId());
         // 更新category count
-        updateCategoryCount(request.getCategoryId());
+        categoryService.syncCategoryCount(newCategory);
         // 更新tag count
         updateTagCount(request.getTagIds());
 
@@ -199,25 +198,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     }
 
     /**
-     * 更新文章分类count, 因为文章分类比较少, 并且关系是一对一, 所以直接全部更新count
-     */
-    private void updateAllCategoryCount() {
-        categoryService.categories().forEach(category -> {
-            updateCategoryCount(category.getId());
-        });
-    }
-
-    private void updateCategoryCount(Long categoryId) {
-        Category category = categoryService.get(categoryId);
-        Article article = new Article();
-        article.setCategoryId(categoryId);
-        article.setPublish(PublishState.Published);
-        int count = (int) repository.count(Example.of(article));
-        category.setCount(count);
-        categoryService.update(category.getId(), category);
-    }
-
-    /**
      * 更新文章标签count
      *
      * @param tagIds 标签id数组
@@ -225,13 +205,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     private void updateTagCount(List<Long> tagIds) {
         tagIds.forEach(tagId -> {
             Tag tag = tagService.get(tagId);
-            // 找到当前tag的记录
-            List<ArticleTag> articleTags = articleTagRepository.findAllByTagIdEquals(tagId);
-            List<Long> ids = articleTags.stream().map(ArticleTag::getArticleId).collect(Collectors.toList());
-            // 获取当前tag的已发布文章数
-            int count = ((ArticleRepository) repository).countArticlesByIdInAndPublishEquals(ids, PublishState.Published);
-            tag.setCount(count);
-            tagService.update(tagId, tag);
+            tagService.syncTagCount(tag);
         });
     }
 
@@ -251,7 +225,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         Article update = super.update(id, article);
 
         // 更新新的category、tag count
-        updateAllCategoryCount();
+        categoryService.syncAllCategoryCount();
         updateTagCount(entity.getTagIds());
         // 更新旧的tag count
         updateTagCount(oldTagIds);
@@ -270,7 +244,9 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         deleteComment(articleId);
 
         updateTagCount(oldTagIds);
-        updateCategoryCount(oldArticle.getCategoryId());
+
+        Category category = categoryService.get(oldArticle.getCategoryId());
+        categoryService.syncCategoryCount(category);
 
         seoService.delete(urlUtil.getArticleUrl(articleId));
 
@@ -285,7 +261,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         ids.forEach(id -> {
             Article article = get(id);
             List<Long> tagIds = getArticleTagIds(id);
-            updateCategoryCount(article.getCategoryId());
+            Category category = categoryService.get(article.getCategoryId());
+            categoryService.syncCategoryCount(category);
             updateTagCount(tagIds);
         });
 
