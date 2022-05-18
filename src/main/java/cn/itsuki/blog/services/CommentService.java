@@ -1,7 +1,6 @@
 package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.bean.copier.CopyOptions;
 import cn.itsuki.blog.constants.CommentState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
@@ -10,6 +9,7 @@ import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import cn.itsuki.blog.utils.UrlUtil;
 import com.alibaba.fastjson.JSONObject;
+import graphql.GraphQLException;
 import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
@@ -138,7 +138,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     public int deleteComment(Long id) {
         Comment comment = get(id);
         adminService.ensureAdminOperate();
-        ensureCommentAllowOperate(comment);
+        if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
+            throw new IllegalArgumentException("当前评论不能进行操作");
+        }
         repository.deleteById(id);
         return 1;
     }
@@ -171,7 +173,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     public Comment createComment(CommentCreateRequest input, DataFetchingEnvironment environment) {
         if (input.getNickname().length() >= 10) {
-            throw new IllegalArgumentException("昵称太长了, 最长: 10, 当前长度:" + input.getNickname().length());
+            throw new GraphQLException("昵称太长了, 最长: 10, 当前长度:" + input.getNickname().length());
         }
 
         Comment comment = new Comment();
@@ -252,12 +254,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void setCommentIp(Comment comment, DataFetchingEnvironment environment) {
         GraphQLServletContext context = environment.getContext();
         HttpServletRequest request = context.getHttpServletRequest();
-//        if (isDev) {
-//            comment.setIp(devIP);
-//        } else {
-        System.out.println("ip: " + requestUtil.getRequestIp(request));
         comment.setIp(requestUtil.getRequestIp(request));
-//        }
     }
 
     private Article ensureArticleExist(Long articleId) {
