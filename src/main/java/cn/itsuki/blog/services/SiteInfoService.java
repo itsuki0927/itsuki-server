@@ -5,6 +5,7 @@ import cn.itsuki.blog.entities.BlackList;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
+import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.entities.responses.SiteInfoResponse;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.repositories.CategoryRepository;
@@ -50,6 +51,11 @@ public class SiteInfoService implements GraphQLQueryResolver {
 
         Page<Article> articles = articleService.getHotArticles();
         siteInfoResponse.setHotArticles(articles.getContent());
+
+        ArticleSearchRequest request = new ArticleSearchRequest();
+        request.setBanner(1);
+        SearchResponse<Article> bannerArticles = articleService.search(request);
+        siteInfoResponse.setBannerArticles(bannerArticles.getData());
 
         return siteInfoResponse;
     }

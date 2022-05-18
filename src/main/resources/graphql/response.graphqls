@@ -58,5 +58,6 @@ type SiteInfoResponse {
     tags: [Tag]
     categories: [Category]
     hotArticles: [Article]
+    bannerArticles: [Article]
     blacklist: BlackList
 }
