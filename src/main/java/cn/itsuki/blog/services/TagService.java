@@ -1,11 +1,15 @@
 package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.itsuki.blog.constants.PublishState;
+import cn.itsuki.blog.entities.ArticleTag;
 import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.TagActionInput;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
+import cn.itsuki.blog.repositories.ArticleRepository;
+import cn.itsuki.blog.repositories.ArticleTagRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
@@ -17,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * 标签 服务
@@ -32,6 +38,10 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     private AdminService adminService;
     @Autowired
     private SeoService seoService;
+    @Autowired
+    private ArticleTagRepository articleTagRepository;
+    @Autowired
+    private ArticleRepository articleRepository;
     @Autowired
     private UrlUtil urlUtil;
 
@@ -113,6 +123,25 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         seoService.delete(urlUtil.getTagUrl(tag.getPath()));
 
         return super.delete(id);
+    }
+
+    public int syncAllTagCount() {
+        List<Tag> tags = search(new TagSearchRequest()).getData();
+        tags.forEach(tag -> syncTagCount(tag));
+        return 1;
+    }
+
+    public int syncTagCount(Tag tag) {
+        long id = tag.getId();
+        // 找到当前tag的记录
+        List<ArticleTag> articleTags = articleTagRepository.findAllByTagIdEquals(id);
+        List<Long> ids = articleTags.stream().map(ArticleTag::getArticleId).collect(Collectors.toList());
+        // 获取当前tag的已发布文章数
+        int count = articleRepository.countArticlesByIdInAndPublishEquals(ids, PublishState.Published);
+        System.out.println(tag.getName() + " count: " + count);
+        tag.setCount(count);
+        update(id, tag);
+        return 1;
     }
 }
 

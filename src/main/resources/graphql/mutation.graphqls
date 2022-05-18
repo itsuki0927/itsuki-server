@@ -28,4 +28,6 @@ type Mutation {
     updateAdminPassword(input: UpdateAdminPasswordInput!): Admin
 
     updateBlackList(input: UpdateBlackListInput!): BlackList
+
+    syncAllTagCount: Int
 }
