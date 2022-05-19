@@ -120,8 +120,8 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         criteria = Optional.ofNullable(criteria).orElse(new ArticleSearchRequest());
 
-        long tagId = getSearchTagId(criteria);
-        long categoryId = getSearchCategoryId(criteria);
+        Long tagId = getSearchTagId(criteria);
+        Long categoryId = getSearchCategoryId(criteria);
 
         return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
