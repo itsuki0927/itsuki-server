@@ -2,6 +2,7 @@ package cn.itsuki.blog.exceptions;
 
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import graphql.GraphQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -112,6 +113,17 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
         return buildErrorResponse(HttpStatus.FORBIDDEN, ex.getMessage());
     }
 
+    /**
+     * 处理graphql异常
+     *
+     * @param e 异常
+     * @return 错误实体
+     */
+    @ExceptionHandler(GraphQLException.class)
+    @ResponseBody
+    public ResponseEntity<Object> handleGraphqlException(GraphQLException e) {
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+    }
 
     /**
      * 处理其他异常
