@@ -20,6 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -83,25 +84,44 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return repository.findAll(Example.of(probe), pageable);
     }
 
+    private Category getCategory(String name) {
+        Category category = categoryService.getCategoryByNameOrPath(name);
+        if (category == null) {
+            throw new EntityNotFoundException("category 不存在");
+        }
+        return category;
+    }
+
+    private Tag getTag(String name) {
+        Tag tag = tagService.getTagByNameOrPath(name);
+        if (tag == null) {
+            throw new EntityNotFoundException("Tag 不存在");
+        }
+        return tag;
+    }
+
+    private Long getSearchTagId(ArticleSearchRequest request) {
+        Long tagId = request.getTagId();
+        if (tagId == null && request.getTagPath() != null) {
+            tagId = tagService.getTagByNameOrPath(request.getTagPath()).getId();
+        }
+        return tagId;
+    }
+
+    private Long getSearchCategoryId(ArticleSearchRequest request) {
+        Long categoryId = request.getCategoryId();
+        if (categoryId == null && request.getCategoryPath() != null) {
+            categoryId = getCategory(request.getCategoryPath()).getId();
+        }
+        return categoryId;
+    }
+
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         criteria = Optional.ofNullable(criteria).orElse(new ArticleSearchRequest());
 
-        Long tagId = criteria.getTagId();
-        Long categoryId = criteria.getCategoryId();
-
-        Boolean isHot = Optional.ofNullable(criteria.getHot()).orElse(false);
-        if (isHot) {
-            return getHotArticles();
-        }
-
-        if (tagId == null && criteria.getTagPath() != null) {
-            tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
-        }
-
-        if (categoryId == null && criteria.getCategoryPath() != null) {
-            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategoryPath()).getId();
-        }
+        long tagId = getSearchTagId(criteria);
+        long categoryId = getSearchCategoryId(criteria);
 
         return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
                 criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
