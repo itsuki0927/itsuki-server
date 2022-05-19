@@ -63,8 +63,8 @@ public class SeoService {
             JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-            InputStream in = FileUtil.getInputStream(new File("src/main/resources/google_secret.json"));
-            GoogleCredential credentials = GoogleCredential.fromStream(in, httpTransport, jsonFactory).createScoped(Collections.singleton(scopes));
+            InputStream secretInput = this.getClass().getResourceAsStream("google_secret.json");
+            GoogleCredential credentials = GoogleCredential.fromStream(secretInput, httpTransport, jsonFactory).createScoped(Collections.singleton(scopes));
 
             GenericUrl genericUrl = new GenericUrl(endPoint);
             HttpRequestFactory requestFactory = httpTransport.createRequestFactory();
