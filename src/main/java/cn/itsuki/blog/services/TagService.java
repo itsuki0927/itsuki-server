@@ -52,15 +52,6 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         super("id", "id", "sort");
     }
 
-    private void ensureTagExist(Tag entity) {
-        Tag probe = new Tag();
-        probe.setName(entity.getName());
-        Optional<Tag> optionalEntity = repository.findOne(Example.of(probe));
-        if (optionalEntity.isPresent()) {
-            throw new EntityExistsException("tag exist with name:" + entity.getName());
-        }
-    }
-
     @Override
     protected Page<Tag> searchWithPageable(TagSearchRequest criteria, Pageable pageable) {
         criteria = criteria == null ? new TagSearchRequest() : criteria;
@@ -74,11 +65,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     public Tag getTagByNameOrPath(String name) {
         Category probe = new Category();
         probe.setName(name);
-        Tag tag = (((TagRepository) repository).findTagByNameEqualsOrPathEquals(name, name));
-        if (tag == null) {
-            throw new IllegalArgumentException("Tag 不存在");
-        }
-        return tag;
+        return (((TagRepository) repository).findTagByNameEqualsOrPathEquals(name, name));
     }
 
     public SearchResponse<Tag> tags(TagSearchRequest criteria) {
@@ -88,7 +75,12 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     public Tag createTag(TagActionInput entity) {
         Tag probe = new Tag();
         BeanUtil.copyProperties(entity, probe);
-        ensureTagExist(probe);
+
+        Tag existTag = getTagByNameOrPath(entity.getName());
+        if (existTag != null) {
+            throw new EntityExistsException("tag " + entity.getName() + " 已存在");
+        }
+
         adminService.ensureAdminOperate();
 
         seoService.push(urlUtil.getTagUrl(probe.getPath()));
@@ -107,7 +99,10 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         entity.setCount(oldTag.getCount());
         entity.setCreateAt(oldTag.getCreateAt());
 
-        ensureTagExist(entity);
+        Tag existTag = getTagByNameOrPath(entity.getName());
+        if (existTag != null && !existTag.getId().equals(id)) {
+            throw new EntityExistsException("tag " + entity.getName() + " 已存在");
+        }
         validateEntity(entity);
 
         seoService.update(urlUtil.getTagUrl(entity.getPath()));
