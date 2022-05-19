@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * 分类 服务
@@ -50,33 +49,25 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         return repository.findAll(pageable);
     }
 
-    private void ensureCategoryExist(Category entity) {
-        Category probe = new Category();
-        probe.setName(entity.getName());
-        Optional<Category> optionalEntity = repository.findOne(Example.of(probe));
-        if (optionalEntity.isPresent()) {
-            throw new EntityExistsException("category exist with name:" + entity.getName());
-        }
-    }
-
     public Category getCategoryByNameOrPath(String name) {
         Category probe = new Category();
         probe.setName(name);
-        Category category = (((CategoryRepository) repository).findCategoryByNameEqualsOrPathEquals(name, name));
-        if (category == null) {
-            throw new IllegalArgumentException("category 不存在");
-        }
-        return category;
+        return (((CategoryRepository) repository).findCategoryByNameEqualsOrPathEquals(name, name));
     }
 
     public List<Category> categories() {
-        return repository.findAll();
+        return search(new BaseSearchRequest()).getData();
     }
 
     public Category createCategory(CategoryActionInput entity) {
         Category probe = new Category();
         BeanUtil.copyProperties(entity, probe);
-        ensureCategoryExist(probe);
+
+        Category existCategory = getCategoryByNameOrPath(entity.getName());
+        if (existCategory != null) {
+            throw new EntityExistsException("category exist with name:" + entity.getName());
+        }
+
         adminService.ensureAdminOperate();
 
         seoService.push(urlUtil.getCategoryUrl(probe.getPath()));
@@ -85,7 +76,7 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
     }
 
     public Category updateCategory(Long categoryId, CategoryActionInput input) {
-        Category oldCategory = ensureExist(repository, categoryId, "Entity");
+        Category oldCategory = get(categoryId);
         Category entity = new Category();
         BeanUtil.copyProperties(input, entity);
 
@@ -95,7 +86,10 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
         entity.setCount(oldCategory.getCount());
         entity.setCreateAt(oldCategory.getCreateAt());
 
-        ensureCategoryExist(entity);
+        Category existCategory = getCategoryByNameOrPath(entity.getName());
+        if (existCategory != null && !existCategory.getId().equals(categoryId)) {
+            throw new EntityExistsException("category exist with name:" + entity.getName());
+        }
         validateEntity(entity);
 
         seoService.update(urlUtil.getCategoryUrl(entity.getPath()));
