@@ -50,8 +50,6 @@ public class CategoryService extends BaseService<Category, BaseSearchRequest> im
     }
 
     public Category getCategoryByNameOrPath(String name) {
-        Category probe = new Category();
-        probe.setName(name);
         return (((CategoryRepository) repository).findCategoryByNameEqualsOrPathEquals(name, name));
     }
 

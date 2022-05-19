@@ -63,8 +63,6 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     }
 
     public Tag getTagByNameOrPath(String name) {
-        Category probe = new Category();
-        probe.setName(name);
         return (((TagRepository) repository).findTagByNameEqualsOrPathEquals(name, name));
     }
 
