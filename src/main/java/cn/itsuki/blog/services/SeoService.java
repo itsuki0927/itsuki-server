@@ -1,6 +1,5 @@
 package cn.itsuki.blog.services;
 
-import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
@@ -13,7 +12,6 @@ import com.google.api.client.json.gson.GsonFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
@@ -63,7 +61,7 @@ public class SeoService {
             JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-            InputStream secretInput = this.getClass().getResourceAsStream("google_secret.json");
+            InputStream secretInput = getClass().getResourceAsStream("/google_secret.json");
             GoogleCredential credentials = GoogleCredential.fromStream(secretInput, httpTransport, jsonFactory).createScoped(Collections.singleton(scopes));
 
             GenericUrl genericUrl = new GenericUrl(endPoint);
@@ -112,7 +110,6 @@ public class SeoService {
 
     public void push(String url) {
         if (isProd) {
-            System.out.println("push..................");
             List<String> urls = humanizedUrl(url);
             this.pingBaidu(SEOAction.Push, urls);
             this.pingGoogle(SEOAction.Push, urls);
