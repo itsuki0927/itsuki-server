@@ -103,7 +103,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     private Long getSearchTagId(ArticleSearchRequest request) {
         Long tagId = request.getTagId();
         if (tagId == null && request.getTagPath() != null) {
-            tagId = tagService.getTagByNameOrPath(request.getTagPath()).getId();
+            tagId = getTag(request.getTagPath()).getId();
         }
         return tagId;
     }
