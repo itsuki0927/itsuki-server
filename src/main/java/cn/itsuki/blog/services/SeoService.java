@@ -31,7 +31,7 @@ public class SeoService {
     @Value("${mode.isProd}")
     private boolean isProd;
 
-    private String getActionString(SEOAction action) {
+    private String getBaiduActionString(SEOAction action) {
         switch (action) {
             case Push:
                 return "urls";
@@ -44,6 +44,18 @@ public class SeoService {
         }
     }
 
+    private String getGoogleActionString(SEOAction action) {
+        switch (action) {
+            case Push:
+            case Update:
+                return "URL_UPDATED";
+            case Delete:
+                return "URL_DELETED";
+            default:
+                return "";
+        }
+    }
+
     private List<String> humanizedUrl(String url) {
         return List.of(url);
     }
@@ -51,8 +63,8 @@ public class SeoService {
     private void pingGoogle(SEOAction action, List<String> urls) {
         String scopes = "https://www.googleapis.com/auth/indexing";
         String endPoint = "https://indexing.googleapis.com/v3/urlNotifications:publish";
-        String type = getActionString(action);
-        String actionText = "Baidu ping[ " + type + " ] action";
+        String type = getGoogleActionString(action);
+        String actionText = "Google ping [" + type + "] action";
         String url = urls.get(0);
 
         System.out.println(actionText);
@@ -85,8 +97,8 @@ public class SeoService {
     // Baidu
     private void pingBaidu(SEOAction action, List<String> urls) {
 
-        String urlKey = getActionString(action);
-        String actionText = "Baidu ping[ " + action + " ] action";
+        String urlKey = getBaiduActionString(action);
+        String actionText = "Baidu ping [" + action + "] action";
         String content = String.join("\n", urls);
 
         if (StrUtil.isEmpty(urlKey)) {
