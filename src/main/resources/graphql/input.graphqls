@@ -34,7 +34,8 @@ input CreateArticleInput {
 input CreateCommentInput {
     nickname:String!
     email:String!
-    website:String!
+    avatar:String!
+    loginType:String!
     agent:String!
     content:String!
     expand:String
@@ -45,7 +46,6 @@ input CreateCommentInput {
 input UpdateCommentInput {
     nickname:String
     email:String
-    website:String
     content:String
     liking:Int
     state:Int

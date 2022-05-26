@@ -33,12 +33,6 @@ public class CommentCreateRequest {
     private String email;
 
     /**
-     * 网址
-     */
-    @NotBlank
-    private String website;
-
-    /**
      * 浏览器agent
      */
     @NotBlank
@@ -49,6 +43,16 @@ public class CommentCreateRequest {
      */
     @NotBlank
     private String content;
+
+    /**
+     * 登录方式
+     */
+    private String loginType;
+
+    /**
+     * 头像
+     */
+    private String avatar;
 
     /**
      * 扩展

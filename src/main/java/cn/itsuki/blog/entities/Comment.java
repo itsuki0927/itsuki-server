@@ -40,11 +40,6 @@ public class Comment extends IdentifiableEntity {
     private String email;
 
     /**
-     * 网址
-     */
-    private String website;
-
-    /**
      * 内容
      */
     @NotBlank
@@ -91,6 +86,17 @@ public class Comment extends IdentifiableEntity {
      */
     @Min(0)
     private Integer fix;
+
+    /**
+     * 头像
+     */
+    private String avatar;
+
+    /**
+     * 登录方式: 0 -> github、1 -> qq、2 -> wechat
+     */
+    @Column(name = "login_type")
+    private String loginType;
 
     /**
      * 扩展

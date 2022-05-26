@@ -22,7 +22,8 @@ type Comment implements IdentifiableEntity{
     updateAt: LocalDateTime
     nickname:String
     email:String
-    website:String
+    avatar:String
+    loginType:String
     content:String
     liking:Int
     ip:String

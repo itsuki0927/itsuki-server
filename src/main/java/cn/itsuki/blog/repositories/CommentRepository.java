@@ -43,7 +43,6 @@ public interface CommentRepository extends BaseRepository<Comment> {
             ":keyword is null or c.nickname like %:keyword%" +
             "                  or c.content like %:keyword%" +
             "                  or c.email like %:keyword%" +
-            "                  or c.website like %:keyword%" +
             "                  or c.articleTitle like %:keyword%" +
             ")" +
             "and (:articleId is null or c.articleId = :articleId)" +

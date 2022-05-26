@@ -252,7 +252,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
         comment.setEmail(adminEmail);
         comment.setNickname(admin.getNickname());
-        comment.setWebsite(webUrl);
     }
 
     private void setCommentIp(Comment comment, DataFetchingEnvironment environment) {

@@ -32,12 +32,6 @@ public class UpdateCommentInput {
     private String email;
 
     /**
-     * 网址
-     */
-    @NotBlank
-    private String website;
-
-    /**
      * 内容
      */
     @NotBlank
