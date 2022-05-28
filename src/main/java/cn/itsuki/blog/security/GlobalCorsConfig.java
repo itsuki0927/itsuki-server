@@ -19,8 +19,6 @@ public class GlobalCorsConfig {
     private String webUrl;
     @Value("${cors.adminUrl}")
     private String adminUrl;
-    @Value("${cors.vercelUrl}")
-    private String vercelUrl;
 
     /**
      * 允许跨域调用的过滤器
@@ -31,7 +29,6 @@ public class GlobalCorsConfig {
         //允许指定域名进行跨域调用
         config.addAllowedOrigin(webUrl);
         config.addAllowedOrigin(adminUrl);
-        config.addAllowedOrigin(vercelUrl);
         //允许跨越发送cookie
         config.setAllowCredentials(true);
         //放行全部原始头信息
