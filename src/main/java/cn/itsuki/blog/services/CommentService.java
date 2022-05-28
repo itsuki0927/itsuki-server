@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,8 +62,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     @Override
     protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "id");
+        Pageable newPageable = new OffsetLimitPageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ((CommentRepository) repository).search(
-                criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), pageable);
+                criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), newPageable);
     }
 
     private List<String> humanizeList(String item) {
