@@ -207,12 +207,14 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     private void setCommentArticle(Comment comment) {
-        Article article = ensureArticleExist(comment.getArticleId());
-        comment.setArticleTitle(article.getTitle());
-        comment.setArticleDescription(article.getDescription());
-        // 更新文章评论数
-        article.setCommenting(article.getCommenting() + 1);
-        articleService.update(article.getId(), article);
+        if (comment.getArticleId() > 0) {
+            Article article = ensureArticleExist(comment.getArticleId());
+            comment.setArticleTitle(article.getTitle());
+            comment.setArticleDescription(article.getDescription());
+            // 更新文章评论数
+            article.setCommenting(article.getCommenting() + 1);
+            articleService.update(article.getId(), article);
+        }
     }
 
     private void setCommentLocation(Comment comment) {
