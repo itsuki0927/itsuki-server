@@ -5,6 +5,7 @@ import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.BaseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -41,6 +42,17 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
     // 实例
     @Autowired
     protected BaseRepository<T> repository;
+
+    @Value("${mode}")
+    private String mode;
+
+    public boolean isDev() {
+        return mode.equals("dev");
+    }
+
+    public boolean isProd() {
+        return mode.equals("prod");
+    }
 
     /**
      * 创建一个service实例

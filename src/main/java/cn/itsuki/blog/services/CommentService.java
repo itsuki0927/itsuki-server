@@ -50,10 +50,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private UrlUtil urlUtil;
     @Value("${mail.admin}")
     private String adminEmail;
-    @Value("${mode.isDev}")
-    private boolean isDev;
-    @Value("${mode.isProd}")
-    private boolean isProd;
     @Value("${cors.webUrl}")
     private String webUrl;
 

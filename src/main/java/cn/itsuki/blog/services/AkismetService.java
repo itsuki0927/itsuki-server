@@ -23,8 +23,12 @@ public class AkismetService {
     private String blog;
     @Value("${akismet.hostname}")
     private String hostname;
-    @Value("${mode.isDev}")
-    private boolean isDev;
+    @Value("${mode}")
+    private String mode;
+
+    public boolean isDev() {
+        return mode.equals("dev");
+    }
 
     private String buildPath(String path) {
 //        return UrlBuilder.create()
@@ -74,7 +78,7 @@ public class AkismetService {
 //        paramMap.put("comment_author_url", comment.getWebsite());
         paramMap.put("comment_content", comment.getContent());
 
-        if (isDev) {
+        if (isDev()) {
             paramMap.put("is_test", true);
         }
 

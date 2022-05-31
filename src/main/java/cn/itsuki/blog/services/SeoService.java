@@ -28,8 +28,12 @@ public class SeoService {
     private String site;
     @Value("${seo.baidu.token}")
     private String token;
-    @Value("${mode.isProd}")
-    private boolean isProd;
+    @Value("${mode}")
+    private String mode;
+
+    public boolean isProd() {
+        return mode.equals("prod");
+    }
 
     private String getBaiduActionString(SEOAction action) {
         switch (action) {
@@ -121,7 +125,7 @@ public class SeoService {
     }
 
     public void push(String url) {
-        if (isProd) {
+        if (isProd()) {
             List<String> urls = humanizedUrl(url);
             this.pingBaidu(SEOAction.Push, urls);
             this.pingGoogle(SEOAction.Push, urls);
@@ -129,7 +133,7 @@ public class SeoService {
     }
 
     public void update(String url) {
-        if (isProd) {
+        if (isProd()) {
             List<String> urls = humanizedUrl(url);
             this.pingBaidu(SEOAction.Update, urls);
             this.pingGoogle(SEOAction.Update, urls);
@@ -137,7 +141,7 @@ public class SeoService {
     }
 
     public void delete(String url) {
-        if (isProd) {
+        if (isProd()) {
             List<String> urls = humanizedUrl(url);
             this.pingBaidu(SEOAction.Delete, urls);
             this.pingGoogle(SEOAction.Delete, urls);
