@@ -2,6 +2,7 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.constants.CommentState;
+import cn.itsuki.blog.constants.CommonState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.responses.SearchResponse;
@@ -100,10 +101,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
      * 更新文章评论数
      */
     public void updateArticleCommentCount(Long articleId) {
-        Article article = ensureArticleExist(articleId);
-        int count = count(articleId);
-        article.setCommenting(count);
-        articleService.update(articleId, article);
+        if (isArticleComment(articleId)) {
+            Article article = ensureArticleExist(articleId);
+            int count = count(articleId);
+            article.setCommenting(count);
+            articleService.update(articleId, article);
+        }
     }
 
     /**
@@ -206,8 +209,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return repository.save(comment);
     }
 
+    private boolean isArticleComment(Long articleId) {
+        return articleId != CommonState.GUESTBOOK;
+    }
+
     private void setCommentArticle(Comment comment) {
-        if (comment.getArticleId() > 0) {
+        if (isArticleComment(comment.getArticleId())) {
             Article article = ensureArticleExist(comment.getArticleId());
             comment.setArticleTitle(article.getTitle());
             comment.setArticleDescription(article.getDescription());
@@ -293,7 +300,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     private void ensureCommentAllowOperate(Comment comment) {
         if (comment.getState() == CommentState.Spam || comment.getState() == CommentState.Deleted) {
-            throw new IllegalArgumentException("当前评论不能进行操作");
+            throw new IllegalArgumentException("当前评论处于垃圾评论、已删除状态，该操作需要待审核、已发布状态");
         }
     }
 }

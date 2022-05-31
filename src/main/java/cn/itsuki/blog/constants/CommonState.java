@@ -14,7 +14,7 @@ public class CommonState {
     public static final long NO_PARENT = 0;
 
     // 留言板
-    public static final long GUESTBOOK = 0;
+    public static final long GUESTBOOK = 10000;
 
     // 关闭
     public static final int SHUT_DOWN = 0;
