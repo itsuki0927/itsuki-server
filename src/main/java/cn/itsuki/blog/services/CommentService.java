@@ -195,14 +195,16 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         setCommentLocation(comment);
         comment.setId(null);
 
-        if (isProd) {
+        Comment save = repository.save(comment);
+
+        if (isProd()) {
             if (parentComment != null) {
                 sendEmailToReplyTarget(comment, parentComment.getEmail());
             }
             sendEmailToAdmin(comment);
         }
 
-        return repository.save(comment);
+        return save;
     }
 
     private boolean isArticleComment(Long articleId) {
@@ -240,11 +242,13 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         setCommentIp(comment, environment);
         setCommentLocation(comment);
 
-        if (parentComment != null && isProd) {
+        Comment save = repository.save(comment);
+
+        if (parentComment != null && isProd()) {
             sendEmailToReplyTarget(comment, parentComment.getEmail());
         }
 
-        return repository.save(comment);
+        return save;
     }
 
     public int likeComment(Long id) {
