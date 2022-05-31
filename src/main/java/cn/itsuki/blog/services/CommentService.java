@@ -75,7 +75,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     private void sendEmailToReplyTarget(Comment comment, String to) {
         List<String> tos = humanizeList(to);
-        boolean isComment = comment.getArticleId() == null;
+        boolean isComment = isArticleComment(comment.getArticleId());
         String text = isComment ? "评论" : "留言";
         String content = buildEmailContent(comment);
         emailService.sendEmail("你在 itsuki.cn 有一条" + text + "回复", content, tos);
@@ -83,14 +83,14 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     private void sendEmailToAdmin(Comment comment) {
         List<String> tos = humanizeList(adminEmail);
-        boolean isComment = comment.getArticleId() == null;
+        boolean isComment = isArticleComment(comment.getArticleId());
         String text = isComment ? "评论" : "留言";
         String content = buildEmailContent(comment);
         emailService.sendEmail("滴滴, 博客添加了一条" + text, content, tos);
     }
 
     private String buildEmailContent(Comment comment) {
-        boolean isComment = comment.getArticleId() == null;
+        boolean isComment = isArticleComment(comment.getArticleId());
         String text = isComment ? "评论" : "留言";
         String path = isComment ? urlUtil.getArticleUrl(comment.getArticleId()) : urlUtil.getGuestBookUrl();
         return "<p>昵称: " + comment.getNickname() + "</p>" + "<p>" + text + "内容: "
