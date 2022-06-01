@@ -10,7 +10,6 @@ import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.RequestUtil;
 import cn.itsuki.blog.utils.UrlUtil;
 import com.alibaba.fastjson.JSONObject;
-import graphql.GraphQLException;
 import graphql.kickstart.servlet.context.GraphQLServletContext;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
@@ -178,10 +177,6 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     public Comment createComment(CommentCreateRequest input, DataFetchingEnvironment environment) {
-        if (input.getNickname().length() >= 10) {
-            throw new GraphQLException("昵称太长了, 最长: 10, 当前长度:" + input.getNickname().length());
-        }
-
         Comment comment = new Comment();
         BeanUtil.copyProperties(input, comment);
 
