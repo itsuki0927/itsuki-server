@@ -21,6 +21,7 @@ input ArticleSearchRequest {
     tagId:ID
     tagPath: String
     hot:Boolean
+    recent:Boolean
 }
 
 input TagSearchRequest {

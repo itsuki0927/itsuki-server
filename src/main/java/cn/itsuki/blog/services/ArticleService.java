@@ -76,9 +76,9 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         }
     }
 
-    public Page<Article> getHotArticles() {
-        Sort sort = Sort.by(Sort.Direction.DESC, "reading");
-        Pageable pageable = new OffsetLimitPageRequest(0, 8, sort);
+    public Page<Article> getRecentArticles() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        Pageable pageable = new OffsetLimitPageRequest(0, 6, sort);
         Article probe = new Article();
         probe.setPublish(PublishState.Published);
         return repository.findAll(Example.of(probe), pageable);
@@ -119,6 +119,10 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         criteria = Optional.ofNullable(criteria).orElse(new ArticleSearchRequest());
+
+        if (criteria.getRecent() != null && criteria.getRecent()) {
+            return getRecentArticles();
+        }
 
         Long tagId = getSearchTagId(criteria);
         Long categoryId = getSearchCategoryId(criteria);

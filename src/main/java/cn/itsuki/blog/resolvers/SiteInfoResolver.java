@@ -33,18 +33,6 @@ public class SiteInfoResolver implements GraphQLResolver<SiteInfoResponse> {
     @Autowired
     private BlackListService blackListService;
 
-    public List<Tag> tags() {
-        return tagRepository.findAll();
-    }
-
-    public List<Category> categories() {
-        return categoryRepository.findAll();
-    }
-
-    public List<Article> hotArticles() {
-        return articleService.getHotArticles().getContent();
-    }
-
     public BlackList blackList() {
         return blackListService.blacklist();
     }

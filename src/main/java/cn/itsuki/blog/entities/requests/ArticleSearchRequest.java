@@ -64,4 +64,9 @@ public class ArticleSearchRequest extends BaseSearchRequest {
      * 排行榜
      */
     private Boolean hot;
+
+    /**
+     * 最近
+     */
+    private Boolean recent;
 }

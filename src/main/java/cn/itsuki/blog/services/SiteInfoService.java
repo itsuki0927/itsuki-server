@@ -40,22 +40,8 @@ public class SiteInfoService implements GraphQLQueryResolver {
     public SiteInfoResponse siteinfo() {
         SiteInfoResponse siteInfoResponse = new SiteInfoResponse();
 
-        List<Tag> tags = tagRepository.findAll();
-        siteInfoResponse.setTags(tags);
-
-        List<Category> categories = categoryRepository.findAll();
-        siteInfoResponse.setCategories(categories);
-
         BlackList blackList = blackListService.blacklist();
         siteInfoResponse.setBlacklist(blackList);
-
-        Page<Article> articles = articleService.getHotArticles();
-        siteInfoResponse.setHotArticles(articles.getContent());
-
-        ArticleSearchRequest request = new ArticleSearchRequest();
-        request.setBanner(1);
-        SearchResponse<Article> bannerArticles = articleService.search(request);
-        siteInfoResponse.setBannerArticles(bannerArticles.getData());
 
         return siteInfoResponse;
     }
