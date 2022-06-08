@@ -59,8 +59,6 @@ type Article implements IdentifiableEntity {
     origin:Int
     open:Int
     banner:Int
-    categoryId: ID
-    category: Category
     tags: [Tag]
 }
 
@@ -74,18 +72,6 @@ type Tag implements IdentifiableEntity{
     expand:String
     sort:Int
     count:Int
-}
-
-type Category implements IdentifiableEntity{
-    id:ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
-    name: String
-    path: String
-    description: String
-    expand: String
-    sort: Int
-    count: Int
 }
 
 type BlackList implements IdentifiableEntity{

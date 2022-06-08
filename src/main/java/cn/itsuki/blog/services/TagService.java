@@ -3,7 +3,6 @@ package cn.itsuki.blog.services;
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.ArticleTag;
-import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.TagActionInput;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
@@ -15,14 +14,12 @@ import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityExistsException;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**

@@ -51,16 +51,6 @@ public class ArticleSearchRequest extends BaseSearchRequest {
     private String tagPath;
 
     /**
-     * 分类id
-     */
-    private Long categoryId;
-
-    /**
-     * 分类路径
-     */
-    private String categoryPath;
-
-    /**
      * 排行榜
      */
     private Boolean hot;

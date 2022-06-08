@@ -47,8 +47,6 @@ type ArticleDetailResponse implements IdentifiableEntity{
     origin:Int
     open:Int
     banner:Int
-    categoryId: ID
-    category: Category
     tags: [Tag]
     prevArticle: Article
     nextArticle: Article
@@ -56,7 +54,6 @@ type ArticleDetailResponse implements IdentifiableEntity{
 
 type SiteInfoResponse {
     tags: [Tag]
-    categories: [Category]
     hotArticles: [Article]
     bannerArticles: [Article]
     blacklist: BlackList

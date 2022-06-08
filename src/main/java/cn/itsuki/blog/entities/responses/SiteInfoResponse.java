@@ -2,7 +2,6 @@ package cn.itsuki.blog.entities.responses;
 
 import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.BlackList;
-import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,7 +16,6 @@ import java.util.List;
 @Setter
 public class SiteInfoResponse {
     private List<Tag> tags;
-    private List<Category> categories;
     private List<Article> hotArticles;
     private List<Article> bannerArticles;
     private BlackList blacklist;

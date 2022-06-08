@@ -39,8 +39,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     @Autowired
     private TagService tagService;
     @Autowired
-    private CategoryService categoryService;
-    @Autowired
     private CommentService commentService;
     @Autowired
     private SeoService seoService;
@@ -84,14 +82,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return repository.findAll(Example.of(probe), pageable);
     }
 
-    private Category getCategory(String name) {
-        Category category = categoryService.getCategoryByNameOrPath(name);
-        if (category == null) {
-            throw new EntityNotFoundException("category 不存在");
-        }
-        return category;
-    }
-
     private Tag getTag(String name) {
         Tag tag = tagService.getTagByNameOrPath(name);
         if (tag == null) {
@@ -108,14 +98,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return tagId;
     }
 
-    private Long getSearchCategoryId(ArticleSearchRequest request) {
-        Long categoryId = request.getCategoryId();
-        if (categoryId == null && request.getCategoryPath() != null) {
-            categoryId = getCategory(request.getCategoryPath()).getId();
-        }
-        return categoryId;
-    }
-
     @Override
     protected Page<Article> searchWithPageable(ArticleSearchRequest criteria, Pageable pageable) {
         criteria = Optional.ofNullable(criteria).orElse(new ArticleSearchRequest());
@@ -125,23 +107,18 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         }
 
         Long tagId = getSearchTagId(criteria);
-        Long categoryId = getSearchCategoryId(criteria);
 
         return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, categoryId, criteria.getBanner(), pageable);
+                criteria.getOpen(), tagId, criteria.getBanner(), pageable);
     }
 
     public Integer count(ArticleSearchRequest criteria) {
         Long tagId = criteria.getTagId();
-        Long categoryId = criteria.getCategoryId();
         if (tagId == null && criteria.getTagPath() != null) {
             tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
         }
-        if (categoryId == null && criteria.getCategoryPath() != null) {
-            categoryId = categoryService.getCategoryByNameOrPath(criteria.getCategoryPath()).getId();
-        }
         return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, categoryId, criteria.getBanner());
+                criteria.getOpen(), tagId, criteria.getBanner());
     }
 
     public ArticleSummaryResponse getSummary() {
@@ -205,9 +182,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         saveAllTags(request.getTagIds(), article.getId());
 
-        Category newCategory = categoryService.get(request.getCategoryId());
-        // 更新category count
-        categoryService.syncCategoryCount(newCategory);
         // 更新tag count
         updateTagCount(request.getTagIds());
 
@@ -245,8 +219,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         BeanUtil.copyProperties(entity, article);
         Article update = super.update(id, article);
 
-        // 更新新的category、tag count
-        categoryService.syncAllCategoryCount();
         updateTagCount(entity.getTagIds());
         // 更新旧的tag count
         updateTagCount(oldTagIds);
@@ -266,9 +238,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         updateTagCount(oldTagIds);
 
-        Category category = categoryService.get(oldArticle.getCategoryId());
-        categoryService.syncCategoryCount(category);
-
         seoService.delete(urlUtil.getArticleUrl(articleId));
 
         return super.delete(articleId);
@@ -282,8 +251,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         ids.forEach(id -> {
             Article article = get(id);
             List<Long> tagIds = getArticleTagIds(id);
-            Category category = categoryService.get(article.getCategoryId());
-            categoryService.syncCategoryCount(category);
             updateTagCount(tagIds);
         });
 

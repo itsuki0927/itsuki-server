@@ -111,9 +111,6 @@ public class Article extends IdentifiableEntity {
      */
     private Integer banner;
 
-    @Column(name = "category_id")
-    private Long categoryId;
-
     @Override
     protected void onCreateAction() {
         setAuthor(SecurityUtils.getCurrentAdmin().getNickname());

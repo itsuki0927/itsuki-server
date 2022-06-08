@@ -56,12 +56,6 @@ public class ArticleCreateRequest {
     private String cover;
 
     /**
-     * 分类id
-     */
-    @NotNull
-    private Long categoryId;
-
-    /**
      * 标签id
      */
     @NotEmpty

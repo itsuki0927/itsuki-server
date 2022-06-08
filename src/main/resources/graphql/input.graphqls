@@ -22,7 +22,6 @@ input CreateArticleInput {
     keywords: String!
     content:String!
     cover:String!
-    categoryId:Int!
     password:String
     publish: Int!
     origin:Int!
@@ -51,14 +50,6 @@ input UpdateCommentInput {
     state:Int
     fix:Int
     expand:String
-}
-
-input CategoryActionInput {
-    name: String
-    path: String
-    description: String
-    expand: String
-    sort: Int
 }
 
 input TagActionInput {

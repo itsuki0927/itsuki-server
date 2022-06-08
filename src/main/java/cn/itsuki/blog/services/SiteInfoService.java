@@ -1,22 +1,14 @@
 package cn.itsuki.blog.services;
 
-import cn.itsuki.blog.entities.Article;
 import cn.itsuki.blog.entities.BlackList;
-import cn.itsuki.blog.entities.Category;
-import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
-import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.entities.responses.SiteInfoResponse;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
-import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 网站信息 服务
@@ -28,8 +20,6 @@ import java.util.List;
 public class SiteInfoService implements GraphQLQueryResolver {
     @Autowired
     private TagRepository tagRepository;
-    @Autowired
-    private CategoryRepository categoryRepository;
     @Autowired
     private ArticleService articleService;
     @Autowired

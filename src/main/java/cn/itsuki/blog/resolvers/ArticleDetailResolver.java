@@ -1,11 +1,9 @@
 package cn.itsuki.blog.resolvers;
 
 import cn.itsuki.blog.entities.ArticleTag;
-import cn.itsuki.blog.entities.Category;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.responses.ArticleDetailResponse;
 import cn.itsuki.blog.repositories.ArticleTagRepository;
-import cn.itsuki.blog.repositories.CategoryRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import graphql.kickstart.tools.GraphQLResolver;
 import lombok.extern.slf4j.Slf4j;
@@ -25,8 +23,6 @@ import java.util.stream.Collectors;
 @Component
 public class ArticleDetailResolver implements GraphQLResolver<ArticleDetailResponse> {
     @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
     private TagRepository tagRepository;
     @Autowired
     private ArticleTagRepository articleTagRepository;
@@ -36,14 +32,6 @@ public class ArticleDetailResolver implements GraphQLResolver<ArticleDetailRespo
         probe.setArticleId(article.getId());
         List<ArticleTag> articleTags = articleTagRepository.findAll(Example.of(probe));
         return tagRepository.findAllById(articleTags.stream().map(ArticleTag::getTagId).collect(Collectors.toList()));
-    }
-
-    public Category category(ArticleDetailResponse article) {
-        Optional<Category> optionalCategory = categoryRepository.findById(article.getCategoryId());
-        if (optionalCategory.isEmpty()) {
-            return null;
-        }
-        return optionalCategory.get();
     }
 
 }

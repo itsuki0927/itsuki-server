@@ -54,10 +54,9 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:open is null or a.open = :open)" +
             "and (:banner is null or a.banner = :banner)" +
             "and (:tag is null or t.tagId = :tag)" +
-            "and (:category is null or a.categoryId = :category) " +
             "")
     Page<Article> search(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
-                         @Param("open") Integer open, @Param("tag") Long tag, @Param("category") Long category,
+                         @Param("open") Integer open, @Param("tag") Long tag,
                          @Param("banner") Integer banner, Pageable pageable);
 
 
@@ -75,10 +74,9 @@ public interface ArticleRepository extends BaseRepository<Article> {
             "and (:open is null or a.open = :open)" +
             "and (:banner is null or a.banner = :banner)" +
             "and (:tagId is null or t.id = :tagId)" +
-            "and (:categoryId is null or a.categoryId = :categoryId)" +
             "")
     int count(@Param("name") String name, @Param("publish") Integer publish, @Param("origin") Integer origin,
-              @Param("open") Integer open, @Param("tagId") Long tagId, @Param("categoryId") Long categoryId, @Param("banner") Integer banner);
+              @Param("open") Integer open, @Param("tagId") Long tagId,  @Param("banner") Integer banner);
 
     int countArticlesByIdInAndPublishEquals(List<Long> ids, Integer publish);
 }

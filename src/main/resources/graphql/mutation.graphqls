@@ -8,10 +8,6 @@ type Mutation {
     likeArticle(id:ID!): Int
     readArticle(id:ID!): Int
 
-    createCategory(input: CategoryActionInput!): Category
-    updateCategory(id:ID!, input: CategoryActionInput!): Category
-    deleteCategory(id: ID!):Int
-
     createTag(input: TagActionInput!): Tag
     updateTag(id:ID!, input: TagActionInput!): Tag
     deleteTag(id:ID!): Int
@@ -29,7 +25,6 @@ type Mutation {
 
     updateBlackList(input: UpdateBlackListInput!): BlackList
 
-    syncAllCategoryCount: Int
     syncAllTagCount: Int
     syncArticleCommentCount(ids:[ID]!):Int
 }
