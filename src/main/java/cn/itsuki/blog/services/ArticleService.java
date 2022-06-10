@@ -74,9 +74,17 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         }
     }
 
-    public Page<Article> getRecentArticles() {
+    public Page<Article> recentArticles() {
         Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
         Pageable pageable = new OffsetLimitPageRequest(0, 6, sort);
+        Article probe = new Article();
+        probe.setPublish(PublishState.Published);
+        return repository.findAll(Example.of(probe), pageable);
+    }
+
+    public Page<Article> hotArticles() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "reading");
+        Pageable pageable = new OffsetLimitPageRequest(0, 3, sort);
         Article probe = new Article();
         probe.setPublish(PublishState.Published);
         return repository.findAll(Example.of(probe), pageable);
@@ -103,7 +111,11 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         criteria = Optional.ofNullable(criteria).orElse(new ArticleSearchRequest());
 
         if (criteria.getRecent() != null && criteria.getRecent()) {
-            return getRecentArticles();
+            return recentArticles();
+        }
+
+        if (criteria.getHot() != null && criteria.getHot()) {
+            return hotArticles();
         }
 
         Long tagId = getSearchTagId(criteria);
