@@ -54,10 +54,7 @@ type Article implements IdentifiableEntity {
     author:String
     liking:Int
     reading:Int
-    password:String
     publish: Int
-    origin:Int
-    open:Int
     banner:Int
     tags: [Tag]
 }
@@ -74,7 +71,7 @@ type Tag implements IdentifiableEntity{
     count:Int
 }
 
-type BlackList implements IdentifiableEntity{
+type BlackList implements IdentifiableEntity {
     id:ID!
     createAt: LocalDateTime
     updateAt: LocalDateTime

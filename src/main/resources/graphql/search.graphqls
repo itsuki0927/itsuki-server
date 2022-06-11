@@ -12,9 +12,7 @@ input ArticleSearchRequest {
     sortOrder:String
     name:String
     publish:Int
-    origin:Int
     banner:Int
-    open:Int
     tag:String
     tagId:ID
     tagPath: String

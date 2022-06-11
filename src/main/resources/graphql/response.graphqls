@@ -42,10 +42,7 @@ type ArticleDetailResponse implements IdentifiableEntity{
     author:String
     liking:Int
     reading:Int
-    password:String
     publish: Int
-    origin:Int
-    open:Int
     banner:Int
     tags: [Tag]
     prevArticle: Article

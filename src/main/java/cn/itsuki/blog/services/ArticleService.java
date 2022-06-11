@@ -120,8 +120,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         Long tagId = getSearchTagId(criteria);
 
-        return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, criteria.getBanner(), pageable);
+        return ((ArticleRepository) repository).search(criteria.getName(), criteria.getPublish(), tagId, criteria.getBanner(), pageable);
     }
 
     public Integer count(ArticleSearchRequest criteria) {
@@ -129,8 +128,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         if (tagId == null && criteria.getTagPath() != null) {
             tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
         }
-        return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), criteria.getOrigin(),
-                criteria.getOpen(), tagId, criteria.getBanner());
+        return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), tagId, criteria.getBanner());
     }
 
     public ArticleSummaryResponse getSummary() {
@@ -170,7 +168,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         ArticleDetailResponse response = new ArticleDetailResponse();
         BeanUtil.copyProperties(article, response);
 
-        response.setPassword(null);
         response.setPrevArticle(((ArticleRepository) repository).prev(id));
         response.setNextArticle(((ArticleRepository) repository).next(id));
 

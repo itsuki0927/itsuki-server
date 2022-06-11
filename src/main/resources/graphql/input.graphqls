@@ -22,10 +22,7 @@ input CreateArticleInput {
     keywords: String!
     content:String!
     cover:String!
-    password:String
     publish: Int!
-    origin:Int!
-    open:Int!
     banner:Int!
     tagIds: [Int]
 }
