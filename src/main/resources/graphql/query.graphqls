@@ -8,7 +8,6 @@ type Query {
     comments(search: CommentSearchRequest): SearchCommentResponse
     comment(id:ID!): Comment
     blacklist: BlackList
-    siteinfo:SiteInfoResponse
 }
 
 schema {

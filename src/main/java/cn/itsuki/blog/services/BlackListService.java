@@ -24,9 +24,8 @@ public class BlackListService implements GraphQLQueryResolver, GraphQLMutationRe
     private AdminService adminService;
 
     public BlackList blacklist() {
-//        long blackListId = 1L;
-//        return repository.getById(blackListId);
-        return repository.findAll().get(0);
+        long blackListId = 1L;
+        return repository.getById(blackListId);
     }
 
     public BlackList updateBlackList(UpdateBlackListInput input) {
@@ -37,23 +36,32 @@ public class BlackListService implements GraphQLQueryResolver, GraphQLMutationRe
         return probe;
     }
 
-    public void add(String ip, String email) {
+    public void addIP(String ip) {
         BlackList blackList = blacklist();
         JSONArray ipList = JSONArray.parseArray(blackList.getIp());
         ipList.add(ip);
+        blackList.setIp(ipList.toString());
+        repository.save(blackList);
+    }
+
+    public void addEmail(String email) {
+        BlackList blackList = blacklist();
         JSONArray emailList = JSONArray.parseArray(blackList.getEmail());
         emailList.add(email);
-        blackList.setIp(ipList.toString());
         blackList.setEmail(emailList.toString());
         repository.save(blackList);
     }
 
-    public void delete(String ip, String email) {
+    public void deleteIP(String ip) {
         BlackList blackList = blacklist();
         JSONArray ipList = JSONArray.parseArray(blackList.getIp());
         ipList.remove(ip);
         blackList.setIp(ipList.toString());
+        repository.save(blackList);
+    }
 
+    public void deleteEmail(String email) {
+        BlackList blackList = blacklist();
         JSONArray emailList = JSONArray.parseArray(blackList.getEmail());
         emailList.remove(email);
         blackList.setEmail(emailList.toString());

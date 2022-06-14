@@ -2,7 +2,6 @@ package cn.itsuki.blog.services;
 
 import cn.itsuki.blog.entities.BlackList;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
-import cn.itsuki.blog.entities.responses.SiteInfoResponse;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.repositories.CommentRepository;
 import cn.itsuki.blog.repositories.TagRepository;
@@ -23,18 +22,7 @@ public class SiteInfoService implements GraphQLQueryResolver {
     @Autowired
     private ArticleService articleService;
     @Autowired
-    private BlackListService blackListService;
-    @Autowired
     private CommentRepository commentRepository;
-
-    public SiteInfoResponse siteinfo() {
-        SiteInfoResponse siteInfoResponse = new SiteInfoResponse();
-
-        BlackList blackList = blackListService.blacklist();
-        siteInfoResponse.setBlacklist(blackList);
-
-        return siteInfoResponse;
-    }
 
     public SiteSummaryResponse getSummary() {
         long article = articleService.count(new ArticleSearchRequest());

@@ -48,10 +48,3 @@ type ArticleDetailResponse implements IdentifiableEntity{
     prevArticle: Article
     nextArticle: Article
 }
-
-type SiteInfoResponse {
-    tags: [Tag]
-    hotArticles: [Article]
-    bannerArticles: [Article]
-    blacklist: BlackList
-}

@@ -1,6 +1,5 @@
 package cn.itsuki.blog.controllers;
 
-import cn.itsuki.blog.entities.responses.SiteInfoResponse;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import cn.itsuki.blog.services.SiteInfoService;

@@ -161,10 +161,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         // 如果是垃圾评论，则加入黑名单，以及 submitSpam
         // 如果不是垃圾评论，则移出黑名单，以及 submitHam
         if (isSpam) {
-            blackListService.add(ip, email);
+            blackListService.addIP(ip);
+            blackListService.addEmail(email);
             akismetService.submitSpam(comment);
         } else {
-            blackListService.delete(ip, email);
+            blackListService.deleteIP(ip);
+            blackListService.deleteEmail(email);
             akismetService.submitHam(comment);
         }
 
@@ -258,6 +260,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         Admin admin = adminService.ensureAdminOperate();
 
         comment.setEmail(adminEmail);
+        comment.setAvatar(admin.getAvatar());
         comment.setNickname(admin.getNickname());
     }
 
