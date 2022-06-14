@@ -259,6 +259,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void setCommentAdmin(Comment comment) {
         Admin admin = adminService.ensureAdminOperate();
 
+        comment.setLoginType("github");
         comment.setEmail(adminEmail);
         comment.setAvatar(admin.getAvatar());
         comment.setNickname(admin.getNickname());
