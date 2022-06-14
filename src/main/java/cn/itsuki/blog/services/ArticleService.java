@@ -285,7 +285,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         ensureArticleAllowOperate(article);
         article.setReading(article.getReading() + 1);
 
-        repository.save(article);
+        repository.saveAndFlush(article);
         return article.getReading();
     }
 
@@ -294,7 +294,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         ensureArticleAllowOperate(article);
         article.setLiking(article.getLiking() + 1);
 
-        repository.save(article);
+        repository.saveAndFlush(article);
         return article.getLiking();
     }
 
