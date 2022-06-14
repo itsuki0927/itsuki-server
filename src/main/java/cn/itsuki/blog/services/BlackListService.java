@@ -24,8 +24,7 @@ public class BlackListService implements GraphQLQueryResolver, GraphQLMutationRe
     private AdminService adminService;
 
     public BlackList blacklist() {
-        long blackListId = 1L;
-        return repository.getById(blackListId);
+        return repository.findAll().get(0);
     }
 
     public BlackList updateBlackList(UpdateBlackListInput input) {
