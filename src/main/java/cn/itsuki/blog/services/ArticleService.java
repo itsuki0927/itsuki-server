@@ -12,6 +12,8 @@ import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
 import graphql.kickstart.tools.GraphQLQueryResolver;
+import graphql.schema.DataFetchingEnvironment;
+import graphql.schema.DataFetchingFieldSelectionSet;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
@@ -157,19 +159,19 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return response;
     }
 
-    public Article articleDetail(long id) {
-        adminService.ensureAdminOperate();
-        return get(id);
-    }
-
-    public ArticleDetailResponse article(long id) {
+    public ArticleDetailResponse article(long id, DataFetchingEnvironment environment) {
+        DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet();
         Article article = get(id);
 
         ArticleDetailResponse response = new ArticleDetailResponse();
         BeanUtil.copyProperties(article, response);
 
-        response.setPrevArticle(((ArticleRepository) repository).prev(id));
-        response.setNextArticle(((ArticleRepository) repository).next(id));
+        if (selectionSet.contains("prevArticle")) {
+            response.setPrevArticle(((ArticleRepository) repository).prev(id));
+        }
+        if (selectionSet.contains("nextArticle")) {
+            response.setNextArticle(((ArticleRepository) repository).next(id));
+        }
 
         return response;
     }
