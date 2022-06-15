@@ -181,12 +181,13 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     public Comment createComment(CommentCreateRequest input, DataFetchingEnvironment environment) {
         Comment comment = new Comment();
         BeanUtil.copyProperties(input, comment);
+        boolean isAdminComment = input.getEmail().equals(adminEmail);
 
         Comment parentComment = ensureReplyCommentReadPermission(comment);
         setCommentIp(comment, environment);
         ensureIsInBlackList(comment);
         // 检查是否为垃圾评论
-        akismetService.checkComment(comment, false);
+        akismetService.checkComment(comment, isAdminComment);
 
         setCommentArticle(comment);
         setCommentLocation(comment);
@@ -198,7 +199,10 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
             if (parentComment != null) {
                 sendEmailToReplyTarget(comment, parentComment.getEmail());
             }
-            sendEmailToAdmin(comment);
+            // 如果是管理评论, 不需要发邮箱.
+            if (!isAdminComment) {
+                sendEmailToAdmin(comment);
+            }
         }
 
         return save;
