@@ -128,7 +128,7 @@
     </dependencies>
 
     <build>
-        <finalName>${project.artifactId}-${project.version}</finalName>
+        <finalName>app</finalName>
         <resources>
             <!--需要动态添加的资源-->
             <resource>
