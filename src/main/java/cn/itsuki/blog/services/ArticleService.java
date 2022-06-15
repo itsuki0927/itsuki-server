@@ -221,16 +221,17 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         Article article = get(id);
 
         List<Long> oldTagIds = getArticleTagIds(id);
+        List<Long> newTagIds = entity.getTagIds();
         // 删除当前文章的tag
         deleteTag(id);
         // 添加新的tag
-        saveAllTags(entity.getTagIds(), id);
+        saveAllTags(newTagIds, id);
 
         // 更新文章
         BeanUtil.copyProperties(entity, article);
         Article update = super.update(id, article);
 
-        updateTagCount(entity.getTagIds());
+        updateTagCount(newTagIds);
         // 更新旧的tag count
         updateTagCount(oldTagIds);
 
@@ -242,7 +243,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     public int deleteArticle(Long articleId) {
         adminService.ensureAdminOperate();
 
-        Article oldArticle = get(articleId);
         List<Long> oldTagIds = getArticleTagIds(articleId);
         deleteTag(articleId);
         commentService.deleteArticleComments(articleId);
@@ -260,7 +260,6 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         int state = ((ArticleRepository) repository).batchUpdateState(publish, ids);
 
         ids.forEach(id -> {
-            Article article = get(id);
             List<Long> tagIds = getArticleTagIds(id);
             updateTagCount(tagIds);
         });
