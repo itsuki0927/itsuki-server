@@ -27,7 +27,7 @@ jobs:
         with:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.KEY }}
           source: "target/app.jar"
           target: "~/blog/server"
 
@@ -40,7 +40,7 @@ jobs:
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           QINIU_ACCESS_KEY: ${{ secrets.QINIU_ACCESS_KEY }}
           QINIU_SECRET_KEY: ${{secrets.QINIU_SECRET_KEY}} 
-          QINIU_BUCKET: ${{secrets.QINIU_SECRET_KEY}} 
+          QINIU_BUCKET: ${{secrets.QINIU_BUCKET}} 
           BAIDU_IP_AK: ${{secrets.BAIDU_IP_AK}} 
           AKISMET_SECRET_KEY: ${{secrets.AKISMET_SECRET_KEY}} 
           MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}} 
@@ -63,7 +63,7 @@ jobs:
           command_timeout: 4m
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-          password: ${{ secrets.PASSWORD }}
+          key: ${{ secrets.KEY }}
           script: |
             cd ~/blog/server
 
