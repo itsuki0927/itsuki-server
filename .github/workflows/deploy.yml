@@ -51,6 +51,10 @@ jobs:
             echo "pid: $pid"
             kill -9 $pid
 
+            echo "MYSQL_USERNAME:$MYSQL_USERNAME" >> a.txt
+            echo "MYSQL_PASSWORD:$MYSQL_PASSWORD" >> a.txt
+            echo "MODE:$MODE" >> a.txt
+            echo "PORT:$PORT" >> a.txt
             # rm -rf app.jar
             # mv target/app.jar app.jar
             # rm -rf target
