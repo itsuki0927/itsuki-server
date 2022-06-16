@@ -19,27 +19,27 @@ jobs:
           java-version: '11'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
-        run: mvn -B -DskipTests=true package -P prod --file pom.xml
+      # - name: Build with Maven
+      #   run: mvn -B -DskipTests=true package -P prod --file pom.xml
 
-      - name: Copy files
-        uses: appleboy/scp-action@master
-        with:
-          host: ${{ secrets.HOST }}
-          username: ${{ secrets.USER }}
-          key: ${{ secrets.KEY }}
-          source: "target/app.jar"
-          target: "~/blog/server"
+      # - name: Copy files
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: ${{ secrets.HOST }}
+      #     username: ${{ secrets.USER }}
+      #     key: ${{ secrets.KEY }}
+      #     source: "target/app.jar"
+      #     target: "~/blog/server"
 
       - name: Run Deploy
         uses: appleboy/ssh-action@master
         env:
-          MODE: ${{secrets.MODE}} 
-          PORT: ${{secrets.PORT}} 
+          MODE: ${{ secrets.MODE }} 
+          PORT: ${{ secrets.PORT }} 
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
         with:
-          envs: MYSQL_USERNAME,MYSQL_PASSWORD,MODE
+          envs: MYSQL_USERNAME,MYSQL_PASSWORD,MODE,PORT
           command_timeout: 4m
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
@@ -51,9 +51,8 @@ jobs:
             echo "pid: $pid"
             kill -9 $pid
 
-            rm -rf app.jar
-            mv target/app.jar app.jar
-            rm -rf target
+            # rm -rf app.jar
+            # mv target/app.jar app.jar
+            # rm -rf target
 
-            # nohup java -jar app.jar --MYSQL_USERNAME=$MYSQL_USERNAME --MYSQL_PASSWORD=$MYSQL_PASSWORD --QINIU_ACCESS_KEY=$QINIU_ACCESS_KEY --QINIU_SECRET_KEY=$QINIU_SECRET_KEY --QINIU_BUCKET=$QINIU_SECRET_KEY --BAIDU_IP_AK=$BAIDU_IP_AK --AKISMET_SECRET_KEY=$AKISMET_SECRET_KEY --MAIL_PASSWORD=$MAIL_PASSWORD --SEO_BAIDU_TOKEN=$SEO_BAIDU_TOKEN --MODE=$MODE --SEO_GOOGLE_TYPE=$SEO_GOOGLE_TYPE --SEO_GOOGLE_PROJECT_ID=$SEO_GOOGLE_PROJECT_ID --SEO_GOOGLE_PRIVATE_KEY_ID=$SEO_GOOGLE_PRIVATE_KEY_ID --SEO_GOOGLE_PRIVATE_KEY=$SEO_GOOGLE_PRIVATE_KEY --SEO_GOOGLE_CLIENT_EMAIL=$SEO_GOOGLE_CLIENT_EMAIL --SEO_GOOGLE_CLIENT_ID=$SEO_GOOGLE_CLIENT_ID --SEO_GOOGLE_AUTH_URI=$SEO_GOOGLE_AUTH_URI --SEO_GOOGLE_TOKEN_URI=$SEO_GOOGLE_TOKEN_URI --SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL=$SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL --SEO_GOOGLE_TOKEN_CLIENT_CERT_URL=$SEO_GOOGLE_TOKEN_CLIENT_CERT_URL --WEB_URL=$WEB_URL --ADMIN_URL=$ADMIN_URL --TINIFY_SECRET_KEY=$TINIFY_SECRET_KEY > nohup.out 2> nohup.err < /dev/null &
             nohup java -jar app.jar --MYSQL_USERNAME=$MYSQL_USERNAME --MYSQL_PASSWORD=$MYSQL_PASSWORD --MODE=$MODE
