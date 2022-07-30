@@ -27,4 +27,8 @@ type Mutation {
 
     syncAllTagCount: Int
     syncArticleCommentCount(ids:[ID]!):Int
+
+    uploadFile(prefix:String, file:FileUpload):String
 }
+
+scalar FileUpload
