@@ -1,6 +1,5 @@
 package cn.itsuki.blog.services;
 
-import cn.itsuki.blog.entities.BlackList;
 import cn.itsuki.blog.entities.requests.ArticleSearchRequest;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.repositories.CommentRepository;
@@ -10,13 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
- * 网站信息 服务
- *
  * @author: itsuki
- * @create: 2021-10-24 18:16
+ * @create: 2022-07-22 08:06
  **/
 @Service
-public class SiteInfoService implements GraphQLQueryResolver {
+public class SummaryService implements GraphQLQueryResolver {
     @Autowired
     private TagRepository tagRepository;
     @Autowired
@@ -24,7 +21,7 @@ public class SiteInfoService implements GraphQLQueryResolver {
     @Autowired
     private CommentRepository commentRepository;
 
-    public SiteSummaryResponse getSummary() {
+    public SiteSummaryResponse summary() {
         long article = articleService.count(new ArticleSearchRequest());
         long tag = tagRepository.count();
         long comment = commentRepository.count();

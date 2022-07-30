@@ -133,7 +133,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return ((ArticleRepository) repository).count(criteria.getName(), criteria.getPublish(), tagId, criteria.getBanner());
     }
 
-    public ArticleSummaryResponse getSummary() {
+    public ArticleSummaryResponse articleSummary() {
         List<ArticleSummary> summaries = ((ArticleRepository) repository).summary();
 
         ArticleSummaryResponse response = new ArticleSummaryResponse();

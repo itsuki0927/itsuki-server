@@ -48,3 +48,23 @@ type ArticleDetailResponse implements IdentifiableEntity{
     prevArticle: Article
     nextArticle: Article
 }
+
+type SiteSummaryResponse{
+    article:Int
+    tag:Int
+    comment:Int
+}
+
+type ArticleSummary {
+    publish:Int
+    value:Int
+    title:String
+    state:String
+}
+
+type ArticleSummaryResponse{
+    total: ArticleSummary
+    draft: ArticleSummary
+    recycle:ArticleSummary
+    published:ArticleSummary
+}

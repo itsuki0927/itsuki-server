@@ -5,6 +5,9 @@ type Query {
     comments(search: CommentSearchRequest): SearchCommentResponse
     comment(id:ID!): Comment
     blacklist: BlackList
+    summary: SiteSummaryResponse
+    articleSummary: ArticleSummaryResponse
+    currentAdmin: Admin
 }
 
 schema {

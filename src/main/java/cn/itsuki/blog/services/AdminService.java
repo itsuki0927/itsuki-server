@@ -13,6 +13,7 @@ import cn.itsuki.blog.repositories.AdminRepository;
 import cn.itsuki.blog.security.SecurityUtils;
 import cn.itsuki.blog.security.TokenUtils;
 import graphql.kickstart.tools.GraphQLMutationResolver;
+import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -31,7 +32,7 @@ import java.util.Optional;
  * @create: 2021-09-15 19:57
  **/
 @Service
-public class AdminService extends BaseService<Admin, BaseSearchRequest> implements GraphQLMutationResolver {
+public class AdminService extends BaseService<Admin, BaseSearchRequest> implements GraphQLMutationResolver, GraphQLQueryResolver {
     @Autowired
     private AdminRepository repository;
     @Autowired
@@ -70,7 +71,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         return response;
     }
 
-    public Admin getCurrentAdmin() {
+    public Admin currentAdmin() {
         Admin currentAdmin = SecurityUtils.getCurrentAdmin();
         if (currentAdmin == null) {
             throw new AccessDeniedException("请先登录");
@@ -79,7 +80,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
     }
 
     public Admin ensureAdminOperate() {
-        Admin currentAdmin = getCurrentAdmin();
+        Admin currentAdmin = currentAdmin();
         if (currentAdmin.getRole() != Role.ADMIN) {
             throw new AccessDeniedException("权限不足");
         }
@@ -89,7 +90,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
     public Admin updateAdmin(AdminSaveRequest request) {
         ensureAdminOperate();
 
-        Admin currentAdmin = getCurrentAdmin();
+        Admin currentAdmin = currentAdmin();
 
         currentAdmin.setNickname(request.getNickname());
         currentAdmin.setAvatar(request.getAvatar());
@@ -103,7 +104,7 @@ public class AdminService extends BaseService<Admin, BaseSearchRequest> implemen
         String password = request.getPassword();
         String newPassword = request.getNewPassword();
         String confirm = request.getConfirm();
-        Admin currentAdmin = getCurrentAdmin();
+        Admin currentAdmin = currentAdmin();
         Admin probe = new Admin();
         BeanUtil.copyProperties(currentAdmin, probe);
 
