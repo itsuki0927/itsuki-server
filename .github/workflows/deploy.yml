@@ -2,13 +2,12 @@ name: Java CI with Maven
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -28,42 +27,42 @@ jobs:
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
           key: ${{ secrets.KEY }}
-          source: "target/app.jar"
-          target: "~/blog/server"
+          source: 'target/app.jar'
+          target: '~/blog/server'
 
       - name: Run Deploy
         uses: appleboy/ssh-action@master
         env:
-          MODE: ${{secrets.MODE}} 
-          PORT: ${{secrets.PORT}} 
+          MODE: ${{secrets.MODE}}
+          PORT: ${{secrets.PORT}}
           MYSQL_USERNAME: ${{ secrets.MYSQL_USERNAME }}
           MYSQL_PASSWORD: ${{ secrets.MYSQL_PASSWORD }}
           QINIU_ACCESS_KEY: ${{ secrets.QINIU_ACCESS_KEY }}
-          QINIU_SECRET_KEY: ${{secrets.QINIU_SECRET_KEY}} 
-          QINIU_BUCKET: ${{ secrets.QINIU_BUCKET }} 
-          BAIDU_IP_AK: ${{secrets.BAIDU_IP_AK}} 
-          AKISMET_SECRET_KEY: ${{secrets.AKISMET_SECRET_KEY}} 
-          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}} 
-          SEO_BAIDU_TOKEN: ${{secrets.SEO_BAIDU_TOKEN}} 
-          SEO_GOOGLE_TYPE: ${{secrets.SEO_GOOGLE_TYPE}} 
-          SEO_GOOGLE_PROJECT_ID: ${{secrets.SEO_GOOGLE_PROJECT_ID}} 
-          SEO_GOOGLE_PRIVATE_KEY_ID: ${{secrets.SEO_GOOGLE_PRIVATE_KEY_ID}} 
-          SEO_GOOGLE_PRIVATE_KEY: ${{secrets.SEO_GOOGLE_PRIVATE_KEY}} 
-          SEO_GOOGLE_CLIENT_EMAIL: ${{secrets.SEO_GOOGLE_CLIENT_EMAIL}} 
-          SEO_GOOGLE_CLIENT_ID: ${{secrets.SEO_GOOGLE_CLIENT_ID}} 
-          SEO_GOOGLE_AUTH_URI: ${{secrets.SEO_GOOGLE_AUTH_URI}} 
-          SEO_GOOGLE_TOKEN_URI: ${{secrets.SEO_GOOGLE_TOKEN_URI}} 
-          SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL: ${{secrets.SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL}} 
-          SEO_GOOGLE_TOKEN_CLIENT_CERT_URL: ${{secrets.SEO_GOOGLE_TOKEN_CLIENT_CERT_URL}} 
-          WEB_URL: ${{secrets.WEB_URL}} 
-          ADMIN_URL: ${{secrets.ADMIN_URL}} 
+          QINIU_SECRET_KEY: ${{secrets.QINIU_SECRET_KEY}}
+          QINIU_BUCKET: ${{ secrets.QINIU_BUCKET }}
+          BAIDU_IP_AK: ${{secrets.BAIDU_IP_AK}}
+          AKISMET_SECRET_KEY: ${{secrets.AKISMET_SECRET_KEY}}
+          MAIL_PASSWORD: ${{secrets.MAIL_PASSWORD}}
+          SEO_BAIDU_TOKEN: ${{secrets.SEO_BAIDU_TOKEN}}
+          SEO_GOOGLE_TYPE: ${{secrets.SEO_GOOGLE_TYPE}}
+          SEO_GOOGLE_PROJECT_ID: ${{secrets.SEO_GOOGLE_PROJECT_ID}}
+          SEO_GOOGLE_PRIVATE_KEY_ID: ${{secrets.SEO_GOOGLE_PRIVATE_KEY_ID}}
+          SEO_GOOGLE_PRIVATE_KEY: ${{secrets.SEO_GOOGLE_PRIVATE_KEY}}
+          SEO_GOOGLE_CLIENT_EMAIL: ${{secrets.SEO_GOOGLE_CLIENT_EMAIL}}
+          SEO_GOOGLE_CLIENT_ID: ${{secrets.SEO_GOOGLE_CLIENT_ID}}
+          SEO_GOOGLE_AUTH_URI: ${{secrets.SEO_GOOGLE_AUTH_URI}}
+          SEO_GOOGLE_TOKEN_URI: ${{secrets.SEO_GOOGLE_TOKEN_URI}}
+          SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL: ${{secrets.SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL}}
+          SEO_GOOGLE_TOKEN_CLIENT_CERT_URL: ${{secrets.SEO_GOOGLE_TOKEN_CLIENT_CERT_URL}}
+          WEB_URL: ${{secrets.WEB_URL}}
+          ADMIN_URL: ${{secrets.ADMIN_URL}}
           TINIFY_SECRET_KEY: ${{secrets.TINIFY_SECRET_KEY}}
         with:
           envs: MYSQL_USERNAME,MYSQL_PASSWORD,QINIU_ACCESS_KEY,QINIU_SECRET_KEY,QINIU_BUCKET,BAIDU_IP_AK,AKISMET_SECRET_KEY,MAIL_PASSWORD,SEO_BAIDU_TOKEN,MODE,PORT,SEO_GOOGLE_TYPE, SEO_GOOGLE_PROJECT_ID, SEO_GOOGLE_PRIVATE_KEY_ID,SEO_GOOGLE_PRIVATE_KEY,SEO_GOOGLE_CLIENT_EMAIL,SEO_GOOGLE_CLIENT_ID,SEO_GOOGLE_AUTH_URI,SEO_GOOGLE_TOKEN_URI,SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL,SEO_GOOGLE_TOKEN_CLIENT_CERT_URL,WEB_URL,ADMIN_URL,TINIFY_SECRET_KEY
           command_timeout: 4m
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USER }}
-#          key: ${{ secrets.KEY }}
+          #          key: ${{ secrets.KEY }}
           password: ${{ secrets.PASSWORD }}
           script: |
             cd ~/blog/server
