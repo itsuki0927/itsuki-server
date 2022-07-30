@@ -67,13 +67,19 @@ jobs:
           script: |
             cd ~/blog/server
 
+            ls -l
+            echo "kill server"
             echo "port: $PORT"
             pid=$(lsof -t -i:$PORT)
             echo "pid: $pid"
             kill -9 $pid
 
+            echo "remove app.jar"
             rm -rf app.jar
             mv target/app.jar app.jar
             rm -rf target
+            ls -l
 
+            echo "deploy start"
             nohup java -jar app.jar --MYSQL_USERNAME=$MYSQL_USERNAME --MYSQL_PASSWORD=$MYSQL_PASSWORD --QINIU_ACCESS_KEY=$QINIU_ACCESS_KEY --QINIU_SECRET_KEY=$QINIU_SECRET_KEY --QINIU_BUCKET=$QINIU_BUCKET --BAIDU_IP_AK=$BAIDU_IP_AK --AKISMET_SECRET_KEY=$AKISMET_SECRET_KEY --MAIL_PASSWORD=$MAIL_PASSWORD --SEO_BAIDU_TOKEN=$SEO_BAIDU_TOKEN --MODE=$MODE --SEO_GOOGLE_TYPE=$SEO_GOOGLE_TYPE --SEO_GOOGLE_PROJECT_ID=$SEO_GOOGLE_PROJECT_ID --SEO_GOOGLE_PRIVATE_KEY_ID=$SEO_GOOGLE_PRIVATE_KEY_ID --SEO_GOOGLE_PRIVATE_KEY=$SEO_GOOGLE_PRIVATE_KEY --SEO_GOOGLE_CLIENT_EMAIL=$SEO_GOOGLE_CLIENT_EMAIL --SEO_GOOGLE_CLIENT_ID=$SEO_GOOGLE_CLIENT_ID --SEO_GOOGLE_AUTH_URI=$SEO_GOOGLE_AUTH_URI --SEO_GOOGLE_TOKEN_URI=$SEO_GOOGLE_TOKEN_URI --SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL=$SEO_GOOGLE_TOKEN_AUTH_PROVIDER_CERT_URL --SEO_GOOGLE_TOKEN_CLIENT_CERT_URL=$SEO_GOOGLE_TOKEN_CLIENT_CERT_URL --WEB_URL=$WEB_URL --ADMIN_URL=$ADMIN_URL --TINIFY_SECRET_KEY=$TINIFY_SECRET_KEY > nohup.out 2> nohup.err < /dev/null &
+            echo "deploy end"
