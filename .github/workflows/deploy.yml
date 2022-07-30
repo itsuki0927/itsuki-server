@@ -67,6 +67,7 @@ jobs:
           script: |
             cd ~/blog/server
 
+            echo "port: $PORT"
             pid=$(lsof -t -i:$PORT)
             echo "pid: $pid"
             kill -9 $pid
