@@ -3,6 +3,8 @@ package cn.itsuki.blog.services;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.http.HttpUtil;
 import cn.itsuki.blog.entities.Comment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,26 +28,18 @@ public class AkismetService {
     @Value("${mode}")
     private String mode;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
+
     public boolean isDev() {
         return mode.equals("dev");
     }
 
     private String buildPath(String path) {
-//        return UrlBuilder.create()
-//                .setScheme("https")
-//                .setHost(hostname)
-//                .addPath(path)
-//                .build();
         return "https://" + hostname + path;
     }
 
     private String buildPath(String prefix, String path) {
         return "https://" + prefix + "." + hostname + path;
-        // return UrlBuilder.create()
-        //         .setScheme("https")
-        //         .setHost(prefix + "." + hostname)
-        //         .addPath(path)
-        //         .build();
     }
 
     // HTTP POST请求
@@ -109,13 +103,17 @@ public class AkismetService {
     public void submitSpam(Comment comment) {
         Map<String, Object> paramMap = getRequestParams(comment, false);
 
-        String url = buildPath(secretKey, "submit-spam");
-        String result = HttpUtil.createPost(url)
-                .form(paramMap)//表单内容
-                .timeout(20000)//超时，毫秒
-                .execute().body();
-
-        System.out.println(result);
+        try {
+            String url = buildPath(secretKey, "submit-spam");
+            String result = HttpUtil.createPost(url)
+                    .form(paramMap)//表单内容
+                    .timeout(20000)//超时，毫秒
+                    .execute().body();
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("submitSpam error:" + e.getMessage());
+        }
     }
 
 
@@ -123,13 +121,17 @@ public class AkismetService {
     public void submitHam(Comment comment) {
         Map<String, Object> paramMap = getRequestParams(comment, false);
 
-        String url = buildPath(secretKey, "submit-ham");
-        String result = HttpUtil.createPost(url)
-                .form(paramMap)//表单内容
-                .timeout(20000)//超时，毫秒
-                .execute().body();
-
-        System.out.println(result);
+        try {
+            String url = buildPath(secretKey, "submit-ham");
+            String result = HttpUtil.createPost(url)
+                    .form(paramMap)//表单内容
+                    .timeout(20000)//超时，毫秒
+                    .execute().body();
+            System.out.println(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("submitHam error:" + e.getMessage());
+        }
     }
 
 }

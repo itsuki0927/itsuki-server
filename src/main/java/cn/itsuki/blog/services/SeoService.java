@@ -9,6 +9,8 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.*;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -52,6 +54,7 @@ public class SeoService {
     @Value("${seo.google.clientCertUrl")
     private String clientCertUrl;
 
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
     public boolean isProd() {
         return mode.equals("prod");
@@ -120,6 +123,7 @@ public class SeoService {
             System.out.println("ping google success");
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
+            logger.error("pingGoogle error:" + e.getMessage());
         }
     }
 
@@ -157,11 +161,16 @@ public class SeoService {
                 .append("&token=")
                 .append(token).toString();
 
-        String result = HttpUtil.createPost(url)
-                .body(content, "text/plain")
-                .timeout(20000).execute().body();//超时，毫秒
+        try {
+            String result = HttpUtil.createPost(url)
+                    .body(content, "text/plain")
+                    .timeout(20000).execute().body();//超时，毫秒
+            System.out.println(actionText + result);
 
-        System.out.println(actionText + result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            logger.error("pingBaidu error:" + e.getMessage());
+        }
     }
 
     public void push(String url) {
