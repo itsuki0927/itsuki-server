@@ -61,7 +61,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable newPageable = new OffsetLimitPageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ((CommentRepository) repository).search(
-                criteria.getKeyword(), criteria.getArticleId(), criteria.getState(), newPageable);
+                criteria.getKeyword(), criteria.getArticleId(), criteria.getArticlePath(), criteria.getState(), newPageable);
     }
 
     private List<String> humanizeList(String item) {
@@ -87,7 +87,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private String buildEmailContent(Comment comment) {
         boolean isComment = isArticleComment(comment.getArticleId());
         String text = isComment ? "评论" : "留言";
-        String path = isComment ? urlUtil.getArticleUrl(comment.getArticleId()) : urlUtil.getGuestBookUrl();
+        String path = isComment ? urlUtil.getArticleUrl(comment.getArticlePath()) : urlUtil.getGuestBookUrl();
         return "<p>昵称: " + comment.getNickname() + "</p>" + "<p>" + text + "内容: "
                 + comment.getContent() + "</p>" + "<a href=\"" + path + "" + "\">[点击查看详情]</a>";
     }
@@ -215,6 +215,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void setCommentArticle(Comment comment) {
         if (isArticleComment(comment.getArticleId())) {
             Article article = ensureArticleExist(comment.getArticleId());
+            comment.setArticlePath(article.getPath());
             comment.setArticleTitle(article.getTitle());
             comment.setArticleDescription(article.getDescription());
             // 更新文章评论数

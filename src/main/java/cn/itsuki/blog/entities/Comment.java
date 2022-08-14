@@ -110,6 +110,12 @@ public class Comment extends IdentifiableEntity {
     private String articleTitle;
 
     /**
+     * 文章标题
+     */
+    @Column(name = "article_path")
+    private String articlePath;
+
+    /**
      * 文章描述
      */
     @Column(name = "article_description")

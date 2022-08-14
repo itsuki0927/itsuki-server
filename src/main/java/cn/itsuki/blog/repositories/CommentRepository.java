@@ -46,8 +46,9 @@ public interface CommentRepository extends BaseRepository<Comment> {
             "                  or c.articleTitle like %:keyword%" +
             ")" +
             "and (:articleId is null or c.articleId = :articleId)" +
+            "and (:articlePath is null or c.articlePath = :articlePath)" +
             "and (:state is null or c.state = :state)" +
             "")
-    Page<Comment> search(@Param("keyword") String keyword, @Param("articleId") Long articleId,
+    Page<Comment> search(@Param("keyword") String keyword, @Param("articleId") Long articleId, @Param("articlePath") String articlePath,
                          @Param("state") Integer state, Pageable pageable);
 }

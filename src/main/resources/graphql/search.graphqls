@@ -34,6 +34,7 @@ input CommentSearchRequest {
     sortBy:String
     sortOrder:String
     articleId:ID
+    articlePath:String
     keyword:String
     state:Int
 }

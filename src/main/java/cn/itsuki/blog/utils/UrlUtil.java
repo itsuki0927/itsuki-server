@@ -12,8 +12,8 @@ public class UrlUtil {
     @Value("${cors.webUrl}")
     private String webUrl;
 
-    public String getArticleUrl(Long articleId) {
-        return webUrl + "/article/" + articleId;
+    public String getArticleUrl(String path) {
+        return webUrl + "/blog/" + path;
     }
 
     public String getGuestBookUrl() {

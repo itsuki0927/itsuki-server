@@ -25,6 +25,11 @@ public class CommentSearchRequest extends BaseSearchRequest {
     private Long articleId;
 
     /**
+     * 文章path
+     */
+    private String articlePath;
+
+    /**
      * 状态
      */
     private Integer state;

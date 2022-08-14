@@ -159,21 +159,34 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return response;
     }
 
-    public ArticleDetailResponse article(long id, DataFetchingEnvironment environment) {
-        DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet();
-        Article article = get(id);
-
+    private ArticleDetailResponse getPreviousAndNextArticle(Article article, DataFetchingEnvironment environment) {
         ArticleDetailResponse response = new ArticleDetailResponse();
+        DataFetchingFieldSelectionSet selectionSet = environment.getSelectionSet();
         BeanUtil.copyProperties(article, response);
 
         if (selectionSet.contains("prevArticle")) {
-            response.setPrevArticle(((ArticleRepository) repository).prev(id));
+            response.setPrevArticle(((ArticleRepository) repository).prev(article.getId()));
         }
         if (selectionSet.contains("nextArticle")) {
-            response.setNextArticle(((ArticleRepository) repository).next(id));
+            response.setNextArticle(((ArticleRepository) repository).next(article.getId()));
         }
 
         return response;
+    }
+
+    private Article getArticleByPath(String path) {
+        Article probe = new Article();
+        probe.setPath(path);
+        Optional<Article> optionalArticle = repository.findOne(Example.of(probe));
+        if (optionalArticle.isEmpty()) {
+            throw new EntityNotFoundException("未找到" + path + "相关的文章");
+        }
+        return optionalArticle.get();
+    }
+
+    public ArticleDetailResponse article(String path, DataFetchingEnvironment environment) {
+        Article article = getArticleByPath(path);
+        return getPreviousAndNextArticle(article, environment);
     }
 
     public SearchResponse<Article> articles(ArticleSearchRequest criteria) {
@@ -197,7 +210,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         updateTagCount(request.getTagIds());
 
         if (request.getPublish() == PublishState.Published) {
-            seoService.push(urlUtil.getArticleUrl(article.getId()));
+            seoService.push(urlUtil.getArticleUrl(article.getPath()));
         }
 
         return article;
@@ -235,7 +248,7 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         // 更新旧的tag count
         updateTagCount(oldTagIds);
 
-        seoService.update(urlUtil.getArticleUrl(id));
+        seoService.update(urlUtil.getArticleUrl(article.getPath()));
 
         return update;
     }
@@ -243,13 +256,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
     public int deleteArticle(Long articleId) {
         adminService.ensureAdminOperate();
 
+        Article oldArticle = get(articleId);
         List<Long> oldTagIds = getArticleTagIds(articleId);
+
         deleteTag(articleId);
         commentService.deleteArticleComments(articleId);
-
+        seoService.delete(urlUtil.getArticleUrl(oldArticle.getPath()));
         updateTagCount(oldTagIds);
-
-        seoService.delete(urlUtil.getArticleUrl(articleId));
 
         return super.delete(articleId);
     }
@@ -277,6 +290,15 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
 
         repository.saveAll(articles);
         return articles.size();
+    }
+
+    public int readArticleByPath(String path) {
+        Article article = getArticleByPath(path);
+        ensureArticleAllowOperate(article);
+        article.setReading(article.getReading() + 1);
+
+        repository.saveAndFlush(article);
+        return article.getReading();
     }
 
     public int readArticle(Long id) {
