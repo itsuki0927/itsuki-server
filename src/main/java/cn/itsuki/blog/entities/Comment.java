@@ -52,6 +52,11 @@ public class Comment extends IdentifiableEntity {
     private Integer liking;
 
     /**
+     * emoji
+     */
+    private String emoji;
+
+    /**
      * ip
      */
     @NotBlank

@@ -253,12 +253,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return save;
     }
 
-    public int likeComment(Long id) {
+    public String likeComment(Long id, String emoji) {
         Comment comment = get(id);
         ensureCommentAllowOperate(comment);
-        comment.setLiking(comment.getLiking() + 1);
+        comment.setEmoji(emoji);
         repository.save(comment);
-        return comment.getLiking();
+        return emoji;
     }
 
     private void setCommentAdmin(Comment comment) {
