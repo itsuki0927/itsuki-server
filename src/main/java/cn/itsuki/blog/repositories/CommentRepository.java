@@ -27,6 +27,12 @@ public interface CommentRepository extends BaseRepository<Comment> {
     @Query("select count(c.id) from comment c where c.articleId = :articleId and c.state <> 2")
     int countComments(@Param("articleId") Long articleId);
 
+    @Query("select count(c.id) from comment c where c.articleId <> 10000 and c.state <> 2")
+    int totalComment();
+
+    @Query("select count(c.id) from comment c where c.articleId = 10000 and c.state <> 2")
+    int totalGuestbook();
+
     List<Comment> findCommentsByIdIn(List<Long> ids);
 
     void deleteCommentsByArticleIdEquals(Long articleId);

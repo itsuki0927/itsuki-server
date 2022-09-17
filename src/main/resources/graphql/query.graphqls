@@ -1,5 +1,6 @@
 type Query {
     article(path:String!): ArticleDetailResponse
+#    articleById(id:ID!): ArticleDetailResponse
     articles(search: ArticleSearchRequest): SearchArticleResponse
     tags(search: TagSearchRequest): SearchTagResponse
     comments(search: CommentSearchRequest): SearchCommentResponse

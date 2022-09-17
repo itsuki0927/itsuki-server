@@ -53,6 +53,8 @@ type SiteSummaryResponse{
     article:Int
     tag:Int
     comment:Int
+    guestbook: Int
+    startTime: LocalDateTime
 }
 
 type ArticleSummary {

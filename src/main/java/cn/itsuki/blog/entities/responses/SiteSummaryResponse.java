@@ -3,6 +3,8 @@ package cn.itsuki.blog.entities.responses;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.LocalDateTime;
+
 /**
  * 网站信息统计 响应类
  *
@@ -15,4 +17,6 @@ public class SiteSummaryResponse {
     private long article;
     private long tag;
     private long comment;
+    private long guestbook;
+    private LocalDateTime startTime;
 }
