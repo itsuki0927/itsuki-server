@@ -33,4 +33,9 @@ public class CommentSearchRequest extends BaseSearchRequest {
      * 状态
      */
     private Integer state;
+
+    /**
+     * 最近的留言
+     */
+    private Boolean recent;
 }

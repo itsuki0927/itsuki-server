@@ -37,4 +37,5 @@ input CommentSearchRequest {
     articlePath:String
     keyword:String
     state:Int
+    recent:Boolean
 }

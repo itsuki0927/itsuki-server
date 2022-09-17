@@ -24,7 +24,7 @@ public interface CommentRepository extends BaseRepository<Comment> {
     @Query(value = "update comment  c set c.state = :state where c.id = :id")
     void updateState(@Param("id") Long id, @Param("state") Integer state);
 
-    @Query("select count(c.id) from comment c where c.articleId = :articleId and (c.state = 1 or c.state = 0)")
+    @Query("select count(c.id) from comment c where c.articleId = :articleId and c.state <> 2")
     int countComments(@Param("articleId") Long articleId);
 
     List<Comment> findCommentsByIdIn(List<Long> ids);
@@ -51,4 +51,7 @@ public interface CommentRepository extends BaseRepository<Comment> {
             "")
     Page<Comment> search(@Param("keyword") String keyword, @Param("articleId") Long articleId, @Param("articlePath") String articlePath,
                          @Param("state") Integer state, Pageable pageable);
+
+    @Query("select c from comment c where c.articleId = 10000 and c.email <> :adminEmail and c.state <> 2")
+    Page<Comment> recent(@Param("adminEmail") String adminEmail,Pageable pageable);
 }

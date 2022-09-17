@@ -2,7 +2,6 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.constants.CommentState;
-import cn.itsuki.blog.constants.CommonState;
 import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.responses.SearchResponse;
@@ -23,6 +22,8 @@ import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+
+import static cn.itsuki.blog.constants.CommonState.GUESTBOOK;
 
 /**
  * 评论 服务
@@ -58,6 +59,9 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     @Override
     protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
+        if (criteria.getRecent() != null && criteria.getRecent()) {
+            return recentComments();
+        }
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable newPageable = new OffsetLimitPageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ((CommentRepository) repository).search(
@@ -113,6 +117,12 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     public SearchResponse<Comment> comments(CommentSearchRequest input) {
         return search(input);
+    }
+
+    public Page<Comment> recentComments() {
+        Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
+        Pageable newPageable = new OffsetLimitPageRequest(0, 3, sort);
+        return ((CommentRepository) repository).recent(adminEmail, newPageable);
     }
 
     public Comment comment(Long id) {
@@ -209,7 +219,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     private boolean isArticleComment(Long articleId) {
-        return articleId != CommonState.GUESTBOOK;
+        return articleId != GUESTBOOK;
     }
 
     private void setCommentArticle(Comment comment) {
