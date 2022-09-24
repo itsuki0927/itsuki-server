@@ -54,6 +54,7 @@ type SiteSummaryResponse{
     tag:Int
     comment:Int
     guestbook: Int
+    reading: Int
     startTime: LocalDateTime
 }
 

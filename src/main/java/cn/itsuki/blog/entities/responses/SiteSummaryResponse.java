@@ -16,6 +16,7 @@ import java.time.LocalDateTime;
 public class SiteSummaryResponse {
     private long article;
     private long tag;
+    private long reading;
     private long comment;
     private long guestbook;
     private LocalDateTime startTime;

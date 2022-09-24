@@ -74,4 +74,7 @@ public interface ArticleRepository extends BaseRepository<Article> {
               @Param("tagId") Long tagId, @Param("banner") Integer banner);
 
     int countArticlesByIdInAndPublishEquals(List<Long> ids, Integer publish);
+
+    @Query("select sum(a.reading) from article a where a.publish = 1")
+    int articleReading();
 }
