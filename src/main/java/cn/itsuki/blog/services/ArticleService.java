@@ -310,10 +310,13 @@ public class ArticleService extends BaseService<Article, ArticleSearchRequest> i
         return article.getReading();
     }
 
-    public int likeArticle(Long id) {
+    public int likeArticle(Long id, int count) {
         Article article = get(id);
         ensureArticleAllowOperate(article);
-        article.setLiking(article.getLiking() + 1);
+        if(count > 50){
+            throw new IllegalArgumentException("count should be < 50");
+        }
+        article.setLiking(article.getLiking() + count);
 
         repository.saveAndFlush(article);
         return article.getLiking();

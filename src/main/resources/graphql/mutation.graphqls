@@ -5,7 +5,7 @@ type Mutation {
     # 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
     updateArticleState(ids: [ID]!, state: Int!): Int
     updateArticleBanner(ids: [ID]!, banner: Int!):Int
-    likeArticle(id:ID!): Int
+    likeArticle(id:ID!, count: Int!): Int
     readArticle(id:ID!): Int
 
     createTag(input: TagActionInput!): Tag
