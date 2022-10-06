@@ -37,7 +37,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     @Autowired
     private BlackListService blackListService;
     @Autowired
-    private ArticleService articleService;
+    private BlogService blogService;
     @Autowired
     private RequestUtil requestUtil;
     @Autowired
@@ -65,7 +65,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         Sort sort = Sort.by(Sort.Direction.DESC, "id");
         Pageable newPageable = new OffsetLimitPageRequest(pageable.getPageNumber(), pageable.getPageSize(), sort);
         return ((CommentRepository) repository).search(
-                criteria.getKeyword(), criteria.getArticleId(), criteria.getArticlePath(), criteria.getState(), newPageable);
+                criteria.getKeyword(), criteria.getBlogId(), criteria.getBlogPath(), criteria.getState(), newPageable);
     }
 
     private List<String> humanizeList(String item) {
@@ -74,7 +74,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     private void sendEmailToReplyTarget(Comment comment, String to) {
         List<String> tos = humanizeList(to);
-        boolean isComment = isArticleComment(comment.getArticleId());
+        boolean isComment = isBlogComment(comment.getBlogId());
         String text = isComment ? "评论" : "留言";
         String content = buildEmailContent(comment);
         emailService.sendEmail("你在 itsuki.cn 有一条" + text + "回复", content, tos);
@@ -82,16 +82,16 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
 
     private void sendEmailToAdmin(Comment comment) {
         List<String> tos = humanizeList(adminEmail);
-        boolean isComment = isArticleComment(comment.getArticleId());
+        boolean isComment = isBlogComment(comment.getBlogId());
         String text = isComment ? "评论" : "留言";
         String content = buildEmailContent(comment);
         emailService.sendEmail("滴滴, 博客添加了一条" + text, content, tos);
     }
 
     private String buildEmailContent(Comment comment) {
-        boolean isComment = isArticleComment(comment.getArticleId());
+        boolean isComment = isBlogComment(comment.getBlogId());
         String text = isComment ? "评论" : "留言";
-        String path = isComment ? urlUtil.getArticleUrl(comment.getArticlePath()) : urlUtil.getGuestBookUrl();
+        String path = isComment ? urlUtil.getBlogUrl(comment.getBlogPath()) : urlUtil.getGuestBookUrl();
         return "<p>昵称: " + comment.getNickname() + "</p>" + "<p>" + text + "内容: "
                 + comment.getContent() + "</p>" + "<a href=\"" + path + "" + "\">[点击查看详情]</a>";
     }
@@ -99,20 +99,20 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     /**
      * 更新文章评论数
      */
-    public void updateArticleCommentCount(Long articleId) {
-        if (isArticleComment(articleId)) {
-            Article article = ensureArticleExist(articleId);
-            int count = count(articleId);
-            article.setCommenting(count);
-            articleService.update(articleId, article);
+    public void updateBlogCommentCount(Long blogId) {
+        if (isBlogComment(blogId)) {
+            Blog blog = ensureBlogExist(blogId);
+            int count = count(blogId);
+            blog.setCommenting(count);
+            blogService.update(blogId, blog);
         }
     }
 
     /**
      * 获取当前文章的评论数(待审核、已发布)
      */
-    public Integer count(Long articleId) {
-        return ((CommentRepository) repository).countComments(articleId);
+    public Integer count(Long blogId) {
+        return ((CommentRepository) repository).countComments(blogId);
     }
 
     public SearchResponse<Comment> comments(CommentSearchRequest input) {
@@ -140,7 +140,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         Comment update = super.update(id, comment);
 
         if (newState != null && !newState.equals(oldState)) {
-            updateArticleCommentCount(comment.getArticleId());
+            updateBlogCommentCount(comment.getBlogId());
         }
 
         return update;
@@ -156,8 +156,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return 1;
     }
 
-    public void deleteArticleComments(long articleId) {
-        ((CommentRepository) repository).deleteCommentsByArticleIdEquals(articleId);
+    public void deleteBlogComments(long blogId) {
+        ((CommentRepository) repository).deleteCommentsByBlogIdEquals(blogId);
     }
 
     public int updateCommentState(Long id, Integer state) {
@@ -183,7 +183,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         ((CommentRepository) repository).updateState(id, state);
 
         // 更新文章评论数
-        updateArticleCommentCount(comment.getArticleId());
+        updateBlogCommentCount(comment.getBlogId());
 
         return 1;
     }
@@ -199,7 +199,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         // 检查是否为垃圾评论
         akismetService.checkComment(comment, isAdminComment);
 
-        setCommentArticle(comment);
+        setCommentBlog(comment);
         setCommentLocation(comment);
         comment.setId(null);
 
@@ -218,19 +218,19 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return save;
     }
 
-    private boolean isArticleComment(Long articleId) {
-        return articleId != GUESTBOOK;
+    private boolean isBlogComment(Long blogId) {
+        return blogId != GUESTBOOK;
     }
 
-    private void setCommentArticle(Comment comment) {
-        if (isArticleComment(comment.getArticleId())) {
-            Article article = ensureArticleExist(comment.getArticleId());
-            comment.setArticlePath(article.getPath());
-            comment.setArticleTitle(article.getTitle());
-            comment.setArticleDescription(article.getDescription());
+    private void setCommentBlog(Comment comment) {
+        if (isBlogComment(comment.getBlogId())) {
+            Blog blog = ensureBlogExist(comment.getBlogId());
+            comment.setBlogPath(blog.getPath());
+            comment.setBlogTitle(blog.getTitle());
+            comment.setBlogDescription(blog.getDescription());
             // 更新文章评论数
-            article.setCommenting(article.getCommenting() + 1);
-            articleService.update(article.getId(), article);
+            blog.setCommenting(blog.getCommenting() + 1);
+            blogService.update(blog.getId(), blog);
         }
     }
 
@@ -250,7 +250,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         akismetService.checkComment(comment, true);
         comment.setState(CommentState.Published);
         setCommentAdmin(comment);
-        setCommentArticle(comment);
+        setCommentBlog(comment);
         setCommentIp(comment, environment);
         setCommentLocation(comment);
 
@@ -274,7 +274,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     private void setCommentAdmin(Comment comment) {
         Admin admin = adminService.ensureAdminOperate();
 
-        comment.setLoginType("github");
+        comment.setProvider("github");
         comment.setEmail(adminEmail);
         comment.setAvatar(admin.getAvatar());
         comment.setNickname(admin.getNickname());
@@ -286,8 +286,8 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         comment.setIp(requestUtil.getRequestIp(request));
     }
 
-    private Article ensureArticleExist(Long articleId) {
-        return articleService.get(articleId);
+    private Blog ensureBlogExist(Long blogId) {
+        return blogService.get(blogId);
     }
 
     private void ensureIsInBlackList(Comment entity) {

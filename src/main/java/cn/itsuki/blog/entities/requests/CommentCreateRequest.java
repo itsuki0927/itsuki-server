@@ -47,7 +47,7 @@ public class CommentCreateRequest {
     /**
      * 登录方式
      */
-    private String loginType;
+    private String provider;
 
     /**
      * 头像

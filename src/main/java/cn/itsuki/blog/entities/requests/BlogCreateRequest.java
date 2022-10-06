@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class ArticleCreateRequest {
+public class BlogCreateRequest {
     /**
      * 标题
      */

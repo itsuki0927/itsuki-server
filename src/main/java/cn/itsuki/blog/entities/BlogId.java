@@ -9,8 +9,8 @@ import lombok.Setter;
  **/
 @Getter
 @Setter
-public class ArticleId {
-    public ArticleId(Long id) {
+public class BlogId {
+    public BlogId(Long id) {
         this.id = id;
     }
 

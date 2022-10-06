@@ -14,17 +14,17 @@ import javax.validation.constraints.NotNull;
  * @author: itsuki
  * @create: 2021-09-23 16:26
  **/
-@Entity(name = "article_tag")
+@Entity(name = "blog_tag")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ArticleTag extends IdentifiableEntity {
+public class BlogTag extends IdentifiableEntity {
     /**
-     * article id
+     * blog id
      */
     @NotNull
-    @Column(name = "article_id")
-    private Long articleId;
+    @Column(name = "blog_id")
+    private Long blogId;
 
     /**
      * tag id

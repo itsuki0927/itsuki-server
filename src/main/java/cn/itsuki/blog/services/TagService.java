@@ -2,13 +2,13 @@ package cn.itsuki.blog.services;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.itsuki.blog.constants.PublishState;
-import cn.itsuki.blog.entities.ArticleTag;
+import cn.itsuki.blog.entities.BlogTag;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.TagActionInput;
 import cn.itsuki.blog.entities.requests.TagSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
-import cn.itsuki.blog.repositories.ArticleRepository;
-import cn.itsuki.blog.repositories.ArticleTagRepository;
+import cn.itsuki.blog.repositories.BlogRepository;
+import cn.itsuki.blog.repositories.BlogTagRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import cn.itsuki.blog.utils.UrlUtil;
 import graphql.kickstart.tools.GraphQLMutationResolver;
@@ -36,9 +36,9 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     @Autowired
     private SeoService seoService;
     @Autowired
-    private ArticleTagRepository articleTagRepository;
+    private BlogTagRepository blogTagRepository;
     @Autowired
-    private ArticleRepository articleRepository;
+    private BlogRepository blogRepository;
     @Autowired
     private UrlUtil urlUtil;
 
@@ -124,10 +124,10 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     public int syncTagCount(Tag tag) {
         long id = tag.getId();
         // 找到当前tag的记录
-        List<ArticleTag> articleTags = articleTagRepository.findAllByTagIdEquals(id);
-        List<Long> ids = articleTags.stream().map(ArticleTag::getArticleId).collect(Collectors.toList());
+        List<BlogTag> blogTags = blogTagRepository.findAllByTagIdEquals(id);
+        List<Long> ids = blogTags.stream().map(BlogTag::getBlogId).collect(Collectors.toList());
         // 获取当前tag的已发布文章数
-        int count = articleRepository.countArticlesByIdInAndPublishEquals(ids, PublishState.Published);
+        int count = blogRepository.countBlogsByIdInAndPublishEquals(ids, PublishState.Published);
         System.out.println(tag.getName() + " count: " + count);
         tag.setCount(count);
         update(id, tag);

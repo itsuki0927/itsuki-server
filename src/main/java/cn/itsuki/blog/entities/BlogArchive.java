@@ -14,14 +14,14 @@ import java.time.LocalDateTime;
  **/
 @Getter
 @Setter
-public class ArticleArchive {
+public class BlogArchive {
     private Long id;
     private String title;
     private LocalDateTime createAt;
     private String createAtString;
     private String description;
 
-    public ArticleArchive(Long id, String title, LocalDateTime createAt, String description) {
+    public BlogArchive(Long id, String title, LocalDateTime createAt, String description) {
         this.id = id;
         this.title = title;
         this.createAt = createAt;

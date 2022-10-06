@@ -23,7 +23,7 @@ type Comment implements IdentifiableEntity{
     nickname:String
     email:String
     avatar:String
-    loginType:String
+    provider:String
     content:String
     liking:Int
     emoji:String
@@ -34,14 +34,14 @@ type Comment implements IdentifiableEntity{
     state:Int
     fix:Int
     expand:String
-    articleTitle:String
-    articleDescription:String
+    blogTitle:String
+    blogDescription:String
+    blogId:ID!
     parentNickName:String
     parentId:ID
-    articleId:ID!
 }
 
-type Article implements IdentifiableEntity {
+type Blog implements IdentifiableEntity {
     id:ID!
     createAt: LocalDateTime
     updateAt: LocalDateTime
@@ -57,6 +57,7 @@ type Article implements IdentifiableEntity {
     reading:Int
     publish: Int
     banner:Int
+    cardStyle:String
     tags: [Tag]
 }
 

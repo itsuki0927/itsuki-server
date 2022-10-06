@@ -1,13 +1,12 @@
 type Query {
-    article(path:String!): ArticleDetailResponse
-#    articleById(id:ID!): ArticleDetailResponse
-    articles(search: ArticleSearchRequest): SearchArticleResponse
+    blog(path:String!): BlogDetailResponse
+    blogs(search: BlogSearchRequest): SearchBlogResponse
     tags(search: TagSearchRequest): SearchTagResponse
     comments(search: CommentSearchRequest): SearchCommentResponse
     comment(id:ID!): Comment
     blacklist: BlackList
     summary: SiteSummaryResponse
-    articleSummary: ArticleSummaryResponse
+    blogSummary: BlogSummaryResponse
     currentAdmin: Admin
 }
 

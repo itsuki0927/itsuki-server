@@ -5,7 +5,7 @@ input BaseSearchRequest {
     sortOrder:String
 }
 
-input ArticleSearchRequest {
+input BlogSearchRequest {
     current:Int = 1
     pageSize:Int = 10
     sortBy:String

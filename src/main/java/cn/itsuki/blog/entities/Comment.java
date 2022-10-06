@@ -100,8 +100,7 @@ public class Comment extends IdentifiableEntity {
     /**
      * 登录方式: 0 -> github、1 -> qq、2 -> wechat
      */
-    @Column(name = "login_type")
-    private String loginType;
+    private String provider;
 
     /**
      * 扩展
@@ -111,20 +110,20 @@ public class Comment extends IdentifiableEntity {
     /**
      * 文章标题
      */
-    @Column(name = "article_title")
-    private String articleTitle;
+    @Column(name = "blog_title")
+    private String blogTitle;
 
     /**
      * 文章标题
      */
-    @Column(name = "article_path")
-    private String articlePath;
+    @Column(name = "blog_path")
+    private String blogPath;
 
     /**
      * 文章描述
      */
-    @Column(name = "article_description")
-    private String articleDescription;
+    @Column(name = "blog_description")
+    private String blogDescription;
 
     /**
      * 回复人昵称
@@ -142,8 +141,8 @@ public class Comment extends IdentifiableEntity {
      * 文章id
      */
     @NotNull
-    @Column(name = "article_id")
-    private Long articleId;
+    @Column(name = "blog_id")
+    private Long blogId;
 
     @Override
     protected void onCreateAction() {
@@ -151,8 +150,8 @@ public class Comment extends IdentifiableEntity {
             setParentId(CommonState.NO_PARENT);
         }
         // 没有文章id, 默认为留言板
-        if (getArticleId() == null) {
-            setArticleId(CommonState.GUESTBOOK);
+        if (getBlogId() == null) {
+            setBlogId(CommonState.GUESTBOOK);
         }
         // 默认待审核
         if (getState() == null) {

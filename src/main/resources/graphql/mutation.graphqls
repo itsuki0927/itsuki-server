@@ -1,12 +1,12 @@
 type Mutation {
-    createArticle(input: CreateArticleInput!): Article
-    updateArticle(id: ID!, input: CreateArticleInput!): Article
-    deleteArticle(id: ID!): Int
+    createBlog(input: CreateBlogInput!): Blog
+    updateBlog(id: ID!, input: CreateBlogInput!): Blog
+    deleteBlog(id: ID!): Int
     # 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
-    updateArticleState(ids: [ID]!, state: Int!): Int
-    updateArticleBanner(ids: [ID]!, banner: Int!):Int
-    likeArticle(id:ID!, count: Int!): Int
-    readArticle(id:ID!): Int
+    updateBlogState(ids: [ID]!, state: Int!): Int
+    updateBlogBanner(ids: [ID]!, banner: Int!):Int
+    likeBlog(id:ID!, count: Int!): Int
+    readBlog(id:ID!): Int
 
     createTag(input: TagActionInput!): Tag
     updateTag(id:ID!, input: TagActionInput!): Tag
@@ -26,7 +26,7 @@ type Mutation {
     updateBlackList(input: UpdateBlackListInput!): BlackList
 
     syncAllTagCount: Int
-    syncArticleCommentCount(ids:[ID]!):Int
+    syncBlogCommentCount(ids:[ID]!):Int
 
     uploadFile(prefix:String, file:FileUpload):String
 }

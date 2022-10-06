@@ -15,7 +15,7 @@ import java.util.List;
  **/
 @Getter
 @Setter
-public class ArticlePatchRequest {
+public class BlogPatchRequest {
     /**
      * 需要更新的ids
      */

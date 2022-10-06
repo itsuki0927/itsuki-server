@@ -1,6 +1,6 @@
 package cn.itsuki.blog.entities.responses;
 
-import cn.itsuki.blog.entities.Article;
+import cn.itsuki.blog.entities.Blog;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
@@ -12,7 +12,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString
-public class ArticleDetailResponse extends Article {
-    private Article prevArticle;
-    private Article nextArticle;
+public class BlogDetailResponse extends Blog {
+    private Blog prevBlog;
+    private Blog nextBlog;
 }

@@ -15,7 +15,7 @@ input UpdateAdminPasswordInput {
     confirm: String
 }
 
-input CreateArticleInput {
+input CreateBlogInput {
     title:String!
     path:String!
     description:String!
@@ -31,12 +31,12 @@ input CreateCommentInput {
     nickname:String!
     email:String!
     avatar:String!
-    loginType:String!
+    provider:String!
     agent:String!
     content:String!
     expand:String
     parentId:ID
-    articleId:ID!
+    blogId:ID!
 }
 
 input UpdateCommentInput {
@@ -65,7 +65,7 @@ input UpdateBlackListInput{
 
 input AdminCommentInput {
     content:String!
-    articleId:ID!
+    blogId:ID!
     parentId:ID!
     agent: String!
 }

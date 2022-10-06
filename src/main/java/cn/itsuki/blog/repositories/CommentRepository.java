@@ -24,22 +24,22 @@ public interface CommentRepository extends BaseRepository<Comment> {
     @Query(value = "update comment  c set c.state = :state where c.id = :id")
     void updateState(@Param("id") Long id, @Param("state") Integer state);
 
-    @Query("select count(c.id) from comment c where c.articleId = :articleId and c.state <> 2")
-    int countComments(@Param("articleId") Long articleId);
+    @Query("select count(c.id) from comment c where c.blogId = :blogId and c.state <> 2")
+    int countComments(@Param("blogId") Long blogId);
 
-    @Query("select count(c.id) from comment c where c.articleId <> 10000 and c.state <> 2")
+    @Query("select count(c.id) from comment c where c.blogId <> 10000 and c.state <> 2")
     int totalComment();
 
-    @Query("select count(c.id) from comment c where c.articleId = 10000 and c.state <> 2")
+    @Query("select count(c.id) from comment c where c.blogId = 10000 and c.state <> 2")
     int totalGuestbook();
 
     List<Comment> findCommentsByIdIn(List<Long> ids);
 
-    void deleteCommentsByArticleIdEquals(Long articleId);
+    void deleteCommentsByBlogIdEquals(Long blogId);
 
     /**
      * @param keyword   关键字
-     * @param articleId 文章id
+     * @param blogId 文章id
      * @param state     状态
      * @param pageable  分页
      * @return 分页列表
@@ -49,15 +49,15 @@ public interface CommentRepository extends BaseRepository<Comment> {
             ":keyword is null or c.nickname like %:keyword%" +
             "                  or c.content like %:keyword%" +
             "                  or c.email like %:keyword%" +
-            "                  or c.articleTitle like %:keyword%" +
+            "                  or c.blogTitle like %:keyword%" +
             ")" +
-            "and (:articleId is null or c.articleId = :articleId)" +
-            "and (:articlePath is null or c.articlePath = :articlePath)" +
+            "and (:blogId is null or c.blogId = :blogId)" +
+            "and (:blogPath is null or c.blogPath = :blogPath)" +
             "and (:state is null or c.state = :state)" +
             "")
-    Page<Comment> search(@Param("keyword") String keyword, @Param("articleId") Long articleId, @Param("articlePath") String articlePath,
+    Page<Comment> search(@Param("keyword") String keyword, @Param("blogId") Long blogId, @Param("blogPath") String blogPath,
                          @Param("state") Integer state, Pageable pageable);
 
-    @Query("select c from comment c where c.articleId = 10000 and c.email <> :adminEmail and c.state <> 2")
+    @Query("select c from comment c where c.blogId = 10000 and c.email <> :adminEmail and c.state <> 2")
     Page<Comment> recent(@Param("adminEmail") String adminEmail,Pageable pageable);
 }

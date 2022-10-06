@@ -14,7 +14,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class ArticleSearchRequest extends BaseSearchRequest {
+public class BlogSearchRequest extends BaseSearchRequest {
     /**
      * 名称
      */

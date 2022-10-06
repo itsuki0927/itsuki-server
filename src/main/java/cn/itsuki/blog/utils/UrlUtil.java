@@ -12,7 +12,7 @@ public class UrlUtil {
     @Value("${cors.webUrl}")
     private String webUrl;
 
-    public String getArticleUrl(String path) {
+    public String getBlogUrl(String path) {
         return webUrl + "/blog/" + path;
     }
 

@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 @Getter
 @Setter
 @ToString
-public class ArticleMetaPatchRequest {
+public class BlogMetaPatchRequest {
 
     /**
      * liking、reading、banner、pinned

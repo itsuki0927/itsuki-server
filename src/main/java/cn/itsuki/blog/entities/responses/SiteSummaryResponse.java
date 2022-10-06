@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class SiteSummaryResponse {
-    private long article;
+    private long blog;
     private long tag;
     private long reading;
     private long comment;

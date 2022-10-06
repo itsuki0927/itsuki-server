@@ -18,11 +18,11 @@ import java.util.Set;
  * @author: itsuki
  * @create: 2021-09-14 20:42
  **/
-@Entity(name = "article")
+@Entity(name = "blog")
 @Getter
 @Setter
 @ToString(callSuper = true)
-public class Article extends IdentifiableEntity {
+public class Blog extends IdentifiableEntity {
     /**
      * 标题
      */
@@ -89,6 +89,9 @@ public class Article extends IdentifiableEntity {
     @NonNull
     private Integer publish;
 
+    @Column(name = "card_style")
+    private String cardStyle;
+
     /**
      * 是否显示在banner: 0 -> 不显示, 1 -> 显示
      */
@@ -103,6 +106,9 @@ public class Article extends IdentifiableEntity {
         // 默认情况下草稿
         if (getPublish() == null) {
             setPublish(PublishState.Draft);
+        }
+        if(getCardStyle() == null){
+            setCardStyle("github");
         }
     }
 }

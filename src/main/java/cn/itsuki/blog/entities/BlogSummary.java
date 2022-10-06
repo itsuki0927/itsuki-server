@@ -11,13 +11,13 @@ import lombok.Setter;
  **/
 @Getter
 @Setter
-public class ArticleSummary {
+public class BlogSummary {
     private Integer publish;
     private Long value;
     private String title;
     private String state;
 
-    public ArticleSummary(Integer publish, Long value) {
+    public BlogSummary(Integer publish, Long value) {
         this.publish = publish;
         this.value = value;
     }
