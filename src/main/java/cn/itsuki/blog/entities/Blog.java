@@ -90,7 +90,7 @@ public class Blog extends IdentifiableEntity {
     private Integer publish;
 
     @Column(name = "card_style")
-    private String cardStyle;
+    private Integer cardStyle;
 
     /**
      * 是否显示在banner: 0 -> 不显示, 1 -> 显示
@@ -108,7 +108,7 @@ public class Blog extends IdentifiableEntity {
             setPublish(PublishState.Draft);
         }
         if(getCardStyle() == null){
-            setCardStyle("github");
+            setCardStyle(0);
         }
     }
 }

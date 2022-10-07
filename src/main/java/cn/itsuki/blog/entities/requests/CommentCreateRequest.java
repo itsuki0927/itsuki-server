@@ -68,5 +68,5 @@ public class CommentCreateRequest {
      * 文章id
      */
     @NotNull
-    private Long articleId;
+    private Long blogId;
 }

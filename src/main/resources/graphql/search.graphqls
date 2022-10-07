@@ -33,8 +33,8 @@ input CommentSearchRequest {
     pageSize:Int = 10
     sortBy:String
     sortOrder:String
-    articleId:ID
-    articlePath:String
+    blogId:ID
+    blogPath:String
     keyword:String
     state:Int
     recent:Boolean
