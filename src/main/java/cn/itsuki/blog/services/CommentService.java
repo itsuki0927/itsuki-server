@@ -146,6 +146,14 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return update;
     }
 
+    public boolean validateCommentAllowOperate(Long id, String uid) {
+        Comment comment = get(id);
+        if (comment.getUid() == null) {
+            return false;
+        }
+        return comment.getUid().equals(uid);
+    }
+
     public int deleteComment(Long id) {
         Comment comment = get(id);
         adminService.ensureAdminOperate();

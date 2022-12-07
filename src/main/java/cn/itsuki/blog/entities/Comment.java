@@ -40,6 +40,13 @@ public class Comment extends IdentifiableEntity {
     private String email;
 
     /**
+     * uid
+     */
+    @NotBlank
+    @Email
+    private String uid;
+
+    /**
      * 内容
      */
     @NotBlank
