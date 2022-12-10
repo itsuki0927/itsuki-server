@@ -148,14 +148,12 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
      * @return
      */
     @Override
-    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers,
-                                                             HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String message = ex.getMessage();
 
         if (ex instanceof HttpMessageNotReadableException) {
             message = "Request body is missing or invalid";
-            if (ex.getCause() != null && ex.getCause() instanceof JsonMappingException &&
-                    ex.getCause().getCause() != null && ex.getCause().getCause() instanceof IllegalArgumentException) {
+            if (ex.getCause() != null && ex.getCause() instanceof JsonMappingException && ex.getCause().getCause() != null && ex.getCause().getCause() instanceof IllegalArgumentException) {
                 message = ex.getCause().getCause().getMessage();
             }
         } else if (ex instanceof MethodArgumentNotValidException) {

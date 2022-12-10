@@ -1,41 +1,41 @@
 input BaseSearchRequest {
-    current:Int
-    pageSize:Int
-    sortBy:String
-    sortOrder:String
+    current: Int
+    pageSize: Int
+    sortBy: String
+    sortOrder: String
 }
 
-input BlogSearchRequest {
-    current:Int = 1
-    pageSize:Int = 10
-    sortBy:String
-    sortOrder:String
-    name:String
-    publish:Int
-    banner:Int
-    tag:String
-    tagId:ID
+input SearchBlogInput {
+    current: Int = 1
+    pageSize: Int = 10
+    sortBy: String
+    sortOrder: String
+    name: String
+    publish: Int
+    banner: Int
+    tag: String
+    tagId: ID
     tagPath: String
-    hot:Boolean
-    recent:Boolean
+    hot: Boolean
+    recent: Boolean
 }
 
-input TagSearchRequest {
-    current:Int = 1
-    pageSize:Int = 10
-    sortBy:String
-    sortOrder:String
-    name:String
+input SearchTagInput {
+    current: Int = 1
+    pageSize: Int = 10
+    sortBy: String
+    sortOrder: String
+    name: String
 }
 
-input CommentSearchRequest {
-    current:Int = 1
-    pageSize:Int = 10
-    sortBy:String
-    sortOrder:String
-    blogId:ID
-    blogPath:String
-    keyword:String
-    state:Int
-    recent:Boolean
+input SearchCommentInput {
+    current: Int = 1
+    pageSize: Int = 10
+    sortBy: String
+    sortOrder: String
+    blogId: ID
+    blogPath: String
+    keyword: String
+    state: Int
+    recent: Boolean
 }

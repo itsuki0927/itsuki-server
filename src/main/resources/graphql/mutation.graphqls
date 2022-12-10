@@ -4,31 +4,31 @@ type Mutation {
     deleteBlog(id: ID!): Int
     # 发布状态: 0 -> 草稿, 1 -> 已发布, 2 -> 回收站
     updateBlogState(ids: [ID]!, state: Int!): Int
-    updateBlogBanner(ids: [ID]!, banner: Int!):Int
-    likeBlog(id:ID!, count: Int!): Int
-    readBlog(id:ID!): Int
+    updateBlogBanner(ids: [ID]!, banner: Int!): Int
+    likeBlog(id: ID!, count: Int!): Int
+    readBlog(id: ID!): Int
 
     createTag(input: TagActionInput!): Tag
-    updateTag(id:ID!, input: TagActionInput!): Tag
-    deleteTag(id:ID!): Int
+    updateTag(id: ID!, input: TagActionInput!): Tag
+    deleteTag(id: ID!): Int
 
     createComment(input: CreateCommentInput!): Comment
-    deleteComment(id:ID!): Int
-    likeComment(id:ID!, emoji: String!): String
-    updateCommentState(id:ID!, state:Int!):Int
-    updateComment(id:ID!, input: UpdateCommentInput!): Comment
+    deleteComment(id: ID!): Int
+    likeComment(id: ID!, emoji: String!): String
+    updateCommentState(id: ID!, state: Int!): Int
+    updateComment(id: ID!, input: UpdateCommentInput!): Comment
     adminComment(input: AdminCommentInput!): Comment
 
-    login(input: LoginRequest!):LoginResponse
+    login(input: LoginRequest!): LoginResponse
     updateAdmin(input: UpdateAdminInput!): Admin
     updateAdminPassword(input: UpdateAdminPasswordInput!): Admin
 
     updateBlackList(input: UpdateBlackListInput!): BlackList
 
     syncAllTagCount: Int
-    syncBlogCommentCount(ids:[ID]!):Int
+    syncBlogCommentCount(ids: [ID]!): Int
 
-    uploadFile(prefix:String, file:FileUpload):String
+    uploadFile(prefix: String, file: FileUpload): String
 }
 
 scalar FileUpload

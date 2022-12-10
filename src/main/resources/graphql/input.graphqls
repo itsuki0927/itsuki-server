@@ -16,37 +16,37 @@ input UpdateAdminPasswordInput {
 }
 
 input CreateBlogInput {
-    title:String!
-    path:String!
-    description:String!
+    title: String!
+    path: String!
+    description: String!
     keywords: String!
-    content:String!
-    cover:String!
+    content: String!
+    cover: String!
     publish: Int!
-    banner:Int!
+    banner: Int!
     tagIds: [Int]
 }
 
 input CreateCommentInput {
-    nickname:String!
-    email:String!
-    avatar:String!
-    provider:String!
-    agent:String!
-    content:String!
-    expand:String
-    parentId:ID
-    blogId:ID!
+    nickname: String!
+    email: String!
+    avatar: String!
+    provider: String!
+    agent: String!
+    content: String!
+    expand: String
+    parentId: ID
+    blogId: ID!
 }
 
 input UpdateCommentInput {
-    nickname:String
-    email:String
-    content:String
-    liking:Int
-    state:Int
-    fix:Int
-    expand:String
+    nickname: String
+    email: String
+    content: String
+    liking: Int
+    state: Int
+    fix: Int
+    expand: String
 }
 
 input TagActionInput {
@@ -57,15 +57,15 @@ input TagActionInput {
     sort: Int
 }
 
-input UpdateBlackListInput{
-    ip:String
-    email:String
-    keyword:String
+input UpdateBlackListInput {
+    ip: String
+    email: String
+    keyword: String
 }
 
 input AdminCommentInput {
-    content:String!
-    blogId:ID!
-    parentId:ID!
+    content: String!
+    blogId: ID!
+    parentId: ID!
     agent: String!
 }

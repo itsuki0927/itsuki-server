@@ -1,6 +1,6 @@
 package cn.itsuki.blog.services;
 
-import cn.itsuki.blog.entities.requests.BlogSearchRequest;
+import cn.itsuki.blog.entities.requests.SearchBlogInput;
 import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.repositories.BlogRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
@@ -27,7 +27,7 @@ public class SummaryService implements GraphQLQueryResolver {
     private CommentRepository commentRepository;
 
     public SiteSummaryResponse summary() {
-        long blog = blogService.count(new BlogSearchRequest());
+        long blog = blogService.count(new SearchBlogInput());
         long tag = tagRepository.count();
         long comment = commentRepository.totalComment();
         long guestbook = commentRepository.totalGuestbook();

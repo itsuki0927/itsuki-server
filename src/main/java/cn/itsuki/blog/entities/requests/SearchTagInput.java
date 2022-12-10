@@ -11,7 +11,7 @@ import lombok.Setter;
  **/
 @Getter
 @Setter
-public class TagSearchRequest extends BaseSearchRequest {
+public class SearchTagInput extends BaseSearchRequest {
     /**
      * 标签名称搜索
      */

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
  **/
 @Getter
 @Setter
-public class CommentSearchRequest extends BaseSearchRequest {
+public class SearchCommentInput extends BaseSearchRequest {
     /**
      * 关键字
      */

@@ -32,7 +32,7 @@ import static cn.itsuki.blog.constants.CommonState.GUESTBOOK;
  * @create: 2021-10-03 16:34
  **/
 @Service
-public class CommentService extends BaseService<Comment, CommentSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
+public class CommentService extends BaseService<Comment, SearchCommentInput> implements GraphQLQueryResolver, GraphQLMutationResolver {
 
     @Autowired
     private BlackListService blackListService;
@@ -58,7 +58,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
     }
 
     @Override
-    protected Page<Comment> searchWithPageable(CommentSearchRequest criteria, Pageable pageable) {
+    protected Page<Comment> searchWithPageable(SearchCommentInput criteria, Pageable pageable) {
         if (criteria.getRecent() != null && criteria.getRecent()) {
             return recentComments();
         }
@@ -115,7 +115,7 @@ public class CommentService extends BaseService<Comment, CommentSearchRequest> i
         return ((CommentRepository) repository).countComments(blogId);
     }
 
-    public SearchResponse<Comment> comments(CommentSearchRequest input) {
+    public SearchResponse<Comment> comments(SearchCommentInput input) {
         return search(input);
     }
 

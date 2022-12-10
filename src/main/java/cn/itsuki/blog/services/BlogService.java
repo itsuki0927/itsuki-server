@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
  * @create: 2021-09-20 22:19
  **/
 @Service
-public class BlogService extends BaseService<Blog, BlogSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
+public class BlogService extends BaseService<Blog, SearchBlogInput> implements GraphQLQueryResolver, GraphQLMutationResolver {
     @Autowired
     private AdminService adminService;
     @Autowired
@@ -100,7 +100,7 @@ public class BlogService extends BaseService<Blog, BlogSearchRequest> implements
         return tag;
     }
 
-    private Long getSearchTagId(BlogSearchRequest request) {
+    private Long getSearchTagId(SearchBlogInput request) {
         Long tagId = request.getTagId();
         if (tagId == null && request.getTagPath() != null) {
             tagId = getTag(request.getTagPath()).getId();
@@ -109,8 +109,8 @@ public class BlogService extends BaseService<Blog, BlogSearchRequest> implements
     }
 
     @Override
-    protected Page<Blog> searchWithPageable(BlogSearchRequest criteria, Pageable pageable) {
-        criteria = Optional.ofNullable(criteria).orElse(new BlogSearchRequest());
+    protected Page<Blog> searchWithPageable(SearchBlogInput criteria, Pageable pageable) {
+        criteria = Optional.ofNullable(criteria).orElse(new SearchBlogInput());
 
         if (criteria.getRecent() != null && criteria.getRecent()) {
             return recentBlogs();
@@ -125,7 +125,7 @@ public class BlogService extends BaseService<Blog, BlogSearchRequest> implements
         return ((BlogRepository) repository).search(criteria.getName(), criteria.getPublish(), tagId, criteria.getBanner(), pageable);
     }
 
-    public Integer count(BlogSearchRequest criteria) {
+    public Integer count(SearchBlogInput criteria) {
         Long tagId = criteria.getTagId();
         if (tagId == null && criteria.getTagPath() != null) {
             tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
@@ -189,7 +189,7 @@ public class BlogService extends BaseService<Blog, BlogSearchRequest> implements
         return getPreviousAndNextBlog(blog, environment);
     }
 
-    public SearchResponse<Blog> blogs(BlogSearchRequest criteria) {
+    public SearchResponse<Blog> blogs(SearchBlogInput criteria) {
         return search(criteria);
     }
 

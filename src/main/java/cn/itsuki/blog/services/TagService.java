@@ -5,7 +5,7 @@ import cn.itsuki.blog.constants.PublishState;
 import cn.itsuki.blog.entities.BlogTag;
 import cn.itsuki.blog.entities.Tag;
 import cn.itsuki.blog.entities.requests.TagActionInput;
-import cn.itsuki.blog.entities.requests.TagSearchRequest;
+import cn.itsuki.blog.entities.requests.SearchTagInput;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.BlogRepository;
 import cn.itsuki.blog.repositories.BlogTagRepository;
@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
  * @create: 2021-09-21 18:18
  **/
 @Service
-public class TagService extends BaseService<Tag, TagSearchRequest> implements GraphQLQueryResolver, GraphQLMutationResolver {
+public class TagService extends BaseService<Tag, SearchTagInput> implements GraphQLQueryResolver, GraphQLMutationResolver {
 
     @Autowired
     private AdminService adminService;
@@ -50,8 +50,8 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     }
 
     @Override
-    protected Page<Tag> searchWithPageable(TagSearchRequest criteria, Pageable pageable) {
-        criteria = criteria == null ? new TagSearchRequest() : criteria;
+    protected Page<Tag> searchWithPageable(SearchTagInput criteria, Pageable pageable) {
+        criteria = criteria == null ? new SearchTagInput() : criteria;
         String name = criteria.getName();
         if (name != null) {
             return ((TagRepository) repository).findByNameContainingOrPathContaining(name, name, pageable);
@@ -63,7 +63,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
         return (((TagRepository) repository).findTagByNameEqualsOrPathEquals(name, name));
     }
 
-    public SearchResponse<Tag> tags(TagSearchRequest criteria) {
+    public SearchResponse<Tag> tags(SearchTagInput criteria) {
         return search(criteria);
     }
 
@@ -116,7 +116,7 @@ public class TagService extends BaseService<Tag, TagSearchRequest> implements Gr
     }
 
     public int syncAllTagCount() {
-        List<Tag> tags = search(new TagSearchRequest()).getData();
+        List<Tag> tags = search(new SearchTagInput()).getData();
         tags.forEach(tag -> syncTagCount(tag));
         return 1;
     }
