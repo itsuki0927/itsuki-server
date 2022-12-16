@@ -43,7 +43,6 @@ public class Comment extends IdentifiableEntity {
      * uid
      */
     @NotBlank
-    @Email
     private String uid;
 
     /**
@@ -93,13 +92,6 @@ public class Comment extends IdentifiableEntity {
     private Integer state;
 
     /**
-     * 是否置顶
-     * 0 -> 不置顶, 1 -> 置顶
-     */
-    @Min(0)
-    private Integer fix;
-
-    /**
      * 头像
      */
     private String avatar;
@@ -108,11 +100,6 @@ public class Comment extends IdentifiableEntity {
      * 登录方式: 0 -> github、1 -> qq、2 -> wechat
      */
     private String provider;
-
-    /**
-     * 扩展
-     */
-    private String expand;
 
     /**
      * 文章标题
@@ -163,10 +150,6 @@ public class Comment extends IdentifiableEntity {
         // 默认待审核
         if (getState() == null) {
             setState(CommentState.Auditing);
-        }
-        // 关闭fix
-        if (getFix() == null) {
-            setFix(CommonState.SHUT_DOWN);
         }
         if (getProvince() == null) {
             setProvince("未知");

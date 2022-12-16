@@ -37,6 +37,7 @@ input CreateCommentInput {
     expand: String
     parentId: ID
     blogId: ID!
+    uid: ID!
 }
 
 input UpdateCommentInput {

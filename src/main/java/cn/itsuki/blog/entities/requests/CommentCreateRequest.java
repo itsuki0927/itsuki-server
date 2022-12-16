@@ -33,6 +33,12 @@ public class CommentCreateRequest {
     private String email;
 
     /**
+     * uid
+     */
+    @NotBlank
+    private String uid;
+
+    /**
      * 浏览器agent
      */
     @NotBlank
