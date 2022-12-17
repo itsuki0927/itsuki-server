@@ -1,7 +1,7 @@
 interface IdentifiableEntity {
     id: ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
+    createAt: LocalDateTime!
+    updateAt: LocalDateTime!
 }
 
 enum Role {
@@ -18,21 +18,21 @@ type Admin {
 
 type Comment implements IdentifiableEntity {
     id: ID!
-    uid: ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
-    nickname: String
-    email: String
-    avatar: String
-    provider: String
-    content: String
+    uid: String!
+    createAt: LocalDateTime!
+    updateAt: LocalDateTime!
+    nickname: String!
+    email: String!
+    avatar: String!
+    provider: String!
+    content: String!
     liking: Int
     emoji: String
-    ip: String
-    agent: String
-    city: String
-    province: String
-    state: Int
+    ip: String!
+    agent: String!
+    city: String!
+    province: String!
+    state: Int!
     blogTitle: String
     blogDescription: String
     blogId: ID!
@@ -40,42 +40,48 @@ type Comment implements IdentifiableEntity {
     parentId: ID
 }
 
+#enum BlogCardStyle  {
+#Image,
+#Text,
+#Mixin,
+#}
+
 type Blog implements IdentifiableEntity {
     id: ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
-    title: String
-    path: String
-    description: String
-    keywords: String
-    content: String
-    cover: String
-    commenting: Int
-    author: String
-    liking: Int
-    reading: Int
-    publish: Int
-    banner: Int
+    createAt: LocalDateTime!
+    updateAt: LocalDateTime!
+    title: String!
+    path: String!
+    description: String!
+    keywords: String!
+    content: String!
+    cover: String!
+    commenting: Int!
+    author: String!
+    liking: Int!
+    reading: Int!
+    publish: Int!
+    banner: Int!
     cardStyle: String
-    tags: [Tag]
+    tags: [Tag!]!
 }
 
 type Tag implements IdentifiableEntity {
     id: ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
-    name: String
-    path: String
-    description: String
+    createAt: LocalDateTime!
+    updateAt: LocalDateTime!
+    name: String!
+    path: String!
+    description: String!
     expand: String
-    sort: Int
-    count: Int
+    sort: Int!
+    count: Int!
 }
 
 type BlackList implements IdentifiableEntity {
     id: ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
+    createAt: LocalDateTime!
+    updateAt: LocalDateTime!
     ip: String
     email: String
     keyword: String

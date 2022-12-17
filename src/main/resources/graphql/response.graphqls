@@ -1,20 +1,20 @@
 interface SearchResponse {
-    total:Int
+    total:Int!
 }
 
 type SearchBlogsResponse implements SearchResponse {
-    total:Int
-    data: [Blog]
+    total:Int!
+    data: [Blog!]!
 }
 
 type SearchTagResponse implements SearchResponse{
-    total:Int
-    data:[Tag]
+    total:Int!
+    data:[Tag!]!
 }
 
 type SearchCommentResponse implements SearchResponse{
-    total:Int
-    data:[Comment]
+    total:Int!
+    data:[Comment!]!
 }
 
 enum OperateState {
@@ -30,40 +30,40 @@ type LoginResponse {
 # TODO: 和Blog一样, 只是加了一个prevBlog、nextBlog
 type BlogDetailResponse implements IdentifiableEntity{
     id:ID!
-    createAt: LocalDateTime
-    updateAt: LocalDateTime
-    title:String
-    path:String
-    description:String
-    keywords: String
-    content:String
-    cover:String
-    commenting:Int
-    author:String
-    liking:Int
-    reading:Int
-    publish: Int
-    banner:Boolean
+    createAt: LocalDateTime!
+    updateAt: LocalDateTime!
+    title:String!
+    path:String!
+    description:String!
+    keywords: String!
+    content:String!
+    cover:String!
+    commenting:Int!
+    author:String!
+    liking:Int!
+    reading:Int!
+    publish: Int!
+    banner:Boolean!
     cardStyle:String
-    tags: [Tag]
-    prevBlog: Blog
-    nextBlog: Blog
+    tags: [Tag!]!
+    prevBlog: Blog!
+    nextBlog: Blog!
 }
 
 type SiteSummaryResponse{
-    blog:Int
-    tag:Int
-    comment:Int
-    guestbook: Int
-    reading: Int
-    startTime: LocalDateTime
+    blog:Int!
+    tag:Int!
+    comment:Int!
+    guestbook: Int!
+    reading: Int!
+    startTime: LocalDateTime!
 }
 
 type BlogSummary {
-    publish:Int
-    value:Int
-    title:String
-    state:String
+    publish:Int!
+    value:Int!
+    title:String!
+    state:String!
 }
 
 type BlogSummaryResponse{

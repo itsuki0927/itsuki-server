@@ -1,13 +1,13 @@
 type Query {
-    blog(path:String!): BlogDetailResponse
-    blogs(search: SearchBlogInput): SearchBlogsResponse
-    tags(search: SearchTagInput): SearchTagResponse
-    comments(search: SearchCommentInput): SearchCommentResponse
+    blog(path:String!): BlogDetailResponse!
+    blogs(search: SearchBlogInput): SearchBlogsResponse!
+    tags(search: SearchTagInput): SearchTagResponse!
+    comments(search: SearchCommentInput): SearchCommentResponse!
     comment(id:ID!): Comment
-    validateCommentAllowOperate(id: ID!, uid: String!): Boolean
-    blacklist: BlackList
-    summary: SiteSummaryResponse
-    blogSummary: BlogSummaryResponse
+    validateCommentAllowOperate(id: ID!, uid: String!): Boolean!
+    blacklist: BlackList!
+    summary: SiteSummaryResponse!
+    blogSummary: BlogSummaryResponse!
     currentAdmin: Admin
 }
 
