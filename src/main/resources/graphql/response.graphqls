@@ -46,8 +46,8 @@ type BlogDetailResponse implements IdentifiableEntity{
     banner:Boolean!
     cardStyle:String
     tags: [Tag!]!
-    prevBlog: Blog!
-    nextBlog: Blog!
+    prevBlog: Blog
+    nextBlog: Blog
 }
 
 type SiteSummaryResponse{
