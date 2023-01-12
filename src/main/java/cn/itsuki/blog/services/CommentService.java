@@ -121,7 +121,7 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
 
     public Page<Comment> recentComments() {
         Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
-        Pageable newPageable = new OffsetLimitPageRequest(0, 3, sort);
+        Pageable newPageable = new OffsetLimitPageRequest(0, 4, sort);
         return ((CommentRepository) repository).recent(adminEmail, newPageable);
     }
 

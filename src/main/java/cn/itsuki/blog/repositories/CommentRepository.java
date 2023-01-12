@@ -58,6 +58,6 @@ public interface CommentRepository extends BaseRepository<Comment> {
     Page<Comment> search(@Param("keyword") String keyword, @Param("blogId") Long blogId, @Param("blogPath") String blogPath,
                          @Param("state") Integer state, Pageable pageable);
 
-    @Query("select c from comment c where c.blogId = 10000 and c.email <> :adminEmail and c.state <> 2")
-    Page<Comment> recent(@Param("adminEmail") String adminEmail,Pageable pageable);
+     @Query("select c from comment c where c.blogId = 10000 and c.email <> :adminEmail and c.state in (0,1) and c.parentId = 0")
+    Page<Comment> recent(@Param("adminEmail") String adminEmail, Pageable pageable);
 }
