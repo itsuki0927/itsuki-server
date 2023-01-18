@@ -52,12 +52,6 @@ public class Comment extends IdentifiableEntity {
     private String content;
 
     /**
-     * 喜欢数
-     */
-    @Min(0)
-    private Integer liking;
-
-    /**
      * emoji
      */
     private String emoji;
@@ -157,7 +151,5 @@ public class Comment extends IdentifiableEntity {
         if (getCity() == null) {
             setCity("未知");
         }
-        // 初始0
-        setLiking(CommonState.INIT_VALUE);
     }
 }

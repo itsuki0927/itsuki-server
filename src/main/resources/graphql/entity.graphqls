@@ -26,7 +26,6 @@ type Comment implements IdentifiableEntity {
     avatar: String!
     provider: String!
     content: String!
-    liking: Int
     emoji: String
     ip: String!
     agent: String!
