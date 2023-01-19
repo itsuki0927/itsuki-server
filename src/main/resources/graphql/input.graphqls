@@ -44,7 +44,6 @@ input UpdateCommentInput {
     nickname: String
     email: String
     content: String
-    liking: Int
     state: Int
     fix: Int
     expand: String

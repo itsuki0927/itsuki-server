@@ -18,7 +18,7 @@ type Admin {
 
 type Comment implements IdentifiableEntity {
     id: ID!
-    uid: String!
+    uid: String # 兼容之前的评论
     createAt: LocalDateTime!
     updateAt: LocalDateTime!
     nickname: String!

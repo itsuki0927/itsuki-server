@@ -34,12 +34,6 @@ public class CommentUpdateRequest {
     private String content;
 
     /**
-     * 被喜欢数
-     */
-    @NotNull
-    private int liking;
-
-    /**
      * 扩展
      */
     private String expand;

@@ -49,12 +49,6 @@ public class UpdateCommentInput {
     private Integer fix;
 
     /**
-     * 喜欢数
-     */
-    @NotNull
-    private Integer liking;
-
-    /**
      * 状态
      */
     @NotNull
