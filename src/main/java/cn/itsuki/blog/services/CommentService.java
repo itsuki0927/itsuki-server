@@ -6,22 +6,23 @@ import cn.itsuki.blog.entities.*;
 import cn.itsuki.blog.entities.requests.*;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
+import cn.itsuki.blog.security.SecurityUtils;
 import cn.itsuki.blog.utils.RequestUtil;
 import cn.itsuki.blog.utils.UrlUtil;
 import com.alibaba.fastjson.JSONObject;
-import graphql.kickstart.servlet.context.GraphQLServletContext;
-import graphql.kickstart.tools.GraphQLMutationResolver;
-import graphql.kickstart.tools.GraphQLQueryResolver;
+import com.google.firebase.remoteconfig.User;
+import graphql.GraphQLContext;
 import graphql.schema.DataFetchingEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 
 import static cn.itsuki.blog.constants.CommonState.GUESTBOOK;
 
@@ -32,7 +33,7 @@ import static cn.itsuki.blog.constants.CommonState.GUESTBOOK;
  * @create: 2021-10-03 16:34
  **/
 @Service
-public class CommentService extends BaseService<Comment, SearchCommentInput> implements GraphQLQueryResolver, GraphQLMutationResolver {
+public class CommentService extends BaseService<Comment, SearchCommentInput> {
 
     @Autowired
     private BlackListService blackListService;
@@ -42,8 +43,6 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
     private RequestUtil requestUtil;
     @Autowired
     private AkismetService akismetService;
-    @Autowired
-    private AdminService adminService;
     @Autowired
     private EmailService emailService;
     @Autowired
@@ -59,6 +58,10 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
 
     @Override
     protected Page<Comment> searchWithPageable(SearchCommentInput criteria, Pageable pageable) {
+        if (criteria == null) {
+            criteria = new SearchCommentInput();
+        }
+        System.out.println("criteria: " + criteria);
         if (criteria.getRecent() != null && criteria.getRecent()) {
             return recentComments();
         }
@@ -129,8 +132,8 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
         return get(id);
     }
 
+    @Secured("ROLE_ADMIN")
     public Comment updateComment(Long id, UpdateCommentInput input) {
-        adminService.ensureAdminOperate();
 
         Comment comment = get(id);
         Integer oldState = comment.getState();
@@ -146,17 +149,8 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
         return update;
     }
 
-    public boolean validateCommentAllowOperate(Long id, String uid) {
-        Comment comment = get(id);
-        if (comment.getUid() == null) {
-            return false;
-        }
-        return comment.getUid().equals(uid);
-    }
-
     public int deleteComment(Long id) {
         Comment comment = get(id);
-        adminService.ensureAdminOperate();
         if (comment.getState() == CommentState.Auditing || comment.getState() == CommentState.Published) {
             throw new IllegalArgumentException("当前评论不能进行操作");
         }
@@ -168,8 +162,9 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
         ((CommentRepository) repository).deleteCommentsByBlogIdEquals(blogId);
     }
 
+    @Secured("ROLE_ADMIN")
     public int updateCommentState(Long id, Integer state) {
-        adminService.ensureAdminOperate();
+        // adminService.ensureAdminOperate();
         // 是否为垃圾评论
         boolean isSpam = state == CommentState.Spam;
         Comment comment = get(id);
@@ -196,13 +191,13 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
         return 1;
     }
 
-    public Comment createComment(CommentCreateRequest input, DataFetchingEnvironment environment) {
+    public Comment createComment(CommentCreateRequest input, GraphQLContext context) {
         Comment comment = new Comment();
         BeanUtil.copyProperties(input, comment);
         boolean isAdminComment = input.getEmail().equals(adminEmail);
 
         Comment parentComment = ensureReplyCommentReadPermission(comment);
-        setCommentIp(comment, environment);
+        setCommentIp(comment, context);
         ensureIsInBlackList(comment);
         // 检查是否为垃圾评论
         akismetService.checkComment(comment, isAdminComment);
@@ -213,15 +208,15 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
 
         Comment save = repository.save(comment);
 
-        if (isProd()) {
-            if (parentComment != null) {
-                sendEmailToReplyTarget(comment, parentComment.getEmail());
-            }
-            // 如果是管理评论, 不需要发邮箱.
-            if (!isAdminComment) {
-                sendEmailToAdmin(comment);
-            }
-        }
+//        if (isProd()) {
+//            if (parentComment != null) {
+//                sendEmailToReplyTarget(comment, parentComment.getEmail());
+//            }
+//            // 如果是管理评论, 不需要发邮箱.
+//            if (!isAdminComment) {
+//                sendEmailToAdmin(comment);
+//            }
+//        }
 
         return save;
     }
@@ -243,14 +238,17 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
     }
 
     private void setCommentLocation(Comment comment) {
-        JSONObject address = requestUtil.findLocationByIp(comment.getIp());
-        if (address != null) {
-            comment.setCity((String) address.get("city"));
-            comment.setProvince((String) address.get("province"));
+        String ip = comment.getIp();
+        if (ip != null) {
+            JSONObject address = requestUtil.findLocationByIp(comment.getIp());
+            if (address != null) {
+                comment.setCity((String) address.get("city"));
+                comment.setProvince((String) address.get("province"));
+            }
         }
     }
 
-    public Comment adminComment(AdminCommentInput input, DataFetchingEnvironment environment) {
+    public Comment adminComment(AdminCommentInput input) {
         Comment comment = new Comment();
         BeanUtil.copyProperties(input, comment);
 
@@ -259,14 +257,14 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
         comment.setState(CommentState.Published);
         setCommentAdmin(comment);
         setCommentBlog(comment);
-        setCommentIp(comment, environment);
+//        setCommentIp(comment, environment);
         setCommentLocation(comment);
 
         Comment save = repository.save(comment);
 
-        if (parentComment != null && isProd()) {
-            sendEmailToReplyTarget(comment, parentComment.getEmail());
-        }
+//        if (parentComment != null && isProd()) {
+//            sendEmailToReplyTarget(comment, parentComment.getEmail());
+//        }
 
         return save;
     }
@@ -280,18 +278,22 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
     }
 
     private void setCommentAdmin(Comment comment) {
-        Admin admin = adminService.ensureAdminOperate();
+        Admin admin = SecurityUtils.getCurrentAdmin();
 
         comment.setProvider("github");
         comment.setEmail(adminEmail);
-        comment.setAvatar(admin.getAvatar());
-        comment.setNickname(admin.getNickname());
+        if (admin != null) {
+            comment.setAvatar(admin.getAvatar());
+            comment.setNickname(admin.getNickname());
+        }
     }
 
-    private void setCommentIp(Comment comment, DataFetchingEnvironment environment) {
-        GraphQLServletContext context = environment.getContext();
-        HttpServletRequest request = context.getHttpServletRequest();
-        comment.setIp(requestUtil.getRequestIp(request));
+    private void setCommentIp(Comment comment, GraphQLContext context) {
+        var myheader = context.get("myheader");
+        var ip = context.get("ip");
+        System.out.println("myheader:" + myheader);
+        System.out.println("ip:" + ip);
+//        comment.setIp(requestUtil.getRequestIp(request));
     }
 
     private Blog ensureBlogExist(Long blogId) {
@@ -299,13 +301,25 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> imp
     }
 
     private void ensureIsInBlackList(Comment entity) {
+        BlackList blackList = blackListService.blacklist();
         String ip = entity.getIp();
         String email = entity.getEmail();
         String content = entity.getContent();
-        BlackList blackList = blackListService.blacklist();
 
-        if (blackList.getIp().contains(ip) || blackList.getEmail().contains(email) || blackList.getKeyword().contains(content)) {
-            throw new IllegalArgumentException("ip | 邮箱 | 内容 -> 不合法");
+        String ipBlackList = Optional.of(blackList.getIp()).orElse("");
+        System.out.println(blackList + "_" + ipBlackList);
+        if (ip != null && ipBlackList.contains(entity.getIp())) {
+            throw new IllegalArgumentException("ip -> 不合法");
+        }
+
+        String emailBlackList = Optional.of(blackList.getEmail()).orElse("");
+        if (email != null && emailBlackList.contains(entity.getEmail())) {
+            throw new IllegalArgumentException("email -> 不合法");
+        }
+
+        String keywordBlackList = Optional.of(blackList.getKeyword()).orElse("");
+        if (content != null && keywordBlackList.contains(entity.getContent())) {
+            throw new IllegalArgumentException("内容 -> 不合法");
         }
     }
 

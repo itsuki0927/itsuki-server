@@ -5,8 +5,6 @@ import cn.itsuki.blog.entities.BlackList;
 import cn.itsuki.blog.entities.requests.UpdateBlackListInput;
 import cn.itsuki.blog.repositories.BlackListRepository;
 import com.alibaba.fastjson.JSONArray;
-import graphql.kickstart.tools.GraphQLMutationResolver;
-import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,18 +15,15 @@ import org.springframework.stereotype.Service;
  * @create: 2021-09-28 08:31
  **/
 @Service
-public class BlackListService implements GraphQLQueryResolver, GraphQLMutationResolver {
+public class BlackListService {
     @Autowired
     private BlackListRepository repository;
-    @Autowired
-    private AdminService adminService;
 
     public BlackList blacklist() {
         return repository.findAll().get(0);
     }
 
     public BlackList updateBlackList(UpdateBlackListInput input) {
-        adminService.ensureAdminOperate();
         BlackList probe = blacklist();
         BeanUtil.copyProperties(input, probe);
         repository.save(probe);

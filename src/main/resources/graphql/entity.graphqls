@@ -27,10 +27,10 @@ type Comment implements IdentifiableEntity {
     provider: String!
     content: String!
     emoji: String
-    ip: String!
-    agent: String!
-    city: String!
-    province: String!
+    ip: String
+    agent: String
+    city: String
+    province: String
     state: Int!
     blogTitle: String
     blogDescription: String

@@ -3,21 +3,17 @@ package cn.itsuki.blog.configs;
 import cn.itsuki.blog.entities.FileUpload;
 import graphql.language.StringValue;
 import graphql.schema.*;
+import jakarta.servlet.http.Part;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-
-import javax.servlet.http.Part;
+import org.springframework.graphql.execution.RuntimeWiringConfigurer;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
-/**
- * @author: itsuki
- * @create: 2022-05-05 21:12
- **/
 @Configuration
-public class ScalarsConfig {
+public class GraphQLConfig {
     @Bean
     public GraphQLScalarType dateScalar() {
         return GraphQLScalarType.newScalar()
@@ -102,5 +98,12 @@ public class ScalarsConfig {
                                 "Must use variables to specify Upload values");
                     }
                 }).build();
+    }
+
+    @Bean
+    public RuntimeWiringConfigurer runtimeWiringConfigurer() {
+        return wiringBuilder -> wiringBuilder
+                .scalar(dateScalar())
+                .scalar(fileScalar());
     }
 }

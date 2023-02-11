@@ -10,19 +10,18 @@ import cn.itsuki.blog.entities.responses.BlogSummaryResponse;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.*;
 import cn.itsuki.blog.utils.UrlUtil;
-import graphql.kickstart.tools.GraphQLMutationResolver;
-import graphql.kickstart.tools.GraphQLQueryResolver;
 import graphql.schema.DataFetchingEnvironment;
 import graphql.schema.DataFetchingFieldSelectionSet;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,9 +32,7 @@ import java.util.stream.Collectors;
  * @create: 2021-09-20 22:19
  **/
 @Service
-public class BlogService extends BaseService<Blog, SearchBlogInput> implements GraphQLQueryResolver, GraphQLMutationResolver {
-    @Autowired
-    private AdminService adminService;
+public class BlogService extends BaseService<Blog, SearchBlogInput> {
     @Autowired
     private BlogTagRepository blogTagRepository;
     @Autowired
@@ -76,7 +73,7 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
         }
     }
 
-    public Page<Blog> recentBlogs() {
+    private Page<Blog> recentBlogs() {
         Sort sort = Sort.by(Sort.Direction.DESC, "createAt");
         Pageable pageable = new OffsetLimitPageRequest(0, 6, sort);
         Blog probe = new Blog();
@@ -84,7 +81,7 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
         return repository.findAll(Example.of(probe), pageable);
     }
 
-    public Page<Blog> hotBlogs() {
+    private Page<Blog> hotBlogs() {
         Sort sort = Sort.by(Sort.Direction.DESC, "reading");
         Pageable pageable = new OffsetLimitPageRequest(0, 3, sort);
         Blog probe = new Blog();
@@ -193,17 +190,18 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
         return search(criteria);
     }
 
-    public List<Long> getBlogTagIds(Long blogId) {
+    private List<Long> getBlogTagIds(Long blogId) {
         return blogTagRepository.findAllByBlogIdEquals(blogId).stream().map(BlogTag::getTagId).collect(Collectors.toList());
     }
 
-    public Blog createBlog(BlogCreateRequest request) {
-        adminService.ensureAdminOperate();
+    public Blog createBlog(CreateBlogInput request) {
+//        adminService.ensureAdminOperate();
 
         Blog entity = new Blog();
         BeanUtils.copyProperties(request, entity);
         Blog blog = super.create(entity);
 
+        // 保存所有的tags
         saveAllTags(request.getTagIds(), blog.getId());
 
         // 更新tag count
@@ -228,20 +226,18 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
         });
     }
 
-    public Blog updateBlog(Long id, BlogCreateRequest entity) {
-        adminService.ensureAdminOperate();
-
+    public Blog updateBlog(Long id, CreateBlogInput input) {
         Blog blog = get(id);
 
         List<Long> oldTagIds = getBlogTagIds(id);
-        List<Long> newTagIds = entity.getTagIds();
+        List<Long> newTagIds = input.getTagIds();
         // 删除当前文章的tag
         deleteTag(id);
         // 添加新的tag
         saveAllTags(newTagIds, id);
 
         // 更新文章
-        BeanUtil.copyProperties(entity, blog);
+        BeanUtil.copyProperties(input, blog);
         Blog update = super.update(id, blog);
 
         updateTagCount(newTagIds);
@@ -254,8 +250,6 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
     }
 
     public int deleteBlog(Long blogId) {
-        adminService.ensureAdminOperate();
-
         Blog oldBlog = get(blogId);
         List<Long> oldTagIds = getBlogTagIds(blogId);
 
@@ -268,8 +262,6 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
     }
 
     public int updateBlogState(List<Long> ids, Integer publish) {
-        adminService.ensureAdminOperate();
-
         int state = ((BlogRepository) repository).batchUpdateState(publish, ids);
 
         ids.forEach(id -> {
@@ -281,8 +273,6 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
     }
 
     public int updateBlogBanner(List<Long> ids, Integer banner) {
-        adminService.ensureAdminOperate();
-
         List<Blog> blogs = repository
                 .findAllById(ids).stream()
                 .filter(v -> v.getPublish() == PublishState.Published)
@@ -313,7 +303,7 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> implements G
     public int likeBlog(Long id, int count) {
         Blog blog = get(id);
         ensureBlogAllowOperate(blog);
-        if(count > 50){
+        if (count > 50) {
             throw new IllegalArgumentException("count should be < 50");
         }
         blog.setLiking(blog.getLiking() + count);

@@ -1,1 +1,2 @@
 scalar LocalDateTime
+scalar FileUpload

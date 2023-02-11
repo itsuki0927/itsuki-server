@@ -96,6 +96,7 @@ public class SeoService {
         String actionText = "Google ping [" + type + "] action";
         String url = urls.get(0);
         String secretJson = buildGoogleSecretJson();
+        InputStream secretInput = new ByteArrayInputStream(secretJson.getBytes());
 
         System.out.println(actionText);
 
@@ -103,7 +104,6 @@ public class SeoService {
             JsonFactory jsonFactory = GsonFactory.getDefaultInstance();
             HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
 
-            InputStream secretInput = new ByteArrayInputStream(secretJson.getBytes());
             System.out.println(secretInput.toString());
             GoogleCredential credentials = GoogleCredential.fromStream(secretInput, httpTransport, jsonFactory).createScoped(Collections.singleton(scopes));
 

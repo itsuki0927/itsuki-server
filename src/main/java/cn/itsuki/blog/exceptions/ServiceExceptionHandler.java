@@ -3,6 +3,8 @@ package cn.itsuki.blog.exceptions;
 import cn.itsuki.blog.entities.responses.WrapperResponse;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import graphql.GraphQLException;
+import jakarta.persistence.EntityExistsException;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
@@ -22,8 +24,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.persistence.EntityExistsException;
-import javax.persistence.EntityNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -147,7 +147,6 @@ public class ServiceExceptionHandler extends ResponseEntityExceptionHandler {
      * @param request 当前请求
      * @return
      */
-    @Override
     protected ResponseEntity<Object> handleExceptionInternal(Exception ex, Object body, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String message = ex.getMessage();
 

@@ -85,15 +85,19 @@ public class AkismetService {
     // 检查评论
     public void checkComment(Comment comment, boolean isAdmin) {
         Map<String, Object> paramMap = getRequestParams(comment, isAdmin);
+        boolean isSpam = false;
 
-        String url = buildPath(secretKey, "comment-check");
-        String result = HttpUtil.createPost(url)
-                .form(paramMap)//表单内容
-                .timeout(20000)//超时，毫秒
-                .execute().body();
-
-        boolean isSpam = StrUtil.equals(result, "true");
-
+        try {
+            String url = buildPath(secretKey, "comment-check");
+            String result = HttpUtil.createPost(url)
+                    .form(paramMap)//表单内容
+                    .timeout(20000)//超时，毫秒
+                    .execute().body();
+            isSpam = StrUtil.equals(result, "true");
+        } catch (Exception e) {
+            System.out.println("Akismet 请求错误");
+            System.out.println(e.getMessage());
+        }
         if (isSpam) {
             throw new IllegalArgumentException("被 Akismet 过滤!!!");
         }

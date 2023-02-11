@@ -5,10 +5,8 @@ import cn.itsuki.blog.entities.responses.SiteSummaryResponse;
 import cn.itsuki.blog.repositories.BlogRepository;
 import cn.itsuki.blog.repositories.CommentRepository;
 import cn.itsuki.blog.repositories.TagRepository;
-import graphql.kickstart.tools.GraphQLQueryResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
 
 /**
@@ -16,7 +14,7 @@ import java.time.LocalDateTime;
  * @create: 2022-07-22 08:06
  **/
 @Service
-public class SummaryService implements GraphQLQueryResolver {
+public class SummaryService {
     @Autowired
     private TagRepository tagRepository;
     @Autowired

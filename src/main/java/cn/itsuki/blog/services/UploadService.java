@@ -7,7 +7,6 @@ import com.qiniu.storage.UploadManager;
 import com.qiniu.util.Auth;
 import com.tinify.Source;
 import com.tinify.Tinify;
-import graphql.kickstart.tools.GraphQLMutationResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
@@ -21,7 +20,7 @@ import java.io.InputStream;
  * @create: 2021-09-24 13:01
  **/
 @Service
-public class UploadService implements GraphQLMutationResolver {
+public class UploadService {
     /**
      * 公钥
      */
@@ -42,9 +41,9 @@ public class UploadService implements GraphQLMutationResolver {
     private String tinifySecretKey;
 
     //构造一个带指定Region对象的配置类
-    private Configuration cfg = new Configuration(Region.region0());
+    private final Configuration cfg = new Configuration(Region.region0());
 
-    private UploadManager uploadManager = new UploadManager(cfg);
+    private final UploadManager uploadManager = new UploadManager(cfg);
 
     public String uploadFile(String prefix, FileUpload fileUpload) {
 

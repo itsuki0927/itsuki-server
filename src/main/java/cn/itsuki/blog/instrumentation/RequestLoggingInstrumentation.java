@@ -7,6 +7,7 @@ import graphql.execution.instrumentation.SimpleInstrumentationContext;
 import graphql.execution.instrumentation.parameters.InstrumentationExecutionParameters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Component;
 
 import java.time.Clock;
@@ -23,6 +24,7 @@ import java.time.Instant;
 public class RequestLoggingInstrumentation extends SimpleInstrumentation {
     private final Clock clock = Clock.systemDefaultZone();
 
+    @NotNull
     @Override
     public InstrumentationContext<ExecutionResult> beginExecution(InstrumentationExecutionParameters parameters) {
         var start = Instant.now(clock);

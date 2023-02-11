@@ -28,7 +28,6 @@ type Mutation {
     syncAllTagCount: Int
     syncBlogCommentCount(ids: [ID]!): Int
 
-    uploadFile(prefix: String, file: FileUpload): String
+#    uploadFile(prefix: String, file: FileUpload): String
 }
 
-scalar FileUpload

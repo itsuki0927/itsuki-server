@@ -11,14 +11,11 @@ import cn.itsuki.blog.repositories.BlogRepository;
 import cn.itsuki.blog.repositories.BlogTagRepository;
 import cn.itsuki.blog.repositories.TagRepository;
 import cn.itsuki.blog.utils.UrlUtil;
-import graphql.kickstart.tools.GraphQLMutationResolver;
-import graphql.kickstart.tools.GraphQLQueryResolver;
+import jakarta.persistence.EntityExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.EntityExistsException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,10 +26,8 @@ import java.util.stream.Collectors;
  * @create: 2021-09-21 18:18
  **/
 @Service
-public class TagService extends BaseService<Tag, SearchTagInput> implements GraphQLQueryResolver, GraphQLMutationResolver {
+public class TagService extends BaseService<Tag, SearchTagInput> {
 
-    @Autowired
-    private AdminService adminService;
     @Autowired
     private SeoService seoService;
     @Autowired
@@ -76,8 +71,6 @@ public class TagService extends BaseService<Tag, SearchTagInput> implements Grap
             throw new EntityExistsException("tag " + entity.getName() + " 已存在");
         }
 
-        adminService.ensureAdminOperate();
-
         seoService.push(urlUtil.getTagUrl(probe.getPath()));
 
         return super.create(probe);
@@ -87,8 +80,6 @@ public class TagService extends BaseService<Tag, SearchTagInput> implements Grap
         Tag oldTag = get(id);
         Tag entity = new Tag();
         BeanUtil.copyProperties(input, entity);
-
-        adminService.ensureAdminOperate();
 
         entity.setId(id);
         entity.setCount(oldTag.getCount());
@@ -106,8 +97,6 @@ public class TagService extends BaseService<Tag, SearchTagInput> implements Grap
     }
 
     public int deleteTag(Long id) {
-        adminService.ensureAdminOperate();
-
         Tag tag = get(id);
 
         seoService.delete(urlUtil.getTagUrl(tag.getPath()));
@@ -117,11 +106,11 @@ public class TagService extends BaseService<Tag, SearchTagInput> implements Grap
 
     public int syncAllTagCount() {
         List<Tag> tags = search(new SearchTagInput()).getData();
-        tags.forEach(tag -> syncTagCount(tag));
+        tags.forEach(this::syncTagCount);
         return 1;
     }
 
-    public int syncTagCount(Tag tag) {
+    public void syncTagCount(Tag tag) {
         long id = tag.getId();
         // 找到当前tag的记录
         List<BlogTag> blogTags = blogTagRepository.findAllByTagIdEquals(id);
@@ -131,7 +120,6 @@ public class TagService extends BaseService<Tag, SearchTagInput> implements Grap
         System.out.println(tag.getName() + " count: " + count);
         tag.setCount(count);
         update(id, tag);
-        return 1;
     }
 }
 

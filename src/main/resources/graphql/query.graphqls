@@ -4,7 +4,6 @@ type Query {
     tags(search: SearchTagInput): SearchTagResponse!
     comments(search: SearchCommentInput): SearchCommentResponse!
     comment(id:ID!): Comment
-    validateCommentAllowOperate(id: ID!, uid: String!): Boolean!
     blacklist: BlackList!
     summary: SiteSummaryResponse!
     blogSummary: BlogSummaryResponse!

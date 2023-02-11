@@ -2,15 +2,16 @@ package cn.itsuki.blog.entities;
 
 import cn.itsuki.blog.constants.*;
 import cn.itsuki.blog.security.SecurityUtils;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
-import java.util.Set;
+import java.util.Objects;
 
 /**
  * 文章 实体
@@ -99,14 +100,11 @@ public class Blog extends IdentifiableEntity {
 
     @Override
     protected void onCreateAction() {
-        setAuthor(SecurityUtils.getCurrentAdmin().getNickname());
+        setAuthor(Objects.requireNonNull(SecurityUtils.getCurrentAdmin()).getNickname());
         setCommenting(CommonState.INIT_VALUE);
         setLiking(CommonState.INIT_VALUE);
         setReading(CommonState.INIT_VALUE);
         // 默认情况下草稿
-        if (getPublish() == null) {
-            setPublish(PublishState.Draft);
-        }
         if(getCardStyle() == null){
             setCardStyle(0);
         }

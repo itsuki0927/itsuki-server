@@ -1,21 +1,17 @@
 package cn.itsuki.blog.security;
 
-import cn.itsuki.blog.entities.Admin;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * token过滤器 配置
@@ -29,25 +25,37 @@ public class BearerTokenFilter extends OncePerRequestFilter {
     @Autowired
     private TokenUtils tokenUtils;
 
+    @Value("admin.email")
+    private String adminEmail;
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
-        String bearerToken = request.getHeader("Authorization");
-        // 获取请求头token
-        if (bearerToken != null && bearerToken.startsWith(BEARER_PREFIX)) {
-            bearerToken = bearerToken.substring(BEARER_PREFIX.length());
+    protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
+        String token = request.getHeader("Authorization");
+        if (token != null) {
+            // 获取请求头token
+            if (token.startsWith(BEARER_PREFIX)) {
+                token = token.substring(BEARER_PREFIX.length());
+            }
+
+            if (token.length() > 0) {
+                try {
+                    var user = FirebaseAuth.getInstance().verifyIdToken(token);
+                    System.out.println("email:" + user.getEmail());
+                    String role = user.getEmail().equals(adminEmail) ? "ROLE_ADMIN" : "ROLE_USER";
+                    System.out.println("role:" + role);
+                    // 设置 user 到上下文中
+                    var authority = new SimpleGrantedAuthority(role);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
+                            List.of(authority));
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                } catch (FirebaseAuthException e) {
+                    System.out.println("BearerTokenFilter: " + e);
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
-        if (!StringUtils.isEmpty(bearerToken)) {
-            Admin user = tokenUtils.decodeJwtToken(bearerToken);
-
-            // 设置 user 到上下文中
-            GrantedAuthority authority = new SimpleGrantedAuthority(user.getRole().toString());
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
-                    Arrays.asList(authority));
-            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
-
-        chain.doFilter(request, response);
+        filterChain.doFilter(request, response);
     }
 }

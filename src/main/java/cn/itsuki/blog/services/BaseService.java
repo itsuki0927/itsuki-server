@@ -4,6 +4,8 @@ import cn.itsuki.blog.entities.IdentifiableEntity;
 import cn.itsuki.blog.entities.requests.BaseSearchRequest;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.repositories.BaseRepository;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -11,8 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.StringUtils;
 
-import javax.persistence.EntityNotFoundException;
-import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -45,14 +45,6 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
 
     @Value("${mode}")
     private String mode;
-
-    public boolean isDev() {
-        return mode.equals("dev");
-    }
-
-    public boolean isProd() {
-        return mode.equals("prod");
-    }
 
     /**
      * 创建一个service实例
@@ -174,8 +166,7 @@ public abstract class BaseService<T extends IdentifiableEntity, S extends BaseSe
         Sort sort = Sort.by("ASC".equals(criteria.getSortBy()) ? Sort.Direction.ASC : Sort.Direction.DESC, criteria.getSortBy());
         int current = getSearchCurrent(criteria.getCurrent());
         int limit = criteria.getPageSize();
-        Pageable pageable = new OffsetLimitPageRequest(current, limit, sort);
-        return pageable;
+        return new OffsetLimitPageRequest(current, limit, sort);
     }
 
     private int getSearchCurrent(int current) {

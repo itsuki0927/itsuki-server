@@ -2,8 +2,7 @@ package cn.itsuki.blog.entities.requests;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import javax.validation.constraints.NotNull;
+import lombok.ToString;
 
 /**
  * 评论搜索 请求类
@@ -13,6 +12,7 @@ import javax.validation.constraints.NotNull;
  **/
 @Getter
 @Setter
+@ToString
 public class SearchCommentInput extends BaseSearchRequest {
     /**
      * 关键字
