@@ -18,8 +18,8 @@ public class TagController {
     private TagService tagService;
 
     @QueryMapping
-    public SearchResponse<Tag> tags(@Argument SearchTagInput input) {
-        return this.tagService.tags(input);
+    public SearchResponse<Tag> tags(@Argument SearchTagInput search) {
+        return this.tagService.tags(search);
     }
 
     @Secured("ROLE_ADMIN")

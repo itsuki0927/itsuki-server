@@ -40,9 +40,9 @@ type Comment implements IdentifiableEntity {
 }
 
 #enum BlogCardStyle  {
-#Image,
-#Text,
-#Mixin,
+#    Image,
+#    Text,
+#    Mixin,
 #}
 
 type Blog implements IdentifiableEntity {
@@ -61,7 +61,7 @@ type Blog implements IdentifiableEntity {
     reading: Int!
     publish: Int!
     banner: Int!
-    cardStyle: String
+    cardStyle: Int!
     tags: [Tag!]!
 }
 

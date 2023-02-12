@@ -1,6 +1,6 @@
 package cn.itsuki.blog.security;
 
-import cn.itsuki.blog.entities.Admin;
+import cn.itsuki.blog.entities.Member;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
@@ -14,15 +14,15 @@ public abstract class SecurityUtils {
 
     }
 
-    public static Admin getCurrentAdmin() {
+    public static Member getCurrentMember() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        if (principal instanceof Admin) {
-            return (Admin) principal;
+        if (principal instanceof Member) {
+            return (Member) principal;
         }
         return null;
     }
 
-    public static void clearCurrentAdmin() {
+    public static void clearCurrentMember() {
         SecurityContextHolder.getContext().setAuthentication(null);
         SecurityContextHolder.clearContext();
     }

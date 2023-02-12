@@ -19,7 +19,6 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -194,20 +193,18 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> {
         return blogTagRepository.findAllByBlogIdEquals(blogId).stream().map(BlogTag::getTagId).collect(Collectors.toList());
     }
 
-    public Blog createBlog(CreateBlogInput request) {
-//        adminService.ensureAdminOperate();
-
+    public Blog createBlog(CreateBlogInput input) {
         Blog entity = new Blog();
-        BeanUtils.copyProperties(request, entity);
+        BeanUtils.copyProperties(input, entity);
         Blog blog = super.create(entity);
 
         // 保存所有的tags
-        saveAllTags(request.getTagIds(), blog.getId());
+        saveAllTags(input.getTagIds(), blog.getId());
 
         // 更新tag count
-        updateTagCount(request.getTagIds());
+        updateTagCount(input.getTagIds());
 
-        if (request.getPublish() == PublishState.Published) {
+        if (input.getPublish() == PublishState.Published) {
             seoService.push(urlUtil.getBlogUrl(blog.getPath()));
         }
 

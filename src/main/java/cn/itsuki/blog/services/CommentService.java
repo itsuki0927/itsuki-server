@@ -61,7 +61,6 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> {
         if (criteria == null) {
             criteria = new SearchCommentInput();
         }
-        System.out.println("criteria: " + criteria);
         if (criteria.getRecent() != null && criteria.getRecent()) {
             return recentComments();
         }
@@ -278,11 +277,11 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> {
     }
 
     private void setCommentAdmin(Comment comment) {
-        Admin admin = SecurityUtils.getCurrentAdmin();
+        Member admin = SecurityUtils.getCurrentMember();
 
-        comment.setProvider("github");
-        comment.setEmail(adminEmail);
         if (admin != null) {
+            comment.setEmail(admin.getEmail());
+            comment.setProvider(admin.getProvider());
             comment.setAvatar(admin.getAvatar());
             comment.setNickname(admin.getNickname());
         }

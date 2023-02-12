@@ -25,6 +25,7 @@ input CreateBlogInput {
     publish: Int!
     banner: Int!
     tagIds: [Int]
+    cardStyle: Int!
 }
 
 input CreateCommentInput {

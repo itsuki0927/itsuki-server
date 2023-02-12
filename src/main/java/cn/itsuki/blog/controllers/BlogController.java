@@ -36,9 +36,8 @@ public class BlogController {
     public BlogTagRepository blogTagRepository;
 
     @QueryMapping
-    public SearchResponse<Blog> blogs(@Argument SearchBlogInput input) {
-        System.out.println("blogs");
-        return this.blogService.blogs(input);
+    public SearchResponse<Blog> blogs(@Argument SearchBlogInput search) {
+        return this.blogService.blogs(search);
     }
 
     @QueryMapping

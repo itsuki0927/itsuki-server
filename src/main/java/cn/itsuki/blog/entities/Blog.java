@@ -100,7 +100,7 @@ public class Blog extends IdentifiableEntity {
 
     @Override
     protected void onCreateAction() {
-        setAuthor(Objects.requireNonNull(SecurityUtils.getCurrentAdmin()).getNickname());
+        setAuthor(Objects.requireNonNull(SecurityUtils.getCurrentMember()).getNickname());
         setCommenting(CommonState.INIT_VALUE);
         setLiking(CommonState.INIT_VALUE);
         setReading(CommonState.INIT_VALUE);

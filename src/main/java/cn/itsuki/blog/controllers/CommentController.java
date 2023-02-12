@@ -8,14 +8,11 @@ import cn.itsuki.blog.entities.requests.UpdateCommentInput;
 import cn.itsuki.blog.entities.responses.SearchResponse;
 import cn.itsuki.blog.services.CommentService;
 import graphql.GraphQLContext;
-import graphql.schema.DataFetchingEnvironment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
 import org.springframework.graphql.data.method.annotation.QueryMapping;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 
 @Controller
@@ -24,8 +21,8 @@ public class CommentController {
     private CommentService commentService;
 
     @QueryMapping
-    public SearchResponse<Comment> comments(@Argument SearchCommentInput input) {
-        return this.commentService.comments(input);
+    public SearchResponse<Comment> comments(@Argument SearchCommentInput search) {
+        return this.commentService.comments(search);
     }
 
     @QueryMapping
