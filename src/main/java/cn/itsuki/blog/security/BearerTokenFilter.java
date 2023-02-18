@@ -21,7 +21,7 @@ import java.util.List;
  * @author: itsuki
  * @create: 2021-09-14 20:54
  **/
-@Component
+//@Component
 public class BearerTokenFilter extends OncePerRequestFilter {
     // 前缀
     private static final String BEARER_PREFIX = "Bearer ";
