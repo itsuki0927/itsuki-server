@@ -163,7 +163,6 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> {
 
     @Secured("ROLE_ADMIN")
     public int updateCommentState(Long id, Integer state) {
-        // adminService.ensureAdminOperate();
         // 是否为垃圾评论
         boolean isSpam = state == CommentState.Spam;
         Comment comment = get(id);
@@ -196,7 +195,6 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> {
         boolean isAdminComment = input.getEmail().equals(adminEmail);
 
         Comment parentComment = ensureReplyCommentReadPermission(comment);
-        setCommentIp(comment, context);
         ensureIsInBlackList(comment);
         // 检查是否为垃圾评论
         akismetService.checkComment(comment, isAdminComment);
@@ -287,14 +285,6 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> {
         }
     }
 
-    private void setCommentIp(Comment comment, GraphQLContext context) {
-        var myheader = context.get("myheader");
-        var ip = context.get("ip");
-        System.out.println("myheader:" + myheader);
-        System.out.println("ip:" + ip);
-//        comment.setIp(requestUtil.getRequestIp(request));
-    }
-
     private Blog ensureBlogExist(Long blogId) {
         return blogService.get(blogId);
     }
@@ -306,7 +296,6 @@ public class CommentService extends BaseService<Comment, SearchCommentInput> {
         String content = entity.getContent();
 
         String ipBlackList = Optional.of(blackList.getIp()).orElse("");
-        System.out.println(blackList + "_" + ipBlackList);
         if (ip != null && ipBlackList.contains(entity.getIp())) {
             throw new IllegalArgumentException("ip -> 不合法");
         }

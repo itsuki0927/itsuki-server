@@ -1,4 +1,6 @@
 type Mutation {
+    login(password: String!): String!
+
     createBlog(input: CreateBlogInput!): Blog
     updateBlog(id: ID!, input: CreateBlogInput!): Blog
     deleteBlog(id: ID!): Int
@@ -19,15 +21,15 @@ type Mutation {
     updateComment(id: ID!, input: UpdateCommentInput!): Comment
     adminComment(input: AdminCommentInput!): Comment
 
-    login(input: LoginRequest!): LoginResponse
-    updateAdmin(input: UpdateAdminInput!): Admin
-    updateAdminPassword(input: UpdateAdminPasswordInput!): Admin
+#    login(input: LoginRequest!): LoginResponse
+#    updateAdmin(input: UpdateAdminInput!): Admin
+#    updateAdminPassword(input: UpdateAdminPasswordInput!): Admin
 
     updateBlackList(input: UpdateBlackListInput!): BlackList
 
     syncAllTagCount: Int
     syncBlogCommentCount(ids: [ID]!): Int
 
-#    uploadFile(prefix: String, file: FileUpload): String
+    #    uploadFile(prefix: String, file: FileUpload): String
 }
 

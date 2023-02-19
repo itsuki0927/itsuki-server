@@ -1,11 +1,11 @@
 package cn.itsuki.blog.security;
 
 import cn.itsuki.blog.entities.Member;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseAuthException;
-import com.google.firebase.auth.UserRecord;
+import cn.itsuki.blog.utils.TokenUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -27,21 +27,8 @@ public class BearerTokenFilter extends OncePerRequestFilter {
     private static final String BEARER_PREFIX = "Bearer ";
     @Value("${admin.email}")
     private String adminEmail;
-
-    private Member formatUser(UserRecord user) {
-        Member member = new Member();
-        member.setUid(user.getUid());
-        member.setEmail(user.getEmail());
-        member.setProvider(user.getProviderData()[0].getProviderId());
-        member.setAvatar(user.getPhotoUrl());
-        if (user.getDisplayName() != null) {
-            member.setNickname(user.getDisplayName());
-        }
-        if (user.getEmail() != null) {
-            member.setNickname(user.getEmail());
-        }
-        return member;
-    }
+    @Autowired
+    private TokenUtils tokenUtils;
 
     @Override
     protected void doFilterInternal(jakarta.servlet.http.HttpServletRequest request, jakarta.servlet.http.HttpServletResponse response, jakarta.servlet.FilterChain filterChain) throws jakarta.servlet.ServletException, IOException {
@@ -54,17 +41,17 @@ public class BearerTokenFilter extends OncePerRequestFilter {
 
             if (token.length() > 0) {
                 try {
-                    var idToken = FirebaseAuth.getInstance().verifyIdToken(token);
-                    var user = FirebaseAuth.getInstance().getUser(idToken.getUid());
-                    Member member = formatUser(user);
+                    Member user = tokenUtils.decodeJwtToken(token);
+                    System.out.println(user.getEmail() + "---" + adminEmail);
                     String role = user.getEmail().equals(adminEmail) ? "ROLE_ADMIN" : "ROLE_USER";
+
                     // 设置 user 到上下文中
-                    var authority = new SimpleGrantedAuthority(role);
-                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(member, null,
+                    GrantedAuthority authority = new SimpleGrantedAuthority(role);
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(user, null,
                             List.of(authority));
                     authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authentication);
-                } catch (FirebaseAuthException e) {
+                } catch (Exception e) {
                     System.out.println("BearerTokenFilter: " + e);
                     throw new RuntimeException(e);
                 }

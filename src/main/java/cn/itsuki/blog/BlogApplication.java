@@ -1,8 +1,6 @@
 package cn.itsuki.blog;
 
-import cn.itsuki.blog.configs.FirebaseConfig;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -19,9 +17,6 @@ import java.util.Locale;
 @SpringBootApplication
 public class BlogApplication {
 
-    @Autowired
-    FirebaseConfig firebaseConfig;
-
     public static void main(String[] args) {
         SpringApplication.run(BlogApplication.class, args);
     }
@@ -31,7 +26,6 @@ public class BlogApplication {
     ApplicationRunner applicationRunner(Environment environment) {
         String mode = environment.getProperty("mode");
         return args -> {
-            firebaseConfig.initFirebaseApp();
             log.info("Itsuki Server Run！mode: " + mode);
         };
     }

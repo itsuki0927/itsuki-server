@@ -53,7 +53,6 @@ public class BlogController {
     @Secured("ROLE_ADMIN")
     @MutationMapping
     public Blog createBlog(@Argument CreateBlogInput input) {
-        System.out.println(input);
         return this.blogService.createBlog(input);
     }
 
