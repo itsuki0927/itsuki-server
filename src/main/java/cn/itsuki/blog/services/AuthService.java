@@ -2,6 +2,7 @@ package cn.itsuki.blog.services;
 
 import cn.itsuki.blog.utils.TokenUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 
@@ -9,8 +10,16 @@ import org.springframework.stereotype.Service;
 public class AuthService {
     @Autowired
     private TokenUtils tokenUtils;
+    @Value("${admin.password}")
+    private String adminPassword;
 
     public String login(String password) {
+        if (password == null) {
+           throw new IllegalArgumentException("请输入密码");
+        }
+        if (adminPassword.equals(password)) {
+            throw new RuntimeException("密码错误");
+        }
         return tokenUtils.createJwtToken(password);
     }
 }

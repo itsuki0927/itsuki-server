@@ -35,9 +35,6 @@ public class TokenUtils {
     @Value("${admin.email}")
     private String adminEmail;
 
-    @Value("${admin.password}")
-    private String adminPassword;
-
     @Autowired
     private ObjectMapper objectMapper;
 
@@ -57,13 +54,6 @@ public class TokenUtils {
         return member;
     }
 
-    private Member getUser() {
-        Member member = new Member();
-        member.setNickname("用户");
-        member.setEmail("email");
-        return member;
-    }
-
     /**
      * 根据用户信息创建token
      *
@@ -71,9 +61,8 @@ public class TokenUtils {
      * @return token
      */
     public String createJwtToken(String password) {
-        Member member = password.equals(adminPassword) ? getAdmin() : getUser();
+        Member member = getAdmin();
         final Date expiration = new Date(System.currentTimeMillis() + expirationInSeconds * 1000);
-
         try {
             return Jwts.builder().claim(CLAIM_KEY, objectMapper.writeValueAsString(member)).setExpiration(expiration)
                     .signWith(SignatureAlgorithm.HS512, secret).compact();
@@ -84,7 +73,6 @@ public class TokenUtils {
 
     public Member decodeJwtToken(String jwtToken) {
         Claims claims;
-
         try {
             claims = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken).getBody();
         } catch (Exception ex) {

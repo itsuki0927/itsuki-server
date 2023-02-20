@@ -9,7 +9,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -42,7 +41,6 @@ public class BearerTokenFilter extends OncePerRequestFilter {
             if (token.length() > 0) {
                 try {
                     Member user = tokenUtils.decodeJwtToken(token);
-                    System.out.println(user.getEmail() + "---" + adminEmail);
                     String role = user.getEmail().equals(adminEmail) ? "ROLE_ADMIN" : "ROLE_USER";
 
                     // 设置 user 到上下文中
