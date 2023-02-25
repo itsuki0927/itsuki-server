@@ -50,11 +50,10 @@ public interface BlogRepository extends BaseRepository<Blog> {
             "                 or a.description like  %:name%" +
             ")" +
             "and (:publish is null or a.publish = :publish)" +
-            "and (:banner is null or a.banner = :banner)" +
             "and (:tag is null or t.tagId = :tag)" +
             "")
     Page<Blog> search(@Param("name") String name, @Param("publish") Integer publish, @Param("tag") Long tag,
-                      @Param("banner") Integer banner, Pageable pageable);
+                      Pageable pageable);
 
 
     Page<Blog> queryBlogsByPublish(@Param("publish") Integer publish, Pageable pageable);
@@ -67,11 +66,10 @@ public interface BlogRepository extends BaseRepository<Blog> {
             "                 or a.description like  %:name%" +
             ")" +
             "and (:publish is null or a.publish = :publish)" +
-            "and (:banner is null or a.banner = :banner)" +
             "and (:tagId is null or t.id = :tagId)" +
             "")
     int count(@Param("name") String name, @Param("publish") Integer publish,
-              @Param("tagId") Long tagId, @Param("banner") Integer banner);
+              @Param("tagId") Long tagId);
 
     int countBlogsByIdInAndPublishEquals(List<Long> ids, Integer publish);
 

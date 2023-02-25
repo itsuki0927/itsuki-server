@@ -12,7 +12,6 @@ input SearchBlogInput {
     sortOrder: String
     name: String
     publish: Int
-    banner: Int
     tag: String
     tagId: ID
     tagPath: String

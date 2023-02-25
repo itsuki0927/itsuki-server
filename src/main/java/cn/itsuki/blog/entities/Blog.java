@@ -93,11 +93,6 @@ public class Blog extends IdentifiableEntity {
     @Column(name = "card_style")
     private Integer cardStyle;
 
-    /**
-     * 是否显示在banner: 0 -> 不显示, 1 -> 显示
-     */
-    private Integer banner;
-
     @Override
     protected void onCreateAction() {
         setAuthor(Objects.requireNonNull(SecurityUtils.getCurrentMember()).getNickname());

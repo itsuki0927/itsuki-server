@@ -118,7 +118,7 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> {
 
         Long tagId = getSearchTagId(criteria);
 
-        return ((BlogRepository) repository).search(criteria.getName(), criteria.getPublish(), tagId, criteria.getBanner(), pageable);
+        return ((BlogRepository) repository).search(criteria.getName(), criteria.getPublish(), tagId, pageable);
     }
 
     public Integer count(SearchBlogInput criteria) {
@@ -126,7 +126,7 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> {
         if (tagId == null && criteria.getTagPath() != null) {
             tagId = tagService.getTagByNameOrPath(criteria.getTagPath()).getId();
         }
-        return ((BlogRepository) repository).count(criteria.getName(), criteria.getPublish(), tagId, criteria.getBanner());
+        return ((BlogRepository) repository).count(criteria.getName(), criteria.getPublish(), tagId);
     }
 
     public BlogSummaryResponse blogSummary() {
@@ -267,16 +267,6 @@ public class BlogService extends BaseService<Blog, SearchBlogInput> {
         });
 
         return state;
-    }
-
-    public int updateBlogBanner(List<Long> ids, Integer banner) {
-        List<Blog> blogs = repository
-                .findAllById(ids).stream()
-                .filter(v -> v.getPublish() == PublishState.Published)
-                .peek(blog -> blog.setBanner(banner)).collect(Collectors.toList());
-
-        repository.saveAll(blogs);
-        return blogs.size();
     }
 
     public int readBlogByPath(String path) {

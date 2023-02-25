@@ -31,11 +31,6 @@ public class SearchBlogInput extends BaseSearchRequest {
     private Integer origin;
 
     /**
-     * 轮播状态
-     */
-    private Integer banner;
-
-    /**
      * 公开状态
      */
     private Integer open;

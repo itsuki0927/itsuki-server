@@ -74,12 +74,6 @@ public class BlogController {
         return this.blogService.updateBlogState(ids, state);
     }
 
-    @Secured("ROLE_ADMIN")
-    @MutationMapping
-    public int updateBlogBanner(@Argument List<Long> ids, @Argument Integer state) {
-        return this.blogService.updateBlogBanner(ids, state);
-    }
-
     @MutationMapping
     public int likeBlog(@Argument Long id, @Argument Integer counter) {
         return this.blogService.likeBlog(id, counter);

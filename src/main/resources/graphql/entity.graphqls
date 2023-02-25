@@ -60,7 +60,6 @@ type Blog implements IdentifiableEntity {
     liking: Int!
     reading: Int!
     publish: Int!
-    banner: Int!
     cardStyle: Int!
     tags: [Tag!]!
 }

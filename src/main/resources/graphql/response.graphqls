@@ -43,8 +43,7 @@ type BlogDetailResponse implements IdentifiableEntity{
     liking:Int!
     reading:Int!
     publish: Int!
-    banner:Boolean!
-    cardStyle:String
+    cardStyle:Int
     tags: [Tag!]!
     prevBlog: Blog
     nextBlog: Blog

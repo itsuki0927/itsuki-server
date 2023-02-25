@@ -23,7 +23,6 @@ input CreateBlogInput {
     content: String!
     cover: String!
     publish: Int!
-    banner: Int!
     tagIds: [Int]
     cardStyle: Int!
 }
