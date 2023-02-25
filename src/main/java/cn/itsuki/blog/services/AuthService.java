@@ -17,9 +17,9 @@ public class AuthService {
         if (password == null) {
            throw new IllegalArgumentException("请输入密码");
         }
-        if (adminPassword.equals(password)) {
-            throw new RuntimeException("密码错误");
+        if (!adminPassword.equals(password)) {
+            throw new IllegalArgumentException("密码不正确");
         }
-        return tokenUtils.createJwtToken(password);
+        return tokenUtils.createJwtToken();
     }
 }

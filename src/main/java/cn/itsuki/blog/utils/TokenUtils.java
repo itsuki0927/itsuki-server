@@ -57,10 +57,9 @@ public class TokenUtils {
     /**
      * 根据用户信息创建token
      *
-     * @param password 密码
      * @return token
      */
-    public String createJwtToken(String password) {
+    public String createJwtToken() {
         Member member = getAdmin();
         final Date expiration = new Date(System.currentTimeMillis() + expirationInSeconds * 1000);
         try {
