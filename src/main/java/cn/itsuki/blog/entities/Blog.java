@@ -90,6 +90,9 @@ public class Blog extends IdentifiableEntity {
     @NonNull
     private Integer publish;
 
+    /*
+     * 卡片类型：0 -> Image, 1 -> Text, 2 -> Mixin
+     */
     @Column(name = "card_style")
     private Integer cardStyle;
 

@@ -54,7 +54,7 @@ type Blog implements IdentifiableEntity {
     description: String!
     keywords: String!
     content: String!
-    cover: String!
+    cover: String
     commenting: Int!
     author: String!
     liking: Int!

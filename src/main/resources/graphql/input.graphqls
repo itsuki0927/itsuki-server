@@ -21,7 +21,7 @@ input CreateBlogInput {
     description: String!
     keywords: String!
     content: String!
-    cover: String!
+    cover: String
     publish: Int!
     tagIds: [Int]
     cardStyle: Int!
